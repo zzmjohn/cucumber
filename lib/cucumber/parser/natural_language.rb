@@ -14,6 +14,7 @@ module Cucumber
       end
 
       def initialize(step_mother, lang)
+        @lang = lang
         @keywords = Cucumber::LANGUAGES[lang]
         raise "Language not supported: #{lang.inspect}" if @keywords.nil?
         @keywords['grammar_name'] = @keywords['name'].gsub(/\s/, '')
@@ -25,8 +26,23 @@ module Cucumber
         step_mother.register_adverbs(adverbs) if step_mother
       end
 
+      def parse(source, path, filter, options)
+        feature = if options[:parser] == :gherkin
+          gherkin_parse(source, path, filter, options)
+        else
+          treetop_parse(source, path, filter, options)
+        end
+        feature.language = self if feature
+        feature
+      end
+
+      def treetop_parse(source, path, filter, options)
+        parser.parse_or_fail(source, path, filter)
+      end
+
+      # Treetop parser
       def parser
-        return @parser if @parser
+        return @parser if @treetop_parser
         i18n_tt = File.expand_path(File.dirname(__FILE__) + '/i18n.tt')
         template = File.open(i18n_tt, Cucumber.file_mode('r')).read
         erb = ERB.new(template)
@@ -39,10 +55,20 @@ module Cucumber
         @parser
       end
 
-      def parse(source, path, filter)
-        feature = parser.parse_or_fail(source, path, filter)
-        feature.language = self if feature
-        feature
+      def gherkin_parse(source, path, filter, options)
+        require 'gherkin/syntax_policy/feature_policy'
+        require 'cucumber/new_ast/builder'
+
+        builder = NewAst::Builder.new
+        policy = Gherkin::SyntaxPolicy::FeaturePolicy.new(builder)
+        gherkin_parser.new(policy).scan(source)
+        builder.ast
+      end
+
+      def gherkin_parser
+        require "gherkin/parser"
+        require "gherkin/parser/parser_#{@lang}"
+        Gherkin::Parser[@lang]
       end
 
       def keywords(key, raw=false)

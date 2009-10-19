@@ -52,7 +52,12 @@ module Cucumber
 
         runner = configuration.build_runner(step_mother, @out_stream)
         step_mother.visitor = runner # Needed to support World#announce
-        runner.visit_features(features)
+        
+        if(step_mother.options[:parser] == :gherkin)
+          execute_asg(features)
+        else
+          runner.visit_features(features)
+        end
 
         failure = if exceeded_tag_limts?(features)
             FAILURE
@@ -103,6 +108,12 @@ module Cucumber
             ::Spec::Expectations.differ = ::Spec::Expectations::Differs::Default.new(options)
           rescue ::LoadError => ignore
           end
+        end
+      end
+
+      def execute_asg(features)
+        features.each do |feature|
+          feature.execute
         end
       end
 
