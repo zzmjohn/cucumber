@@ -1,7 +1,6 @@
 require 'cucumber/new_ast/background'
 require 'cucumber/new_ast/scenario'
 require 'cucumber/new_ast/scenario_outline'
-require 'cucumber/asg/asg'
 
 module Cucumber
   module NewAst
@@ -31,7 +30,11 @@ module Cucumber
       def accept(visitor)
         visitor.visit_background(@background) if @background
         @elements.each do |element|
-          visitor.visit_element(element)
+          if ScenarioOutline === element
+            visitor.visit_scenario_outline(element)
+          else
+            visitor.visit_scenario(element)
+          end
         end
       end
     end
