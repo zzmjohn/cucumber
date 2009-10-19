@@ -28,8 +28,11 @@ module Cucumber
         s
       end
 
-      def asg
-        Asg::Asg.new(self)
+      def accept(visitor)
+        visitor.visit_background(@background) if @background
+        @elements.each do |element|
+          visitor.visit_element(element)
+        end
       end
     end
   end

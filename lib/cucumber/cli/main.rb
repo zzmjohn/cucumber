@@ -112,10 +112,12 @@ module Cucumber
       end
 
       def execute_asg(features, step_mother, runner)
+        require 'cucumber/asg/builder'
         features.each do |feature|
           # runner is currenntly a TreeWalker, which we're only using for its formatter broadcasting stuff.
           # not using the actual walking parts of it.
-          feature.asg.execute
+          builder = Asg::Builder.new
+          builder.visit_feature(feature)
         end
       end
 

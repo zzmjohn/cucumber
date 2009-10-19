@@ -622,7 +622,7 @@ Feature: Cucumber command line
 
   Scenario: Run feature elements which match a name using -n
     When I run cucumber -n Pisang -q features/
-	Then it should pass with
+	  Then it should pass with
       """
       Feature: search examples
 
