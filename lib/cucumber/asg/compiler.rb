@@ -1,11 +1,14 @@
-require 'cucumber/asg/unit'
+require 'cucumber/asg/compiled_scenario'
+require 'cucumber/asg/compiled_step'
 
 module Cucumber
   module Asg
     # Builds an Asg by walking the Ast
-    class Builder
-      def initialize
-        @units = []
+    class Compiler
+      attr_reader :units
+
+      def initialize(feature)
+        @feature = feature
       end
 
       def visit_feature(feature)
@@ -21,7 +24,7 @@ module Cucumber
       def visit_scenario(element)
         @steps = []
         element.accept(self)
-        store_unit(@steps)
+        store_unit(element, @steps)
       end
 
       def visit_scenario_outline(element)
@@ -30,7 +33,7 @@ module Cucumber
         @all_row_steps = []
         element.accept(self)
         @all_row_steps.each do |row_steps|
-          store_unit(row_steps)
+          store_unit(element, row_steps)
         end
       end
 
@@ -55,8 +58,9 @@ module Cucumber
 
       private
       
-      def store_unit(steps)
-        @units << Unit.new(@background_steps + steps)
+      def store_unit(element, steps)
+        compiled_steps = (@background_steps + steps).map {|step| CompiledStep.new(step)}
+        @feature.add_unit(CompiledScenario.new(element, compiled_steps))
       end
     end
   end
