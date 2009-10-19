@@ -54,7 +54,7 @@ module Cucumber
         step_mother.visitor = runner # Needed to support World#announce
         
         if(step_mother.options[:parser] == :gherkin)
-          execute_asg(features)
+          execute_asg(features, step_mother, runner)
         else
           runner.visit_features(features)
         end
@@ -111,9 +111,11 @@ module Cucumber
         end
       end
 
-      def execute_asg(features)
+      def execute_asg(features, step_mother, runner)
         features.each do |feature|
-          feature.execute
+          # runner is currenntly a TreeWalker, which we're only using for its formatter broadcasting stuff.
+          # not using the actual walking parts of it.
+          feature.asg.execute
         end
       end
 

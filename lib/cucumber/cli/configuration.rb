@@ -124,8 +124,6 @@ module Cucumber
         logger
       end
 
-    private
-    
       def formatters(step_mother)
         return [Formatter::Pretty.new(step_mother, nil, @options)] if @options[:autoformat]
         @options[:formats].map do |format_and_out|
@@ -155,6 +153,8 @@ module Cucumber
           end
         end
       end
+
+      private
 
       class LogFormatter < ::Logger::Formatter
         def call(severity, time, progname, msg)

@@ -60,7 +60,7 @@ module Cucumber
         require 'cucumber/new_ast/builder'
 
         builder = NewAst::Builder.new
-        policy = Gherkin::SyntaxPolicy::FeaturePolicy.new(builder)
+        policy = Gherkin::SyntaxPolicy::FeaturePolicy.new(builder, false)
         gherkin_parser.new(policy).scan(source)
         builder.ast
       end

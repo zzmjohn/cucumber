@@ -2,7 +2,7 @@ require 'cucumber/new_ast/has_steps'
 
 module Cucumber
   module NewAst
-    class Scenario < HasSteps
+    class Background < HasSteps
     end
   end
 end
