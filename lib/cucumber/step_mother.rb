@@ -1,8 +1,6 @@
 require 'cucumber/constantize'
 require 'cucumber/core_ext/instance_exec'
-require 'cucumber/parser/natural_language'
 require 'cucumber/language_support/language_methods'
-require 'cucumber/formatter/duration'
 
 module Cucumber
   # Raised when there is no matching StepDefinition for a step.
@@ -41,32 +39,12 @@ module Cucumber
   # This is the meaty part of Cucumber that ties everything together.
   class StepMother
     include Constantize
-    include Formatter::Duration
     attr_writer :options, :visitor, :log
 
     def initialize
       @unsupported_programming_languages = []
       @programming_languages = []
       @language_map = {}
-      # load_natural_language('en')
-    end
-
-    def load_plain_text_features(feature_files)
-      features = Ast::Features.new
-
-      start = Time.new
-      log.debug("Features:\n")
-      feature_files.each do |f|
-        feature_file = FeatureFile.new(f)
-        feature = feature_file.parse(self, options)
-        if feature
-          features.add_feature(feature)
-          log.debug("  * #{f}\n")
-        end
-      end
-      duration = Time.now - start
-      log.debug("Parsing feature files took #{format_duration(duration)}\n\n")
-      features
     end
 
     def load_code_files(step_def_files)
@@ -99,16 +77,6 @@ module Cucumber
       @language_map[ext] = programming_language
       programming_language
     end
-
-    # Loads a natural language. This has the effect of aliasing 
-    # Step Definition keywords for all of the registered programming 
-    # languages (if they support aliasing). See #load_programming_language
-    #
-    # def load_natural_language(lang)
-    #   parser = Parser::NaturalLanguage.get(lang)
-    #   register_adverbs(parser.adverbs)
-    #   parser
-    # end
 
     # Returns the options passed on the command line.
     def options

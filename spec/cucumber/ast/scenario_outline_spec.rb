@@ -9,8 +9,8 @@ module Cucumber
     describe ScenarioOutline do
       before do
         @step_mother = StepMother.new
+        @step_mother.register_adverbs(Parser::NaturalLanguage.get('en').adverbs)
         @step_mother.load_programming_language('rb')
-        @step_mother.load_natural_language('en')
         @dsl = Object.new
         @dsl.extend(RbSupport::RbDsl)
 
