@@ -3,7 +3,7 @@ require 'cucumber/feature_file'
 require 'cucumber/formatter/duration'
 
 module Cucumber
-  class FeatureSuite
+  class FeatureLoader
     attr_writer :options, :log
     attr_reader :adverbs
     include Formatter::Duration
@@ -30,7 +30,7 @@ module Cucumber
       features
     end
     
-    # Loads a natural language and registers its adverbs with the FeatureSuite.
+    # Loads a natural language and registers its adverbs with the FeatureLoader
     #
     def load_natural_language(lang)
       parser = Parser::NaturalLanguage.get(lang)

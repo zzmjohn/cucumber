@@ -20,12 +20,12 @@ module Cucumber
           @step_mother ||= StepMother.new
         end
 
-        def feature_suite
-          @feature_suite ||= FeatureSuite.new
+        def feature_loader
+          @feature_loader ||= FeatureLoader.new
         end
         
         def execute(args)
-          new(args).execute!(step_mother, feature_suite)
+          new(args).execute!(step_mother, feature_loader)
         end
       end
 
@@ -35,7 +35,7 @@ module Cucumber
         @error_stream = error_stream
       end
 
-      def execute!(step_mother, feature_suite)
+      def execute!(step_mother, feature_loader)
         trap_interrupt
         if configuration.drb?
           begin
@@ -47,14 +47,14 @@ module Cucumber
         step_mother.options = configuration.options
         step_mother.log = configuration.log
         
-        feature_suite.options = configuration.options
-        feature_suite.log = configuration.log
+        feature_loader.options = configuration.options
+        feature_loader.log = configuration.log
       
-        step_mother.register_adverbs(feature_suite.adverbs) # Set up default 'en' adverbs
+        step_mother.register_adverbs(feature_loader.adverbs) # Set up default 'en' adverbs
         step_mother.load_code_files(configuration.support_to_load)
         step_mother.after_configuration(configuration)
-        features = feature_suite.load_plain_text_features(configuration.feature_files)
-        step_mother.register_adverbs(feature_suite.adverbs) # Re-register to catch any i18n adverbs
+        features = feature_loader.load_plain_text_features(configuration.feature_files)
+        step_mother.register_adverbs(feature_loader.adverbs) # Re-register to catch any i18n adverbs
         step_mother.load_code_files(configuration.step_defs_to_load)
 
         enable_diffing
