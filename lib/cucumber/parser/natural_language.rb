@@ -4,8 +4,8 @@ module Cucumber
       KEYWORD_KEYS = %w{name native encoding space_after_keyword feature background scenario scenario_outline examples given when then and but}
 
       class << self
-        def get(step_mother, lang)
-          languages[lang] ||= new(step_mother, lang)
+        def get(feature_suite, lang)
+          languages[lang] ||= new(feature_suite, lang)
         end
 
         def languages
@@ -13,16 +13,14 @@ module Cucumber
         end
       end
 
-      def initialize(step_mother, lang)
+      def initialize(feature_suite, lang)
         @keywords = Cucumber::LANGUAGES[lang]
         raise "Language not supported: #{lang.inspect}" if @keywords.nil?
         @keywords['grammar_name'] = @keywords['name'].gsub(/\s/, '')
-        register_adverbs(step_mother) if step_mother
       end
-
-      def register_adverbs(step_mother)
-        adverbs = %w{given when then and but}.map{|keyword| @keywords[keyword].split('|').map{|w| w.gsub(/\s/, '')}}.flatten
-        step_mother.register_adverbs(adverbs) if step_mother
+      
+      def adverbs
+        %w{given when then and but}.map{|keyword| @keywords[keyword].split('|').map{|w| w.gsub(/\s/, '')}}.flatten
       end
 
       def parser

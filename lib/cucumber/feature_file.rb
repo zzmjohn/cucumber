@@ -21,9 +21,9 @@ module Cucumber
     # Parses a file and returns a Cucumber::Ast
     # If +options+ contains tags, the result will
     # be filtered.
-    def parse(step_mother, options)
+    def parse(feature_suite, options)
       filter = Filter.new(@lines, options)
-      language = Parser::NaturalLanguage.get(step_mother, (lang || options[:lang] || 'en'))
+      language = feature_suite.load_natural_language(lang || options[:lang] || 'en')
       language.parse(source, @path, filter)
     end
     

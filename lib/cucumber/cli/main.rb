@@ -20,8 +20,12 @@ module Cucumber
           @step_mother ||= StepMother.new
         end
 
+        def feature_suite
+          @feature_suite ||= FeatureSuite.new
+        end
+        
         def execute(args)
-          new(args).execute!(step_mother)
+          new(args).execute!(step_mother, feature_suite)
         end
       end
 
@@ -31,7 +35,7 @@ module Cucumber
         @error_stream = error_stream
       end
 
-      def execute!(step_mother)
+      def execute!(step_mother, feature_suite)
         trap_interrupt
         if configuration.drb?
           begin
@@ -43,9 +47,15 @@ module Cucumber
         step_mother.options = configuration.options
         step_mother.log = configuration.log
 
+        feature_suite.options = configuration.options
+        feature_suite.log = configuration.log
+      
+        # features = feature_suite.load_plain_text_features(configuration.feature_files)
+        # step_mother.register_adverbs(feature_suite.adverbs)
+        
         step_mother.load_code_files(configuration.support_to_load)
         step_mother.after_configuration(configuration)
-        features = step_mother.load_plain_text_features(configuration.feature_files)
+        features = step_mother.load_plain_text_features(configuration.feature_files)        
         step_mother.load_code_files(configuration.step_defs_to_load)
 
         enable_diffing
