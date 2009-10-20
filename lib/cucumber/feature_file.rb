@@ -1,4 +1,3 @@
-require 'cucumber/parser/natural_language'
 require 'cucumber/filter'
 
 module Cucumber

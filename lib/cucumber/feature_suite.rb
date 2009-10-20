@@ -35,18 +35,15 @@ module Cucumber
     # languages (if they support aliasing). See #load_programming_language
     #
     def load_natural_language(lang)
-      parser = Parser::NaturalLanguage.get(self, lang)
+      parser = Parser::NaturalLanguage.get(lang)
     end
 
-    def register_adverbs(adverbs) #:nodoc:
+    def adverbs=(adverbs)
       @adverbs ||= []
       @adverbs += adverbs
       @adverbs.uniq!
-      @programming_languages.each do |programming_language|
-        programming_language.alias_adverbs(@adverbs)
-      end
     end
-          
+              
     def log
       @log ||= Logger.new(STDOUT)
     end

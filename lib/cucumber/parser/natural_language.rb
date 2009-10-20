@@ -4,8 +4,8 @@ module Cucumber
       KEYWORD_KEYS = %w{name native encoding space_after_keyword feature background scenario scenario_outline examples given when then and but}
 
       class << self
-        def get(feature_suite, lang)
-          languages[lang] ||= new(feature_suite, lang)
+        def get(lang)
+          languages[lang] ||= new(lang)
         end
 
         def languages
@@ -13,7 +13,7 @@ module Cucumber
         end
       end
 
-      def initialize(feature_suite, lang)
+      def initialize(lang)
         @keywords = Cucumber::LANGUAGES[lang]
         raise "Language not supported: #{lang.inspect}" if @keywords.nil?
         @keywords['grammar_name'] = @keywords['name'].gsub(/\s/, '')

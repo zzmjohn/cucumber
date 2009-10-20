@@ -105,7 +105,7 @@ module Cucumber
     # languages (if they support aliasing). See #load_programming_language
     #
     def load_natural_language(lang)
-      parser = Parser::NaturalLanguage.get(self, lang)
+      parser = Parser::NaturalLanguage.get(lang)
       register_adverbs(parser.adverbs)
       parser
     end

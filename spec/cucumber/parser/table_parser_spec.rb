@@ -6,7 +6,7 @@ module Cucumber
   module Parser
     describe 'Tables' do
       before do
-        @parser = NaturalLanguage.get(StepMother.new, 'en').parser
+        @parser = NaturalLanguage.get('en').parser
       end
       
       after do

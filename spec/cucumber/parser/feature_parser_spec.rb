@@ -6,7 +6,7 @@ module Cucumber
     describe Feature do
       before do
         @step_mother = StepMother.new
-        @parser = NaturalLanguage.get(@step_mother, 'en').parser
+        @parser = NaturalLanguage.get('en').parser
       end
 
       after do
