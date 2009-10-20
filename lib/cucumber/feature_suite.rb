@@ -36,6 +36,8 @@ module Cucumber
     #
     def load_natural_language(lang)
       parser = Parser::NaturalLanguage.get(lang)
+      self.adverbs = parser.adverbs
+      parser
     end
 
     def adverbs=(adverbs)

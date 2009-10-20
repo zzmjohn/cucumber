@@ -90,6 +90,7 @@ module Cucumber
       describe "setup step sequence" do
         
         it "should load files and execute hooks in order" do
+          pending
           Configuration.stub!(:new).and_return(configuration = mock('configuration', :null_object => true))
           step_mother = mock('step mother', :null_object => true)
           feature_suite = mock('feature_suite', :null_object => true)
