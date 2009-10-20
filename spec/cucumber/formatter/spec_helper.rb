@@ -24,10 +24,14 @@ module Cucumber
         @step_mother ||= StepMother.new
       end
       
+      def feature_suite
+        @feature_suite ||= FeatureSuite.new
+      end
+      
       def load_features(content)
         feature_file = FeatureFile.new('spec.feature', content)
         features = Ast::Features.new
-        features.add_feature feature_file.parse(@step_mother, {})
+        features.add_feature feature_file.parse(feature_suite, {})
         features
       end
     

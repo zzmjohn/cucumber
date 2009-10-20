@@ -48,7 +48,7 @@ module Cucumber
       @unsupported_programming_languages = []
       @programming_languages = []
       @language_map = {}
-      load_natural_language('en')
+      # load_natural_language('en')
     end
 
     def load_plain_text_features(feature_files)
@@ -104,11 +104,11 @@ module Cucumber
     # Step Definition keywords for all of the registered programming 
     # languages (if they support aliasing). See #load_programming_language
     #
-    def load_natural_language(lang)
-      parser = Parser::NaturalLanguage.get(lang)
-      register_adverbs(parser.adverbs)
-      parser
-    end
+    # def load_natural_language(lang)
+    #   parser = Parser::NaturalLanguage.get(lang)
+    #   register_adverbs(parser.adverbs)
+    #   parser
+    # end
 
     # Returns the options passed on the command line.
     def options

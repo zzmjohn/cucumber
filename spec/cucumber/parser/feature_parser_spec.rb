@@ -5,7 +5,7 @@ module Cucumber
   module Parser
     describe Feature do
       before do
-        @step_mother = StepMother.new
+        @feature_suite = FeatureSuite.new
         @parser = NaturalLanguage.get('en').parser
       end
 
@@ -18,11 +18,11 @@ module Cucumber
       end
 
       def parse_file(file)
-        FeatureFile.new(File.dirname(__FILE__) + "/../treetop_parser/" + file).parse(@step_mother, {})
+        FeatureFile.new(File.dirname(__FILE__) + "/../treetop_parser/" + file).parse(@feature_suite, {})
       end
 
       def parse_example_file(file)
-        FeatureFile.new(File.dirname(__FILE__) + "/../../../examples/" + file).parse(@step_mother, {})
+        FeatureFile.new(File.dirname(__FILE__) + "/../../../examples/" + file).parse(@feature_suite, {})
       end
 
       describe "Comments" do

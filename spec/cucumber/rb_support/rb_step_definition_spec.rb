@@ -9,7 +9,7 @@ module Cucumber
     describe RbStepDefinition do
       before do      
         @step_mother = StepMother.new
-        @step_mother.load_natural_language('en')
+        @step_mother.register_adverbs(Parser::NaturalLanguage.get('en').adverbs)
         @rb = @step_mother.load_programming_language('rb')
         @dsl = Object.new 
         @dsl.extend RbSupport::RbDsl

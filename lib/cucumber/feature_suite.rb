@@ -30,9 +30,7 @@ module Cucumber
       features
     end
     
-    # Loads a natural language. This has the effect of aliasing 
-    # Step Definition keywords for all of the registered programming 
-    # languages (if they support aliasing). See #load_programming_language
+    # Loads a natural language and registers its adverbs with the FeatureSuite.
     #
     def load_natural_language(lang)
       parser = Parser::NaturalLanguage.get(lang)
