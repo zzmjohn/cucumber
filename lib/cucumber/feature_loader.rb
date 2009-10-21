@@ -21,8 +21,8 @@ module Cucumber
       start = Time.new
       log.debug("Features:\n")
       feature_files.each do |f|
-        FileInput.new(f)
-        feature_file = GherkinBuilder.new(f.source, f.path, f.lines, f.lang)
+        content = FileInput.new(f)
+        feature_file = GherkinBuilder.new(content.source, content.path, content.lines, content.lang)
         feature = feature_file.parse(self, options)
         if feature
           features.add_feature(feature)
