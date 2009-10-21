@@ -1,12 +1,15 @@
 require 'cucumber/parser/natural_language'
 require 'cucumber/feature_file'
 require 'cucumber/formatter/duration'
+require 'cucumber/source/file_input'
+require 'cucumber/source/gherkin_builder'
 
 module Cucumber
   class FeatureLoader
     attr_writer :options, :log
     attr_reader :adverbs
     include Formatter::Duration
+    include Source
     
     def initialize
       load_natural_language('en')
@@ -18,7 +21,8 @@ module Cucumber
       start = Time.new
       log.debug("Features:\n")
       feature_files.each do |f|
-        feature_file = FeatureFile.new(f)
+        FileInput.new(f)
+        feature_file = GherkinBuilder.new(f.source, f.path, f.lines, f.lang)
         feature = feature_file.parse(self, options)
         if feature
           features.add_feature(feature)
