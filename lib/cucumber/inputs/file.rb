@@ -4,32 +4,17 @@ module Cucumber
   module Inputs
     class File
       attr_reader :path, :lines
-      
-      FILE_COLON_LINE_PATTERN = /^([\w\W]*?):([\d:]+)$/ #:nodoc:
+
       LANGUAGE_PATTERN = /language:\s*(.*)/ #:nodoc:
 
       # The +uri+ argument is the location of the source. It can ba a path 
       # or a path:line1:line2 etc. If +source+ is passed, +uri+ is ignored.
       def initialize(uri, source=nil)
         @source = source
-        _, @path, @lines = *FILE_COLON_LINE_PATTERN.match(uri)
-        if @path
-          @lines = @lines.split(':').map { |line| line.to_i }
-        else
-          @path = uri
-        end
+        @path = uri
       end
-
-      # Parses a file and returns a Cucumber::Ast
-      # If +options+ contains tags, the result will
-      # be filtered.
-      def parse(feature_loader, options)
-        filter = Filter.new(@lines, options)
-        language = feature_loader.load_natural_language(lang || options[:lang] || 'en')
-        language.parse(source, @path, filter)
-      end
-
-      def source
+      
+      def content
         @source ||= if @path =~ /^http/
           require 'open-uri'
           open(@path).read
@@ -45,7 +30,7 @@ module Cucumber
       end
 
       def lang
-        line_one = source.split(/\n/)[0]
+        line_one = content.split(/\n/)[0]
         if line_one =~ LANGUAGE_PATTERN
           $1.strip
         else

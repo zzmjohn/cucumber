@@ -17,11 +17,15 @@ module Cucumber
     
     it "should have other adverbs if other languages are used"
     
-    it "should load features and return a collection of asts" do
+    it "should load feature sources and return a feature suite" do
       pending
-      @feature_loader.load_plain_text_features("example.feature")
+      @feature_loader.load_features("example.feature")
     end
     
-    it "should split the content name and line numbers from the sources"
+    it "should split the content name and line numbers from the sources" do
+      Inputs::File.should_receive(:new).with("example.feature").and_return(mock("file input").as_null_object)
+      Builders::Gherkin.stub!(:new).and_return(mock("gherkin builder").as_null_object)
+      @feature_loader.load_features("example.feature:10:20")
+    end
   end
 end
