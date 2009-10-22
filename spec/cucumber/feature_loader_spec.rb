@@ -15,11 +15,13 @@ module Cucumber
       @feature_loader.adverbs.should == ["Given", "When", "Then", "And", "But"]
     end
     
-    it "should include other adverbs if necessary"
+    it "should have other adverbs if other languages are used"
     
     it "should load features and return a collection of asts" do
       pending
       @feature_loader.load_plain_text_features("example.feature")
     end
+    
+    it "should split the content name and line numbers from the sources"
   end
 end

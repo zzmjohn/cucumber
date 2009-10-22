@@ -113,7 +113,7 @@ module Cucumber
           # The post configuration hook/s (if any) need to be run next to enable
           # extensions to do their thing before features are loaded
           step_mother.should_receive(:after_configuration).with(configuration).ordered
-          feature_loader.should_receive(:load_plain_text_features)
+          feature_loader.should_receive(:load_features)
           # Re-register to catch any i18n adverbs
           step_mother.should_receive(:register_adverbs).ordered
           step_mother.should_receive(:load_code_files).with(['step defs']).ordered

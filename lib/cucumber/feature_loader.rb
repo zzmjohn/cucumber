@@ -6,6 +6,8 @@ require 'cucumber/builders/gherkin'
 
 module Cucumber
   class FeatureLoader
+    # FILE_COLON_LINE_PATTERN = /^([\w\W]*?):([\d:]+)$/ #:nodoc:
+    
     attr_writer :options, :log
     attr_reader :adverbs
     include Formatter::Duration
@@ -14,7 +16,7 @@ module Cucumber
       load_natural_language('en')
     end
     
-    def load_plain_text_features(feature_files)
+    def load_features(feature_files)
       features = Ast::Features.new
 
       start = Time.new
