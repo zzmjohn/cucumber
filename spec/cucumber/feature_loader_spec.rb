@@ -35,7 +35,7 @@ module Cucumber
     
     it "should split the content name and line numbers from the sources" do
       Inputs::File.should_receive(:new).with("example.feature").and_return(mock("file input").as_null_object)
-      Builders::Gherkin.stub!(:new).and_return(mock("gherkin builder").as_null_object)
+      Builders::Gherkin.stub!(:new).and_return(mock("gherkin builder", :adverbs => ["I CAN HAZ"]).as_null_object)
       @feature_loader.load_features("example.feature:10:20")
     end
   end
