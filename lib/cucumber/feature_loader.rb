@@ -15,7 +15,7 @@ module Cucumber
     end
     
     def load_features(sources)
-      features = Ast::Features.new
+      feature_suite = Ast::Features.new
 
       start = Time.new
       log.debug("Features:\n")
@@ -28,17 +28,17 @@ module Cucumber
         end
         
         input = Inputs::File.new(name)
-        feature_file = Builders::Gherkin.new(input.content, input.path, lines || nil)
-        feature = feature_file.parse(options)
+        builder = Builders::Gherkin.new(input.content, input.path, lines || nil)
+        feature = builder.parse(options)
         if feature
-          features.add_feature(feature)        # It would be nice if adverbs lived on Ast::Feature, 
-          self.adverbs = feature_file.adverbs  # then adding them to the feature suite could merge them.
-          log.debug("  * #{source}\n")         # And maybe StepMother could get them from there?
+          feature_suite.add_feature(feature)  # It would be nice if adverbs lived on Ast::Feature, 
+          self.adverbs = builder.adverbs      # then adding them to the feature suite could merge them.
+          log.debug("  * #{source}\n")        # And maybe StepMother could get them from there?
         end
       end
       duration = Time.now - start
       log.debug("Parsing feature files took #{format_duration(duration)}\n\n")
-      features
+      feature_suite
     end
     
     # The only reason FeatureLoader has these is so StepMother can learn about them...
