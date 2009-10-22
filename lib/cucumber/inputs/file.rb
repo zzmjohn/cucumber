@@ -3,9 +3,7 @@ require 'cucumber/filter'
 module Cucumber
   module Inputs
     class File
-      attr_reader :path, :lines
-
-      LANGUAGE_PATTERN = /language:\s*(.*)/ #:nodoc:
+      attr_reader :path
 
       # The +uri+ argument is the location of the source. It can ba a path 
       # or a path:line1:line2 etc. If +source+ is passed, +uri+ is ignored.
@@ -26,15 +24,6 @@ module Cucumber
             e.message << "\nCouldn't open #{p}"
             raise e
           end
-        end
-      end
-
-      def lang
-        line_one = content.split(/\n/)[0]
-        if line_one =~ LANGUAGE_PATTERN
-          $1.strip
-        else
-          nil
         end
       end
     end

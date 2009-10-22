@@ -1,5 +1,3 @@
-require 'cucumber/parser/natural_language'
-require 'cucumber/feature_file'
 require 'cucumber/formatter/duration'
 require 'cucumber/inputs/file'
 require 'cucumber/builders/gherkin'
@@ -13,7 +11,7 @@ module Cucumber
     include Formatter::Duration
     
     def initialize
-      load_natural_language('en')
+      @adverbs = ["Given", "When", "Then", "And", "But"] # haxx?
     end
     
     def load_features(sources)
@@ -30,11 +28,12 @@ module Cucumber
         end
         
         input = Inputs::File.new(name)
-        feature_file = Builders::Gherkin.new(input.content, input.path, lines || nil, input.lang)
-        feature = feature_file.parse(self, options)
+        feature_file = Builders::Gherkin.new(input.content, input.path, lines || nil)
+        feature = feature_file.parse(options)
         if feature
-          features.add_feature(feature)
-          log.debug("  * #{source}\n")
+          features.add_feature(feature)        # It would be nice if adverbs lived on Ast::Feature, 
+          self.adverbs = feature_file.adverbs  # then adding them to the feature suite could merge them.
+          log.debug("  * #{source}\n")         # And maybe StepMother could get them from there?
         end
       end
       duration = Time.now - start
@@ -42,16 +41,8 @@ module Cucumber
       features
     end
     
-    # Loads a natural language and registers its adverbs with the FeatureLoader
-    #
-    def load_natural_language(lang)
-      parser = Parser::NaturalLanguage.get(lang)
-      self.adverbs = parser.adverbs
-      parser
-    end
-
+    # The only reason FeatureLoader has these is so StepMother can learn about them...
     def adverbs=(adverbs)
-      @adverbs ||= []
       @adverbs += adverbs
       @adverbs.uniq!
     end

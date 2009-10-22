@@ -15,7 +15,18 @@ module Cucumber
       @feature_loader.adverbs.should == ["Given", "When", "Then", "And", "But"]
     end
     
-    it "should have other adverbs if other languages are used"
+    it "should have other adverbs if other languages are used" do
+      pending
+      # given builder loads fr-parser
+      # feature_loader.adverbs.should include(french adverbs)
+    end
+     
+    it "should take a hint from the input when determining what builder to use" do
+      pending
+      # input.format = :json
+      # Builders::JSON.should_receive(:new)
+      # @feature_loader.load_features("http://domain.com/my.feature")
+    end
     
     it "should load feature sources and return a feature suite" do
       pending
