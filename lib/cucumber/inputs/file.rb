@@ -1,8 +1,8 @@
 require 'cucumber/filter'
 
 module Cucumber
-  module Source
-    class FileInput
+  module Inputs
+    class File
       attr_reader :path, :lines
       
       FILE_COLON_LINE_PATTERN = /^([\w\W]*?):([\d:]+)$/ #:nodoc:
@@ -35,7 +35,7 @@ module Cucumber
           open(@path).read
         else
           begin
-            File.open(@path, Cucumber.file_mode('r')).read 
+            ::File.open(@path, Cucumber.file_mode('r')).read 
           rescue Errno::EACCES => e
             p = File.expand_path(@path)
             e.message << "\nCouldn't open #{p}"

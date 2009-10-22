@@ -1,8 +1,8 @@
 require 'cucumber/filter'
 
 module Cucumber
-  module Source
-    class GherkinBuilder
+  module Builders
+    class Gherkin
       attr_reader :source, :lang
       
       def initialize(source, path, lines, lang)
