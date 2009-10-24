@@ -5,7 +5,7 @@ module Cucumber
         @compiled_scenarios = []
       end
       
-      def add_unit(compiled_scenario)
+      def add_compiled_scenario(compiled_scenario)
         @compiled_scenarios << compiled_scenario
       end
 

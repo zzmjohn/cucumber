@@ -60,7 +60,7 @@ module Cucumber
       
       def store_unit(element, steps)
         compiled_steps = (@background_steps + steps).map {|step| CompiledStep.new(step)}
-        @feature.add_unit(CompiledScenario.new(element, compiled_steps))
+        @feature.add_compiled_scenario(CompiledScenario.new(element, compiled_steps))
       end
     end
   end
