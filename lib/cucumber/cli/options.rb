@@ -232,6 +232,9 @@ module Cucumber
           opts.on("--port PORT", "Specify DRb port.  Ignored without --drb") do |port|
             @options[:drb_port] = port
           end
+          opts.on("--parser=PARSER", "Available: gherkin|treetop. Default: #{@options[:parser]}") do |v|
+            @options[:parser] = v.to_sym
+          end
           opts.on_tail("--version", "Show version.") do
             @out_stream.puts Cucumber::VERSION
             Kernel.exit(0)
@@ -387,7 +390,8 @@ module Cucumber
           :tag_names    => {},
           :name_regexps => [],
           :env_vars     => {},
-          :diff_enabled => true
+          :diff_enabled => true,
+          :parser       => :treetop
         }
       end
     end
