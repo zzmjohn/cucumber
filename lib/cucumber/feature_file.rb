@@ -24,7 +24,11 @@ module Cucumber
     def parse(step_mother, options)
       filter = Filter.new(@lines, options)
       language = Parser::NaturalLanguage.get(step_mother, (lang || options[:lang] || 'en'))
-      language.parse(source, @path, filter, options)
+      begin
+        language.parse(source, @path, filter, options)
+      rescue => exception
+        raise(exception, "Failed to parse feature #{@path}: #{exception.message}", exception.backtrace)
+      end
     end
     
     def source
