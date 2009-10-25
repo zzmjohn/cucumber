@@ -11,6 +11,7 @@ Cucumber::Rake::Task.new do |t|
   t.rcov = ENV['RCOV']
 end
 
-Cucumber::Rake::Task.new('pretty') do |t|
-  t.cucumber_opts = %w{--format pretty}
+Cucumber::Rake::Task.new(:cucumber_wip) do |t|
+  t.profile = 'wip'
+  t.rcov = ENV['RCOV']
 end
