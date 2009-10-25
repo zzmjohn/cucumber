@@ -52,7 +52,11 @@ module Cucumber
 
       def invoke(step_mother, options)
         find_step_match!(step_mother)
-        unless @skip_invoke || options[:dry_run] || @exception || @step_collection.exception
+        skip = @skip_invoke || 
+               options[:dry_run] || 
+               @exception || 
+               (@step_collection.respond_to?(:exception) && @step_collection.exception) # TODO: Remove when ASG is good
+        unless skip
           @skip_invoke = true
           begin
             @step_match.invoke(@multiline_arg)

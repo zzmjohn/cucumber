@@ -11,9 +11,18 @@ module Cucumber
         def languages
           @languages ||= {}
         end
+
+        def parser=(treetop_or_gherkin)
+          @parser = treetop_or_gherkin
+        end
+
+        def parser
+          @parser ||= :treetop
+        end
       end
 
       def initialize(lang)
+        @lang = lang
         @keywords = Cucumber::LANGUAGES[lang]
         raise "Language not supported: #{lang.inspect}" if @keywords.nil?
         @keywords['grammar_name'] = @keywords['name'].gsub(/\s/, '')
@@ -23,8 +32,19 @@ module Cucumber
         %w{given when then and but}.map{|keyword| @keywords[keyword].split('|').map{|w| w.gsub(/\s/, '')}}.flatten
       end
 
+      def parse(source, path, filter)
+        feature = (self.class.parser == :treetop) ? treetop_parse(source, path, filter) : gherkin_parse(source, path, filter)
+        feature.language = self if feature
+        feature
+      end
+
+      def treetop_parse(source, path, filter)
+        parser.parse_or_fail(source, path, filter)
+      end
+
+      # Treetop parser
       def parser
-        return @parser if @parser
+        return @parser if @treetop_parser
         i18n_tt = File.expand_path(File.dirname(__FILE__) + '/i18n.tt')
         template = File.open(i18n_tt, Cucumber.file_mode('r')).read
         erb = ERB.new(template)
@@ -37,10 +57,20 @@ module Cucumber
         @parser
       end
 
-      def parse(source, path, filter)
-        feature = parser.parse_or_fail(source, path, filter)
-        feature.language = self if feature
-        feature
+      def gherkin_parse(source, path, filter)
+        require 'gherkin/syntax_policy/feature_policy'
+        require 'cucumber/new_ast/builder'
+
+        builder = NewAst::Builder.new
+        policy = Gherkin::SyntaxPolicy::FeaturePolicy.new(builder, false)
+        gherkin_parser.new(policy).scan(source)
+        builder.ast
+      end
+
+      def gherkin_parser
+        require "gherkin/parser"
+        require "gherkin/parser/parser_#{@lang}"
+        Gherkin::Parser[@lang]
       end
 
       def keywords(key, raw=false)
