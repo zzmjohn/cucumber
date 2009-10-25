@@ -293,6 +293,7 @@ Gem::Specification.new do |s|
      "examples/test_unit/features/test_unit.feature",
      "examples/tickets/.gitignore",
      "examples/tickets/Rakefile",
+     "examples/tickets/features.html",
      "examples/tickets/features/172.feature",
      "examples/tickets/features/177/1.feature",
      "examples/tickets/features/177/2.feature",
