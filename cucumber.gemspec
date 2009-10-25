@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Aslak Helles\303\270y"]
-  s.date = %q{2009-10-15}
+  s.date = %q{2009-10-26}
   s.default_executable = %q{cucumber}
   s.description = %q{A BDD tool written in Ruby}
   s.email = %q{cukes@googlegroups.com}
@@ -327,9 +327,11 @@ Gem::Specification.new do |s|
      "examples/watir/features/search.feature",
      "examples/watir/features/step_definitons/search_steps.rb",
      "examples/watir/features/support/env.rb",
+     "examples/watir/features/support/screenshots.rb",
      "examples/webrat/features/search.feature",
      "examples/webrat/features/step_definitions/kvasir_steps.rb",
      "examples/webrat/features/support/env.rb",
+     "features/announce.feature",
      "features/background.feature",
      "features/bug_371.feature",
      "features/bug_464.feature",
@@ -405,6 +407,7 @@ Gem::Specification.new do |s|
      "lib/cucumber/ast/tree_walker.rb",
      "lib/cucumber/ast/visitor.rb",
      "lib/cucumber/broadcaster.rb",
+     "lib/cucumber/builders/gherkin.rb",
      "lib/cucumber/cli/configuration.rb",
      "lib/cucumber/cli/drb_client.rb",
      "lib/cucumber/cli/language_help_formatter.rb",
@@ -415,7 +418,7 @@ Gem::Specification.new do |s|
      "lib/cucumber/core_ext/instance_exec.rb",
      "lib/cucumber/core_ext/proc.rb",
      "lib/cucumber/core_ext/string.rb",
-     "lib/cucumber/feature_file.rb",
+     "lib/cucumber/feature_loader.rb",
      "lib/cucumber/filter.rb",
      "lib/cucumber/formatter/ansicolor.rb",
      "lib/cucumber/formatter/color_io.rb",
@@ -433,9 +436,11 @@ Gem::Specification.new do |s|
      "lib/cucumber/formatter/rerun.rb",
      "lib/cucumber/formatter/stepdefs.rb",
      "lib/cucumber/formatter/steps.rb",
+     "lib/cucumber/formatter/summary.rb",
      "lib/cucumber/formatter/tag_cloud.rb",
      "lib/cucumber/formatter/unicode.rb",
      "lib/cucumber/formatter/usage.rb",
+     "lib/cucumber/inputs/file.rb",
      "lib/cucumber/language_support.rb",
      "lib/cucumber/language_support/language_methods.rb",
      "lib/cucumber/languages.yml",
@@ -504,6 +509,7 @@ Gem::Specification.new do |s|
      "spec/cucumber/cli/options_spec.rb",
      "spec/cucumber/cli/profile_loader_spec.rb",
      "spec/cucumber/core_ext/proc_spec.rb",
+     "spec/cucumber/feature_loader_spec.rb",
      "spec/cucumber/formatter/ansicolor_spec.rb",
      "spec/cucumber/formatter/color_io_spec.rb",
      "spec/cucumber/formatter/console_spec.rb",
@@ -574,6 +580,7 @@ for important information about this release. Happy cuking!
      "spec/cucumber/cli/options_spec.rb",
      "spec/cucumber/cli/profile_loader_spec.rb",
      "spec/cucumber/core_ext/proc_spec.rb",
+     "spec/cucumber/feature_loader_spec.rb",
      "spec/cucumber/formatter/ansicolor_spec.rb",
      "spec/cucumber/formatter/color_io_spec.rb",
      "spec/cucumber/formatter/console_spec.rb",
@@ -680,7 +687,8 @@ for important information about this release. Happy cuking!
      "examples/selenium_webrat/features/support/env.rb",
      "examples/self_test/features/step_definitions/sample_steps.rb",
      "examples/self_test/features/support/env.rb",
-     "examples/self_test/tmp/features/step_definitions/steps.rb",
+     "examples/self_test/tmp/features/step_definitions/all_your_steps_are_belong_to_us.rb",
+     "examples/self_test/tmp/features/support/env.rb",
      "examples/sinatra/app.rb",
      "examples/sinatra/features/step_definitions/add_steps.rb",
      "examples/sinatra/features/support/env.rb",
@@ -700,6 +708,7 @@ for important information about this release. Happy cuking!
      "examples/tickets/features/step_definitons/tickets_steps.rb",
      "examples/watir/features/step_definitons/search_steps.rb",
      "examples/watir/features/support/env.rb",
+     "examples/watir/features/support/screenshots.rb",
      "examples/webrat/features/step_definitions/kvasir_steps.rb",
      "examples/webrat/features/support/env.rb"
   ]
@@ -717,7 +726,7 @@ for important information about this release. Happy cuking!
       s.add_development_dependency(%q<nokogiri>, ["= 1.3.3"])
       s.add_development_dependency(%q<prawn>, ["= 0.5.1"])
       s.add_development_dependency(%q<rspec>, ["= 1.2.9"])
-      s.add_development_dependency(%q<spork>, ["= 0.7.2"])
+      s.add_development_dependency(%q<spork>, ["= 0.7.3"])
     else
       s.add_dependency(%q<term-ansicolor>, ["= 1.0.4"])
       s.add_dependency(%q<treetop>, ["= 1.4.2"])
@@ -727,7 +736,7 @@ for important information about this release. Happy cuking!
       s.add_dependency(%q<nokogiri>, ["= 1.3.3"])
       s.add_dependency(%q<prawn>, ["= 0.5.1"])
       s.add_dependency(%q<rspec>, ["= 1.2.9"])
-      s.add_dependency(%q<spork>, ["= 0.7.2"])
+      s.add_dependency(%q<spork>, ["= 0.7.3"])
     end
   else
     s.add_dependency(%q<term-ansicolor>, ["= 1.0.4"])
@@ -738,6 +747,6 @@ for important information about this release. Happy cuking!
     s.add_dependency(%q<nokogiri>, ["= 1.3.3"])
     s.add_dependency(%q<prawn>, ["= 0.5.1"])
     s.add_dependency(%q<rspec>, ["= 1.2.9"])
-    s.add_dependency(%q<spork>, ["= 0.7.2"])
+    s.add_dependency(%q<spork>, ["= 0.7.3"])
   end
 end

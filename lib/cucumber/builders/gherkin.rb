@@ -6,7 +6,7 @@ module Cucumber
     class Gherkin
       attr_reader :content, :adverbs
       
-      LANGUAGE_PATTERN = /language:\s*(.*)/ #:nodoc:
+      LANGUAGE_PATTERN = /language\s*:\s*(.*)/ #:nodoc:
       
       def initialize(content, path, lines)
         @content, @path, @lines = content, path, lines

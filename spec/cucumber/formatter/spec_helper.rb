@@ -29,9 +29,10 @@ module Cucumber
       end
       
       def load_features(content)
-        feature_file = FeatureFile.new('spec.feature', content)
+        builder = Builders::Gherkin.new(content, 'spec.feature', nil)
+        builder.parse(options)
         features = Ast::Features.new
-        features.add_feature feature_file.parse(feature_loader, {})
+        features.add_feature(builder.parse(options))
         features
       end
     
@@ -45,6 +46,7 @@ module Cucumber
       def define_steps
         return unless step_defs = self.class.step_defs
         rb = @step_mother.load_programming_language('rb')
+        rb.alias_adverbs(%w{Given When Then})
         dsl = Object.new 
         dsl.extend RbSupport::RbDsl
         dsl.instance_exec &step_defs

@@ -18,11 +18,11 @@ module Cucumber
       end
 
       def parse_file(file)
-        FeatureFile.new(File.dirname(__FILE__) + "/../treetop_parser/" + file).parse(@feature_loader, {})
+        @feature_loader.load_feature(File.dirname(__FILE__) + "/../treetop_parser/" + file)
       end
 
       def parse_example_file(file)
-        FeatureFile.new(File.dirname(__FILE__) + "/../../../examples/" + file).parse(@feature_loader, {})
+        @feature_loader.load_feature(File.dirname(__FILE__) + "/../../../examples/" + file)
       end
 
       describe "Comments" do
