@@ -19,12 +19,8 @@ module Cucumber
           @step_mother ||= StepMother.new
         end
 
-        def feature_loader
-          @feature_loader ||= FeatureLoader.new
-        end
-        
         def execute(args)
-          new(args).execute!(step_mother, feature_loader)
+          new(args).execute!(step_mother)
         end
       end
 
@@ -34,7 +30,7 @@ module Cucumber
         @error_stream = error_stream
       end
 
-      def execute!(step_mother, feature_loader)
+      def execute!(step_mother)
         trap_interrupt
         if configuration.drb?
           begin
@@ -46,6 +42,7 @@ module Cucumber
         step_mother.options = configuration.options
         step_mother.log = configuration.log
         
+        feature_loader = FeatureLoader.new
         feature_loader.options = configuration.options
         feature_loader.log = configuration.log
       
