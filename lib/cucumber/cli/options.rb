@@ -233,6 +233,7 @@ module Cucumber
             @options[:drb_port] = port
           end
           opts.on("--parser=PARSER", "Available: gherkin|treetop. Default: #{@options[:parser]}") do |v|
+            options[:parser] = v.to_sym
             Parser::NaturalLanguage.parser = v.to_sym
           end
           opts.on_tail("--version", "Show version.") do
