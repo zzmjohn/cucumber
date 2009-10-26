@@ -29,10 +29,10 @@ module Cucumber
       end
       
       def load_features(content)
-        builder = Builders::Gherkin.new(content, 'spec.feature', nil)
-        builder.parse(options)
+        parser = Parsers::Gherkin.new(content, 'spec.feature', nil)
+        parser.parse(options)
         features = Ast::Features.new
-        features.add_feature(builder.parse(options))
+        features.add_feature(parser.parse(options))
         features
       end
     

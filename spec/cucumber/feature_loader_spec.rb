@@ -24,7 +24,7 @@ module Cucumber
     it "should take a hint from the input when determining what builder to use" do
       pending
       # input.format = :json
-      # Builders::JSON.should_receive(:new)
+      # Parsers::JSON.should_receive(:new)
       # @feature_loader.load_features("http://domain.com/my.feature")
     end
     
@@ -35,7 +35,7 @@ module Cucumber
     
     it "should split the content name and line numbers from the sources" do
       Inputs::File.should_receive(:new).with("example.feature").and_return(mock("file input").as_null_object)
-      Builders::Gherkin.stub!(:new).and_return(mock("gherkin builder", :adverbs => ["I CAN HAZ"]).as_null_object)
+      Parsers::Gherkin.stub!(:new).and_return(mock("gherkin builder", :adverbs => ["I CAN HAZ"]).as_null_object)
       @feature_loader.load_features("example.feature:10:20")
     end
   end

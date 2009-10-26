@@ -1,6 +1,6 @@
 require 'cucumber/formatter/duration'
 require 'cucumber/inputs/file'
-require 'cucumber/builders/gherkin'
+require 'cucumber/parsers/gherkin'
 
 module Cucumber
   class FeatureLoader
@@ -40,13 +40,13 @@ module Cucumber
       end
 
       input = Inputs::File.new(name)
-      builder = Builders::Gherkin.new(input.content, name, lines || nil)
-      feature = builder.parse(options)
+      parser = Parsers::Gherkin.new(input.content, name, lines || nil)
+      feature = parser.parse(options)
 
       # It would be nice if adverbs lived on Ast::Feature, 
       # then adding them to the feature suite could merge them.
       # And maybe StepMother could get them from there?
-      self.adverbs = builder.adverbs if feature
+      self.adverbs = parser.adverbs if feature
 
       feature
     end

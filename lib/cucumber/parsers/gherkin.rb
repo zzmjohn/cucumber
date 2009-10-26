@@ -2,7 +2,7 @@ require 'cucumber/parser/natural_language'
 require 'cucumber/filter'
 
 module Cucumber
-  module Builders
+  module Parsers
     class Gherkin
       attr_reader :content, :adverbs
       
