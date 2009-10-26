@@ -30,7 +30,7 @@ module Cucumber
           Inputs::File.stub!(:new).and_return(mock("file input").as_null_object) 
           Builders::Gherkin.stub!(:new).and_return(mock("feature file", :parse => @empty_feature, :adverbs => ["I CAN HAZ"]))
 
-          @cli.execute!(StepMother.new, FeatureLoader.new)
+          @cli.execute!(StepMother.new)
 
           @out.string.should include('example.feature')
         end
@@ -44,7 +44,6 @@ module Cucumber
           Configuration.should_receive(:new).and_return(@configuration)
 
           @step_mother = mock('StepMother', :null_object => true)
-          @feature_loader = mock('FeatureLoader', :null_object => true)
 
           @cli = Main.new(nil, @out)
         end
@@ -54,7 +53,7 @@ module Cucumber
 
           ::Spec::Expectations::Differs::Default.should_receive(:new)
 
-          @cli.execute!(@step_mother, @feature_loader)
+          @cli.execute!(@step_mother)
         end
 
         it "does not use Spec Differ::Default when diff is disabled" do
@@ -62,7 +61,7 @@ module Cucumber
 
           ::Spec::Expectations::Differs::Default.should_not_receive(:new)
 
-          @cli.execute!(@step_mother, @feature_loader)
+          @cli.execute!(@step_mother)
         end
 
       end
@@ -130,7 +129,7 @@ module Cucumber
         configuration.stub!(:parse!).and_raise(exception_klass.new("error message"))
 
         main = Main.new('', out = StringIO.new, error = StringIO.new)
-        main.execute!(StepMother.new, FeatureLoader.new).should be_true
+        main.execute!(StepMother.new).should be_true
         error.string.should == "error message\n"
       end
     end
@@ -145,31 +144,30 @@ module Cucumber
 
           @cli = Main.new(@args, @out, @err)
           @step_mother = mock('StepMother', :null_object => true)
-          @feature_loader = mock('FeatureLoader', :null_object => true)
         end
 
         it "delegates the execution to the DRB client passing the args and streams" do
           @configuration.stub :drb_port => 1450
           DRbClient.should_receive(:run).with(@args, @err, @out, 1450).and_return(true)
-          @cli.execute!(@step_mother, @feature_loader)
+          @cli.execute!(@step_mother)
         end
 
         it "returns the result from the DRbClient" do
           DRbClient.stub!(:run).and_return('foo')
-          @cli.execute!(@step_mother, @feature_loader).should == 'foo'
+          @cli.execute!(@step_mother).should == 'foo'
         end
 
         it "ceases execution if the DrbClient is able to perform the execution" do
           DRbClient.stub!(:run).and_return(true)
           @configuration.should_not_receive(:build_formatter_broadcaster)
-          @cli.execute!(@step_mother, @feature_loader)
+          @cli.execute!(@step_mother)
         end
 
         context "when the DrbClient is unable to perfrom the execution" do
           before { DRbClient.stub!(:run).and_raise(DRbClientError.new('error message.')) }
 
           it "alerts the user that execution will be performed locally" do
-            @cli.execute!(@step_mother, @feature_loader)
+            @cli.execute!(@step_mother)
             @err.string.should include("WARNING: error message. Running features locally:")
           end
 
