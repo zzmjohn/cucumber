@@ -1,16 +1,15 @@
-require 'cucumber/filter'
-
 module Cucumber
   module Inputs
     class File
-
-      # The +uri+ argument is the location of the source. It can ba a path 
-      # or a path:line1:line2 etc. If +source+ is passed, +uri+ is ignored.
-      def initialize(uri, source=nil)
-        @source = source
-        @path = uri
+      def read(uri)
+        ::File.open(uri, Cucumber.file_mode('r')).read
+      rescue Errno::EACCES => e
+        p = ::File.expand_path(uri)
+        e.message << "\nCouldn't open #{p}"
+        raise e
       end
-      
+
+      # Leave this in for historical purposes until we have an HTTP loader
       def content
         @source ||= if @path =~ /^http/
           require 'open-uri'

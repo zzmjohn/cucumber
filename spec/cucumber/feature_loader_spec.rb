@@ -7,10 +7,21 @@ module Cucumber
     before do
       @out = StringIO.new
       @log = Logger.new(@out)
+
       @feature_loader = FeatureLoader.new
       @feature_loader.log = @log
+
+      @file_input = mock('file input service')
+      @feature_loader.register_input(@file_input)
+      @gherkin_parser = mock('gherkin parser', :adverbs => ["Given"], :parse => mock('feature'))
+      @feature_loader.register_parser(@gherkin_parser)
     end
     
+    it "should load a feature from a file" do
+      @file_input.should_receive(:read).with("example.feature")
+      @feature_loader.load_feature("example.feature")
+    end
+
     it "should have English adverbs by default" do
       @feature_loader.adverbs.should == ["Given", "When", "Then", "And", "But"]
     end
@@ -34,6 +45,7 @@ module Cucumber
     end
     
     it "should split the content name and line numbers from the sources" do
+      pending
       Inputs::File.should_receive(:new).with("example.feature").and_return(mock("file input").as_null_object)
       Parsers::Gherkin.stub!(:new).and_return(mock("gherkin builder", :adverbs => ["I CAN HAZ"]).as_null_object)
       @feature_loader.load_features("example.feature:10:20")

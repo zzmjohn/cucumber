@@ -12,6 +12,16 @@ module Cucumber
     
     def initialize
       @adverbs = ["Given", "When", "Then", "And", "But"] # haxx?
+      @input = Inputs::File.new
+      @parser = Parsers::Gherkin.new
+    end
+
+    def register_input(input)
+      @input = input
+    end
+
+    def register_parser(parser)
+      @parser = parser
     end
     
     def load_features(sources)
@@ -39,14 +49,14 @@ module Cucumber
         name = source
       end
 
-      input = Inputs::File.new(name)
-      parser = Parsers::Gherkin.new(input.content, name, lines || nil)
-      feature = parser.parse(options)
+      #input = Inputs::File.new(name)
+      content = @input.read(name)
+      feature = @parser.parse(content, name, lines || nil, options)
 
       # It would be nice if adverbs lived on Ast::Feature, 
       # then adding them to the feature suite could merge them.
       # And maybe StepMother could get them from there?
-      self.adverbs = parser.adverbs if feature
+      self.adverbs = @parser.adverbs if feature
 
       feature
     end
