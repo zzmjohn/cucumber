@@ -40,7 +40,7 @@ module Cucumber
       end
 
       input = Inputs::File.new(name)
-      builder = Builders::Gherkin.new(input.content, input.path, lines || nil)
+      builder = Builders::Gherkin.new(input.content, name, lines || nil)
       feature = builder.parse(options)
 
       # It would be nice if adverbs lived on Ast::Feature, 

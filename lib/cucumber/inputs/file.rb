@@ -3,7 +3,6 @@ require 'cucumber/filter'
 module Cucumber
   module Inputs
     class File
-      attr_reader :path
 
       # The +uri+ argument is the location of the source. It can ba a path 
       # or a path:line1:line2 etc. If +source+ is passed, +uri+ is ignored.
