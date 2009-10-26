@@ -4,7 +4,7 @@ require 'cucumber/filter'
 module Cucumber
   module Parsers
     class Gherkin
-      attr_reader :content, :adverbs
+      attr_reader :adverbs
       
       LANGUAGE_PATTERN = /language\s*:\s*(.*)/ #:nodoc:
       
