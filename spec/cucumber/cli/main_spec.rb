@@ -27,7 +27,7 @@ module Cucumber
           @cli = Main.new(%w{--verbose example.feature}, @out)
           @cli.stub!(:require)
 
-          Inputs::File.stub!(:new).and_return(mock("file input").as_null_object) 
+          Inputs::File.stub!(:new).and_return(mock("file input", :protocol => :file).as_null_object) 
           Parsers::Gherkin.stub!(:new).and_return(mock("feature file", :parse => @empty_feature, :adverbs => ["I CAN HAZ"]))
 
           @cli.execute!(StepMother.new)

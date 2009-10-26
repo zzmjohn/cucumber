@@ -1,6 +1,10 @@
 module Cucumber
   module Inputs
     class File
+      def protocol
+        :file
+      end
+
       def read(uri)
         ::File.open(uri, Cucumber.file_mode('r')).read
       rescue Errno::EACCES => e

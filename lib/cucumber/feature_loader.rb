@@ -1,6 +1,7 @@
 require 'cucumber/formatter/duration'
 require 'cucumber/inputs/file'
 require 'cucumber/parsers/gherkin'
+require 'uri'
 
 module Cucumber
   class FeatureLoader
@@ -12,12 +13,13 @@ module Cucumber
     
     def initialize
       @adverbs = ["Given", "When", "Then", "And", "But"] # haxx?
-      @input = Inputs::File.new
       @parser = Parsers::Gherkin.new
+      register_input(Inputs::File.new)
     end
 
     def register_input(input)
-      @input = input
+      @inputs ||= {}
+      @inputs[input.protocol] = input
     end
 
     def register_parser(parser)
@@ -49,8 +51,10 @@ module Cucumber
         name = source
       end
 
-      #input = Inputs::File.new(name)
-      content = @input.read(name)
+      uri = URI.parse(name)
+      proto = (uri.scheme || :file).to_sym
+
+      content = @inputs[proto].read(name)
       feature = @parser.parse(content, name, lines || nil, options)
 
       # It would be nice if adverbs lived on Ast::Feature, 
