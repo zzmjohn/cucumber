@@ -1,8 +1,8 @@
 module Cucumber
   module Inputs
     class File
-      def protocol
-        :file
+      def protocols
+        [:file]
       end
 
       def read(uri)
