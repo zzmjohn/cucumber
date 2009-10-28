@@ -13,13 +13,17 @@ module Cucumber
 
       @file_input = mock('file input service', :read => "Feature: test", :protocols => [:file])
       @feature_loader.register_input(@file_input)
-      @gherkin_parser = mock('gherkin parser', :adverbs => ["Given"], :parse => mock('feature', :features= => true))
+      @gherkin_parser = mock('gherkin parser', :adverbs => ["Given"], :parse => mock('feature', :features= => true), :format => :gherkin)
       @feature_loader.register_parser(@gherkin_parser)
+    end
+
+    it "should split the content name and line numbers from the sources" do
+      @file_input.should_receive(:read).with("example.feature")
+      @feature_loader.load_feature("example.feature:10:20")
     end
     
     it "should load a feature from a file" do
       @file_input.should_receive(:read).with("example.feature").once
-      @gherkin_parser.should_receive(:parse).once
       @feature_loader.load_feature("example.feature")
     end
 
@@ -37,7 +41,7 @@ module Cucumber
       @feature_loader.load_features(["example.feature", "http://test.domain/http.feature"])
     end
     
-    it "should alias each protocol from the input source" do
+    it "should say it supports the protocols provided by a registered input service" do
       @feature_loader.register_input(mock('http', :protocols => [:http, :https]))
       @feature_loader.protocols.should include(:http, :https)
     end
@@ -48,11 +52,34 @@ module Cucumber
       }.should raise_error(InputServiceNotFound, /.*'accidentally'.*Services available:.*/)
     end
 
-    it "should split the content name and line numbers from the sources" do
-      @file_input.should_receive(:read).with("example.feature")
-      @feature_loader.load_feature("example.feature:10:20")
+    it "should parse a feature written in Gherkin" do
+      @gherkin_parser.should_receive(:parse).once
+      @feature_loader.load_feature("example.feature")
     end
-
+    
+    it "should determine the feature format by the file extension" do
+      textile_parser = mock('textile parser', :adverbs => ["Given"], :parse => mock('feature', :features= => true), :format => :textile)
+      textile_parser.should_receive(:parse).with(anything(), "example.textile", anything(), anything()).once
+      @gherkin_parser.should_receive(:parse).with(anything(), "example.feature", anything(), anything()).once
+      
+      @feature_loader.register_parser(textile_parser)
+      @feature_loader.load_features(["example.feature", "example.textile"])
+    end
+    
+    it "should default to Gherkin-formatted input" do
+      json_parser = mock('json parser', :format => :json)
+      json_parser.should_not_receive(:parse)
+      @gherkin_parser.should_receive(:parse).once
+      
+      @feature_loader.register_parser(json_parser)
+      @feature_loader.load_feature("jbehave.scenario")
+    end
+        
+    it "should say it supports the formats parsed by a registered parser" do
+      @feature_loader.register_parser(mock('csv parser', :format => :csv))
+      @feature_loader.formats.should include(:csv)
+    end
+    
     it "should have English adverbs by default" do
       @feature_loader.adverbs.should == ["Given", "When", "Then", "And", "But"]
     end
@@ -62,14 +89,7 @@ module Cucumber
       # given builder loads fr-parser
       # feature_loader.adverbs.should include(french adverbs)
     end
-     
-    it "should take a hint from the input when determining what builder to use" do
-      pending
-      # input.format = :json
-      # Parsers::JSON.should_receive(:new)
-      # @feature_loader.load_features("http://domain.com/my.feature")
-    end
-    
+        
     it "should load feature sources and return a feature suite" do
       pending
       @feature_loader.load_features("example.feature")

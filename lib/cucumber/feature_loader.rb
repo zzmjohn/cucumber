@@ -19,7 +19,7 @@ module Cucumber
     
     def initialize
       @adverbs = ["Given", "When", "Then", "And", "But"] # haxx?
-      @parser = Parsers::Gherkin.new
+      register_parser(Parsers::Gherkin.new)
       register_input(Inputs::File.new)
     end
 
@@ -29,13 +29,18 @@ module Cucumber
     end
 
     def register_parser(parser)
-      @parser = parser
+      @parsers ||= {}
+      @parsers[parser.format] = parser
     end
     
     def protocols
       @inputs.keys
     end
     
+    def formats
+      @parsers.keys
+    end
+        
     def load_features(uris)
       feature_suite = Ast::Features.new
 
@@ -63,23 +68,34 @@ module Cucumber
 
       uri = URI.parse(URI.escape(name))
       proto = (uri.scheme || :file).to_sym
-      
-      begin
-        content = @inputs.fetch(proto).read(name)
-      rescue IndexError
-        raise InputServiceNotFound.new(proto, protocols)
-      end
-      
-      feature = @parser.parse(content, name, lines || nil, options)
+      content = input(proto).read(name)
+                       
+      feature = parser(name).parse(content, name, lines || nil, options)
 
       # It would be nice if adverbs lived on Ast::Feature, 
       # then adding them to the feature suite could merge them.
       # And maybe StepMother could get them from there?
-      self.adverbs = @parser.adverbs if feature
+      self.adverbs = parser(name).adverbs if feature
 
       feature
     end
 
+    def input(proto)
+      @inputs.fetch(proto)
+    rescue IndexError
+      raise InputServiceNotFound.new(proto, protocols)
+    end
+    
+    def parser(name)
+      format = name.split('.')[-1]
+      case format
+      when "textile"
+        @parsers[:textile]
+      else
+        @parsers[:gherkin]
+      end
+    end
+        
     # The only reason FeatureLoader has these is so StepMother can learn about them...
     def adverbs=(adverbs)
       @adverbs += adverbs

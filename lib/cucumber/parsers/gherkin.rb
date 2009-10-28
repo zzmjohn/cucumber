@@ -7,6 +7,10 @@ module Cucumber
       attr_reader :adverbs
       
       LANGUAGE_PATTERN = /language\s*:\s*(.*)/ #:nodoc:
+
+      def format
+        :gherkin
+      end
       
       # Parses a file and returns a Cucumber::Ast
       # If +options+ contains tags, the result will
