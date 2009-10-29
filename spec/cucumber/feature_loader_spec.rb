@@ -66,12 +66,8 @@ module Cucumber
       @feature_loader.load_features(["example.feature", "example.textile"])
     end
     
-    it "should default to Gherkin-formatted input" do
-      json_parser = mock('json parser', :format => :json)
-      json_parser.should_not_receive(:parse)
+    it "should default to the Gherkin format" do
       @gherkin_parser.should_receive(:parse).once
-      
-      @feature_loader.register_parser(json_parser)
       @feature_loader.load_feature("jbehave.scenario")
     end
         
@@ -79,20 +75,46 @@ module Cucumber
       @feature_loader.register_parser(mock('csv parser', :format => :csv))
       @feature_loader.formats.should include(:csv)
     end
+        
+    it "should allow a format rule to override extension-based format determination" do
+      textile_parser = mock('textile parser', :format => :textile)
+      textile_parser.should_receive(:parse).once
+      
+      @feature_loader.add_format_rule(/\.txt/, :textile)
+      @feature_loader.register_parser(textile_parser)
+      @feature_loader.load_feature("example.txt")
+    end
+    
+    it "should assume the Gherkin format if there is no extension" do
+      @gherkin_parser.should_receive(:parse).once
+      @feature_loader.load_feature("example")
+    end
+    
+    it "should allow a format rule set formats for the same extension via location" do
+      textile_parser = mock('textile parser', :format => :textile)
+      textile_parser.should_receive(:parse).once      
+      @gherkin_parser.should_receive(:parse).once
+      
+      @feature_loader.register_parser(textile_parser)
+      @feature_loader.add_format_rule(/features\/test\/\w+\.feature$/, :textile)
+      @feature_loader.load_feature("features/example.feature")
+      @feature_loader.load_feature("features/test/example.feature")
+    end
+    
+    it "should raise AmbiguousFormatRules if two or more format rules match" do
+      @feature_loader.add_format_rule(/\.foo$/, :gherkin)
+      @feature_loader.add_format_rule(/.*/, :gherkin)
+      lambda { 
+        @feature_loader.load_feature("example.foo")
+      }.should raise_error(AmbiguousFormatRules)
+    end
     
     it "should have English adverbs by default" do
       @feature_loader.adverbs.should == ["Given", "When", "Then", "And", "But"]
     end
     
     it "should have other adverbs if other languages are used" do
-      pending
-      # given builder loads fr-parser
-      # feature_loader.adverbs.should include(french adverbs)
-    end
-        
-    it "should load feature sources and return a feature suite" do
-      pending
-      @feature_loader.load_features("example.feature")
-    end    
+      pending "Adverbs should be moved into the ast feature node and the feature suite"
+    end        
   end
 end

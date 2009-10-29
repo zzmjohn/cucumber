@@ -6,7 +6,14 @@ require 'uri'
 module Cucumber
   class InputServiceNotFound < IndexError
     def initialize(proto, available)
-      super "No input service for the '#{proto}' protocol has been registered. Services available: #{available.join(' ')}."
+      super "No input service for the '#{proto}' protocol has been registered. Services available: #{available.join(', ')}."
+    end
+  end
+  
+  class AmbiguousFormatRules < StandardError
+    def initialize(name, matches)
+      matches = matches.collect { |rule| rule[0].inspect }.join(', ')
+      super "'#{name}' is matched by multiple format rules: #{matches}"
     end
   end
   
@@ -14,23 +21,28 @@ module Cucumber
     SOURCE_COLON_LINE_PATTERN = /^([\w\W]*?):([\d:]+)$/ #:nodoc:
     
     attr_writer :options, :log
-    attr_reader :adverbs
+    attr_reader :adverbs, :format_rules
     include Formatter::Duration
     
     def initialize
-      @adverbs = ["Given", "When", "Then", "And", "But"] # haxx?
+      @adverbs = ["Given", "When", "Then", "And", "But"]
+      @format_rules = {}
+      @parsers = {}
+      @inputs = {}
       register_parser(Parsers::Gherkin.new)
       register_input(Inputs::File.new)
     end
 
     def register_input(input)
-      @inputs ||= {}
       input.protocols.each { |proto| @inputs[proto] = input }
     end
 
     def register_parser(parser)
-      @parsers ||= {}
       @parsers[parser.format] = parser
+    end
+    
+    def add_format_rule(rule, format)
+      @format_rules[rule] = format
     end
     
     def protocols
@@ -81,22 +93,21 @@ module Cucumber
     end
 
     def input(proto)
-      @inputs.fetch(proto)
-    rescue IndexError
-      raise InputServiceNotFound.new(proto, protocols)
+      @inputs[proto] || raise(InputServiceNotFound.new(proto, protocols))
     end
     
-    def parser(name)
-      format = name.split('.')[-1]
-      case format
-      when "textile"
-        @parsers[:textile]
+    def parser(name)      
+      matches = @format_rules.select { |rule, _| rule.match(name) }
+      if matches.empty?
+        format = name.split('.').last.to_sym
+        @parsers[format] || @parsers[:gherkin]
+      elsif matches.length > 1
+        raise AmbiguousFormatRules.new(name, matches)
       else
-        @parsers[:gherkin]
+        @parsers[matches[0].last]
       end
     end
-        
-    # The only reason FeatureLoader has these is so StepMother can learn about them...
+    
     def adverbs=(adverbs)
       @adverbs += adverbs
       @adverbs.uniq!
