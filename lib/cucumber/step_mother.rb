@@ -45,6 +45,7 @@ module Cucumber
       @unsupported_programming_languages = []
       @programming_languages = []
       @language_map = {}
+      @current_scenario = nil
     end
 
     def load_code_files(step_def_files)

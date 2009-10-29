@@ -26,6 +26,7 @@ module Cucumber
         @keywords = Cucumber::LANGUAGES[lang]
         raise "Language not supported: #{lang.inspect}" if @keywords.nil?
         @keywords['grammar_name'] = @keywords['name'].gsub(/\s/, '')
+        @parser = nil
       end
       
       def adverbs
