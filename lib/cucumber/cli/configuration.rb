@@ -101,9 +101,6 @@ module Cucumber
           path = path.chomp('/')
           if File.directory?(path)
             Dir["#{path}/**/*.feature"]
-          elsif path[0..0] == '@' and # @listfile.txt
-              File.file?(path[1..-1]) # listfile.txt is a file
-            IO.read(path[1..-1]).split
           else 
             path
           end
