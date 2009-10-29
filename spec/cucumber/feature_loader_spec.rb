@@ -90,7 +90,7 @@ module Cucumber
       @feature_loader.load_feature("example")
     end
     
-    it "should allow a format rule set formats for the same extension via location" do
+    it "should allow a format rule set to formats for the same extension via location" do
       textile_parser = mock('textile parser', :format => :textile)
       textile_parser.should_receive(:parse).once      
       @gherkin_parser.should_receive(:parse).once
