@@ -5,8 +5,6 @@ module Cucumber
   module Asg
     # Builds an Asg by walking the Ast
     class Compiler
-      attr_reader :units
-
       def initialize(feature)
         @feature = feature
       end
