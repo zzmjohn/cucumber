@@ -26,6 +26,7 @@ module Cucumber
         @keywords = Cucumber::LANGUAGES[lang]
         raise "Language not supported: #{lang.inspect}" if @keywords.nil?
         @keywords['grammar_name'] = @keywords['name'].gsub(/\s/, '')
+        @parser = nil
       end
       
       def adverbs
@@ -94,6 +95,14 @@ module Cucumber
 
       def and_keywords
         @keywords['and'].split('|')
+      end
+
+      def step_keywords
+        %w{given when then and but}.map{|key| @keywords[key].split('|')}.flatten.uniq
+      end
+
+      def space_after_keyword
+        @keywords['space_after_keyword']
       end
     end
   end

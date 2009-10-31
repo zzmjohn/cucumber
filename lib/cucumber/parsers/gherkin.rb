@@ -13,7 +13,7 @@ module Cucumber
       end
       
       # Parses a file and returns a Cucumber::Ast
-      # If +options+ contains tags, the result will
+      # If +options+ contains :tag_names or :name_regexps, the result will
       # be filtered.
       def parse(content, path, lines, options)
         filter = Filter.new(lines, options)

@@ -9,7 +9,7 @@ module Cucumber
       end
 
       def accept(visitor)
-        return if $cucumber_interrupted
+        return if Cucumber.wants_to_quit
         cells_rows.each_with_index do |row, n|
           if(visitor.options[:expand])
             row.accept(visitor)
@@ -44,7 +44,11 @@ module Cucumber
         @scenario_outline.visit_scenario_name(visitor, row)
       end
 
-      class ExampleRow < Cells #:nodoc:
+      def language
+        @scenario_outline.language
+      end
+
+      class ExampleRow < Cells #:nodoc:        
         class InvalidForHeaderRowError < NoMethodError
           def initialize(*args)
             super 'This is a header row and cannot pass or fail'
@@ -52,6 +56,11 @@ module Cucumber
         end
         
         attr_reader :scenario_outline # https://rspec.lighthouseapp.com/projects/16211/tickets/342
+
+        def initialize(table, cells)
+          super
+          @scenario_exception = nil
+        end
 
         def create_step_invocations!(scenario_outline)
           @scenario_outline = scenario_outline
@@ -65,7 +74,7 @@ module Cucumber
         end
 
         def accept(visitor)
-          return if $cucumber_interrupted
+          return if Cucumber.wants_to_quit
           visitor.options[:expand] ? accept_expand(visitor) : accept_plain(visitor)
         end
 
@@ -141,7 +150,11 @@ module Cucumber
         def name
           "| #{@cells.collect{|c| c.value }.join(' | ')} |"
         end
-        
+
+        def language
+          @table.language
+        end
+
         private
 
         def header?

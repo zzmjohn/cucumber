@@ -13,7 +13,7 @@ module Cucumber
         @rb = @step_mother.load_programming_language('rb')
         @dsl = Object.new 
         @dsl.extend RbSupport::RbDsl
-        @step_mother.before(nil)
+        @step_mother.before(mock('scenario', :null_object => true))
 
         $inside = nil
       end
@@ -60,6 +60,15 @@ module Cucumber
         lambda do
           @step_mother.step_match("Outside").invoke(nil)
         end.should raise_error(Pending, "Do me!")
+      end
+
+      it "should raise ArityMismatchError when the number of capture groups differs from the number of step arguments" do
+        @dsl.Given /No group: \w+/ do |arg|
+        end
+
+        lambda do
+          @step_mother.step_match("No group: arg").invoke(nil)
+        end.should raise_error(ArityMismatchError)
       end
 
       it "should allow announce" do
