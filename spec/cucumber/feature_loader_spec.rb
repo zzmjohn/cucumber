@@ -109,6 +109,11 @@ module Cucumber
       }.should raise_error(AmbiguousFormatRules)
     end
     
+    it "should pull feature names from a feature list" do
+      @file_input.should_receive(:list).with("my_feature_list.txt").and_return(["features/foo.feature", "features/bar.feature"])
+      @feature_loader.load_features(["@my_feature_list.txt"])
+    end
+
     it "should have English adverbs by default" do
       @feature_loader.adverbs.should == ["Given", "When", "Then", "And", "But"]
     end

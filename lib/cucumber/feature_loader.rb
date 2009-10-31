@@ -56,6 +56,10 @@ module Cucumber
     def load_features(uris)
       feature_suite = Ast::Features.new
 
+      lists, uris = uris.partition { |uri| uri =~ /^@/ }
+      lists.map! { |list| list.gsub(/^@/, '') }
+      lists.inject(uris) { |uris, list| uris += input(list).list(list) }
+
       start = Time.new
       log.debug("Features:\n")
       uris.each do |uri|
@@ -78,10 +82,7 @@ module Cucumber
         name = uri
       end
 
-      uri = URI.parse(URI.escape(name))
-      proto = (uri.scheme || :file).to_sym
-      content = input(proto).read(name)
-                       
+      content = input(name).read(name)                 
       feature = parser(name).parse(content, name, lines || nil, options)
 
       # It would be nice if adverbs lived on Ast::Feature, 
@@ -92,7 +93,9 @@ module Cucumber
       feature
     end
 
-    def input(proto)
+    def input(name)
+      uri = URI.parse(URI.escape(name))
+      proto = (uri.scheme || :file).to_sym
       @inputs[proto] || raise(InputServiceNotFound.new(proto, protocols))
     end
     

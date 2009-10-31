@@ -43,6 +43,7 @@ module Cucumber
           Configuration.should_receive(:new).and_return(@configuration)
 
           @step_mother = mock('StepMother', :null_object => true)
+          @feature_loader = mock('FeatureLoader', :null_object => true)
 
           @cli = Main.new(nil, @out)
         end
@@ -52,7 +53,7 @@ module Cucumber
 
           ::Spec::Expectations::Differs::Default.should_receive(:new)
 
-          @cli.execute!(@step_mother)
+          @cli.execute!(@step_mother, @feature_loader)
         end
 
         it "does not use Spec Differ::Default when diff is disabled" do
@@ -60,7 +61,7 @@ module Cucumber
 
           ::Spec::Expectations::Differs::Default.should_not_receive(:new)
 
-          @cli.execute!(@step_mother)
+          @cli.execute!(@step_mother, @feature_loader)
         end
 
       end
@@ -143,6 +144,7 @@ module Cucumber
 
           @cli = Main.new(@args, @out, @err)
           @step_mother = mock('StepMother', :null_object => true)
+          @feature_loader = mock('FeatureLoader', :null_object => true)
         end
 
         it "delegates the execution to the DRB client passing the args and streams" do
@@ -166,7 +168,7 @@ module Cucumber
           before { DRbClient.stub!(:run).and_raise(DRbClientError.new('error message.')) }
 
           it "alerts the user that execution will be performed locally" do
-            @cli.execute!(@step_mother)
+            @cli.execute!(@step_mother, @feature_loader)
             @err.string.should include("WARNING: error message. Running features locally:")
           end
 
