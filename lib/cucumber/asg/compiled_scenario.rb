@@ -4,13 +4,9 @@ module Cucumber
     # be hooks, background steps, scenario steps or expanded scenario outline steps
     # from table rows
     class CompiledScenario
-      def initialize(ast_node, statements)
-        @ast_node = ast_node
+      def initialize(source_scenario, statements)
+        @source_scenario = source_scenario
         @statements = statements
-      end
-
-      def announce
-        puts "#{@ast_node.keyword}: #{@ast_node.name}"
       end
 
       def accept(visitor)

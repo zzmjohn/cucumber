@@ -126,7 +126,7 @@ module Cucumber
           compiled_feature = Asg::CompiledFeature.new
           builder = Asg::Compiler.new(compiled_feature)
           builder.visit_feature(feature)
-          runtime = Asg::Runtime.new
+          runtime = Asg::Runtime.new(step_mother)
           runtime.execute(compiled_feature)
         end
       end

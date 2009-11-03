@@ -97,8 +97,9 @@ module Cucumber
         connect_world(scenario)
       end
 
+      LOCATION_NAMES = {'before' => 'Before', 'after' => 'After', 'after_step' => 'AfterStep'} # hack
       def register_rb_hook(phase, tag_names, proc)
-        add_hook(phase, RbHook.new(self, tag_names, proc))
+        add_hook(phase, RbHook.new(self, LOCATION_NAMES[phase], tag_names, proc))
       end
 
       def register_rb_transform(regexp, proc)

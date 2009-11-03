@@ -19,6 +19,11 @@ module Cucumber
         Step.new(@keyword, name, cells.line)
       end
 
+      def invoke(step_mother, scenario)
+        step_match = step_mother.step_match(name, name)
+        step_match.invoke(nil)
+      end
+
       private
 
       def delimit_argument_names(argument_hash)
