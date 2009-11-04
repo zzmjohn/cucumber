@@ -1,7 +1,7 @@
-require 'cucumber/new_ast/has_steps'
+require 'cucumber/parse_tree/has_steps'
 
 module Cucumber
-  module NewAst
+  module ParseTree
     class Background < HasSteps
     end
   end

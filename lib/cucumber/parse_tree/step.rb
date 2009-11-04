@@ -1,5 +1,5 @@
 module Cucumber
-  module NewAst
+  module ParseTree
     class Step
       attr_reader :keyword, :name, :line
       

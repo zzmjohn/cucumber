@@ -60,9 +60,9 @@ module Cucumber
 
       def gherkin_parse(source, path, filter)
         require 'gherkin/syntax_policy/feature_policy'
-        require 'cucumber/new_ast/builder'
+        require 'cucumber/parse_tree/builder'
 
-        builder = NewAst::Builder.new
+        builder = ParseTree::Builder.new
         policy = Gherkin::SyntaxPolicy::FeaturePolicy.new(builder, false)
         gherkin_parser.new(policy).scan(source)
         builder.ast

@@ -1,8 +1,8 @@
-require 'cucumber/new_ast/has_steps'
-require 'cucumber/new_ast/examples'
+require 'cucumber/parse_tree/has_steps'
+require 'cucumber/parse_tree/examples'
 
 module Cucumber
-  module NewAst
+  module ParseTree
     class ScenarioOutline < HasSteps
       def examples(keyword, name, line)
         examples = Examples.new(keyword, name, line)

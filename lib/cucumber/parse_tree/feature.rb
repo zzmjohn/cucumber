@@ -1,9 +1,9 @@
-require 'cucumber/new_ast/background'
-require 'cucumber/new_ast/scenario'
-require 'cucumber/new_ast/scenario_outline'
+require 'cucumber/parse_tree/background'
+require 'cucumber/parse_tree/scenario'
+require 'cucumber/parse_tree/scenario_outline'
 
 module Cucumber
-  module NewAst
+  module ParseTree
     class Feature
       attr_writer :language, :features
       

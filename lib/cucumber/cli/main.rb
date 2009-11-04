@@ -59,7 +59,7 @@ module Cucumber
         step_mother.visitor = runner # Needed to support World#announce
         
         if(step_mother.options[:parser] == :gherkin)
-          execute_asg(features, step_mother, runner)
+          execute_ast(features, step_mother, runner)
         else
           runner.visit_features(features)
         end
@@ -118,15 +118,15 @@ module Cucumber
         end
       end
 
-      def execute_asg(features, step_mother, runner)
-        require 'cucumber/asg/compiler'
-        require 'cucumber/asg/compiled_feature'
-        require 'cucumber/asg/runtime'
+      def execute_ast(features, step_mother, runner)
+        require 'cucumber/new_ast/compiler'
+        require 'cucumber/new_ast/compiled_feature'
+        require 'cucumber/new_ast/runtime'
         features.each do |feature|
-          compiled_feature = Asg::CompiledFeature.new
-          builder = Asg::Compiler.new(compiled_feature)
+          compiled_feature = NewAst::CompiledFeature.new
+          builder = NewAst::Compiler.new(step_mother, compiled_feature)
           builder.visit_feature(feature)
-          runtime = Asg::Runtime.new(step_mother)
+          runtime = NewAst::Runtime.new
           runtime.execute(compiled_feature)
         end
       end
