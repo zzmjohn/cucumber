@@ -32,7 +32,7 @@ module Cucumber
         @all_ast_row_steps = []
         parse_tree_scenario_outline.accept(self)
         @all_ast_row_steps.each do |ast_row_steps|
-          compile_scenario(ast_scenario_outline, ast_row_steps)
+          compile_scenario(parse_tree_scenario_outline, ast_row_steps)
         end
       end
 
