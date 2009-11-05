@@ -1,5 +1,4 @@
 require 'cucumber/asg/compiled_scenario'
-require 'cucumber/asg/compiled_step'
 
 module Cucumber
   module Asg
@@ -57,8 +56,8 @@ module Cucumber
       private
       
       def compile_scenario(ast_has_steps, steps)
-        compiled_steps = (@background_steps + steps).map {|step| CompiledStep.new(step)}
-        @compiled_feature.add_compiled_scenario(CompiledScenario.new(ast_has_steps, compiled_steps))
+        all_steps = (@background_steps + steps)
+        @compiled_feature.add_compiled_scenario(CompiledScenario.new(ast_has_steps, all_steps))
       end
     end
   end

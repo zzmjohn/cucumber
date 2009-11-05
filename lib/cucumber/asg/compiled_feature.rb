@@ -11,7 +11,7 @@ module Cucumber
 
       def accept(visitor)
         @compiled_scenarios.each do |compiled_scenario|
-          visitor.visit_scenario(compiled_scenario)
+          visitor.visit_compiled_scenario(compiled_scenario)
         end
       end
     end
