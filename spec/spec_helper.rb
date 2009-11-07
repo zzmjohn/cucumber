@@ -2,6 +2,7 @@ require 'rubygems'
 gem 'rspec'
 require 'spec'
 require 'spec/autorun'
+require 'spec/cucumber/new_ast/ast_node_spec'
 
 ENV['CUCUMBER_COLORS']=nil
 $:.unshift(File.dirname(__FILE__) + '/../lib')

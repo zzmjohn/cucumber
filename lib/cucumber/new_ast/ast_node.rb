@@ -1,6 +1,9 @@
 module Cucumber
   module NewAst
     module AstNode
+   
+      attr_accessor :parent
+
       def children
         @children ||= []
       end

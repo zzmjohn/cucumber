@@ -2,6 +2,7 @@ require File.dirname(__FILE__) + '/../../spec_helper'
 require 'cucumber/parse_tree/step'
 require 'cucumber/new_ast/runtime'
 require 'cucumber/new_ast/compiled_step'
+require 'cucumber/new_ast/compiled_hook'
 require 'cucumber/step_mother'
 
 module Cucumber
@@ -23,12 +24,13 @@ module Cucumber
       end
 
       it "should invoke a before hook" do
-        pending("******************* Next place to pick up, Aslak!") do
+      #  pending("******************* Next place to pick up, Aslak!") do
           kilroy = nil
-          hook = @rb.register_rb_hook(:before, [], lambda {kilroy})
-          @runtime.visit_statement(hook)
+          hook = @rb.register_rb_hook(:before, [], lambda {kilroy = "was here"})
+          ast_hook = NewAst::CompiledHook.new(hook, @step_mother)
+          @runtime.visit(ast_hook)
           kilroy.should == "was here"
-        end
+      #  end
       end
     end
   end

@@ -25,6 +25,10 @@ module Cucumber
           it "should respond to accept" do
             @ast_node.should respond_to(:accept)
           end
+
+          it "should respond to parent" do
+            @ast_node.should respond_to(:parent)
+          end
         end
        
         describe "adding children" do
