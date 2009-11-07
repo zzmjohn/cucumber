@@ -7,7 +7,7 @@ module Cucumber
   module NewAst
     describe CompiledStep do
       before(:each) do
-        @ast_node = CompiledStep.new(mock("ParseTree::Step"), mock("StepMother"), mock("CompiledScenario"))
+        @ast_node = CompiledStep.new(mock("ParseTree::Step"), mock("StepMother"))
       end
 
       it_should_behave_like 'an AstNode' 

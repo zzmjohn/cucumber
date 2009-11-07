@@ -16,9 +16,9 @@ module Cucumber
 
       it "should invoke a step definition" do
         step = ParseTree::Step.new("Given", "I have 5 cukes in my belly", 9)
-        ast_step = NewAst::CompiledStep.new(step, @step_mother, nil)
         matched_cukes = nil
         @rb.register_rb_step_definition(/I have (.*) cukes in my belly/, lambda {|cukes| matched_cukes = cukes})
+        ast_step = NewAst::CompiledStep.new(step, @step_mother.step_match(step.name, step.name))
         @runtime.visit(ast_step)
         matched_cukes.should == "5"
       end

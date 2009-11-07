@@ -13,6 +13,7 @@ module Cucumber
 
       def add_child(ast_node)
         children << ast_node
+        ast_node.parent = self
       end
 
       def accept(visitor)

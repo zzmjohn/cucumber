@@ -5,10 +5,9 @@ module Cucumber
     class CompiledStep
       include AstNode
 
-      def initialize(parse_tree_node, step_mother, compiled_scenario)
+      def initialize(parse_tree_node, step_match)
         @parse_tree_node = parse_tree_node
-        @step_mother = step_mother
-        @compiled_scenario = compiled_scenario
+        @step_match = step_match
       end
 
       def announce
@@ -16,12 +15,7 @@ module Cucumber
       end
 
       def invoke
-        step_match = @step_mother.step_match(name, name)
-        step_match.invoke(nil)
-      end
- 
-      def name
-        @parse_tree_node.name
+        @step_match.invoke(nil)
       end
     end
   end

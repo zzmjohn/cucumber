@@ -60,7 +60,7 @@ module Cucumber
       def compile_scenario(parse_tree_has_steps, steps)
         all_steps = (@background_steps + steps)
         compiled_scenario = CompiledScenario.new(parse_tree_has_steps)
-        all_steps.map {|step| compiled_scenario.add_child(CompiledStep.new(step,@step_mother,compiled_scenario)) }
+        all_steps.map {|step| compiled_scenario.add_child(CompiledStep.new(step,@step_mother.step_match(step.name, step.name)) }
         @compiled_feature.add_child(compiled_scenario)
       end
     end

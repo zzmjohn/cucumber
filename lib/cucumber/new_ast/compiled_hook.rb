@@ -5,9 +5,8 @@ module Cucumber
     class CompiledHook
       include AstNode
 
-      def initialize(language_hook, step_mother, parent=nil)
+      def initialize(language_hook, step_mother)
         @hook = language_hook
-        @parent = parent
         @step_mother = step_mother
       end
 

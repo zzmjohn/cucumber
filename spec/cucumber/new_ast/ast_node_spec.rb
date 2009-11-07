@@ -33,14 +33,14 @@ module Cucumber
        
         describe "adding children" do
           it "should allow adding children and return them when asked for" do
-            child = mock("Node")
+            child = mock("Node").as_null_object
             @ast_node.add_child(child)
             @ast_node.children.should include(child)           
           end
 
           it "should return the children in the order they were added" do
-            child1 = mock("Node")
-            child2 = mock("Node2")
+            child1 = mock("Node").as_null_object
+            child2 = mock("Node2").as_null_object
             @ast_node.add_child(child1)
             @ast_node.add_child(child2)
             @ast_node.children.first.should == child1
