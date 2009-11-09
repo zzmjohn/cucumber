@@ -1,5 +1,5 @@
 module Cucumber
-  module NewAst
+  module SemanticModel
     # Executes the Ast by walking it
     #
     class Runtime
@@ -7,9 +7,9 @@ module Cucumber
         visit(compiled_feature)
       end
 
-      def visit(ast_node)
-        ast_node.invoke
-        ast_node.children.map { |child| execute(child) }
+      def visit(node)
+        node.invoke
+        node.children.map { |child| execute(child) }
       end
     end
   end

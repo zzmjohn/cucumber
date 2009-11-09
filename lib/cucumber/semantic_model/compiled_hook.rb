@@ -1,9 +1,9 @@
-require 'cucumber/new_ast/ast_node'
+require 'cucumber/semantic_model/node'
 
 module Cucumber
-  module NewAst
+  module SemanticModel
     class CompiledHook
-      include AstNode
+      include Node
 
       def initialize(language_hook, step_mother)
         @hook = language_hook
@@ -11,7 +11,7 @@ module Cucumber
       end
 
       def invoke
-        @hook.invoke(@step_mother, @parent)
+        @hook.invoke(@step_mother, @parent) # Can we get rid of the need for stepmother here?
       end
  
       def name

@@ -1,6 +1,6 @@
 module Cucumber
-  module NewAst
-    module AstNode
+  module SemanticModel
+    module Node
    
       attr_accessor :parent
 
@@ -11,9 +11,9 @@ module Cucumber
       def announce
       end
 
-      def add_child(ast_node)
-        children << ast_node
-        ast_node.parent = self
+      def add_child(node)
+        children << node
+        node.parent = self
       end
 
       def accept(visitor)

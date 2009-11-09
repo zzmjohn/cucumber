@@ -1,9 +1,9 @@
-require 'cucumber/new_ast/ast_node'
+require 'cucumber/semantic_model/node'
 
 module Cucumber
-  module NewAst
+  module SemanticModel
     class CompiledStep
-      include AstNode
+      include Node
 
       def initialize(parse_tree_node, step_match)
         @parse_tree_node = parse_tree_node

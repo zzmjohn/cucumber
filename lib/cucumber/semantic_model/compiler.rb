@@ -1,8 +1,8 @@
-require 'cucumber/new_ast/compiled_scenario'
-require 'cucumber/new_ast/compiled_step'
+require 'cucumber/semantic_model/compiled_scenario'
+require 'cucumber/semantic_model/compiled_step'
 
 module Cucumber
-  module NewAst
+  module SemanticModel
     # Builds an Ast by walking the Ast
     class Compiler
       def initialize(step_mother, compiled_feature)
@@ -58,10 +58,12 @@ module Cucumber
       private
       
       def compile_scenario(parse_tree_has_steps, steps)
+        #TODO: Insert world hook, then other before hooks as children
         all_steps = (@background_steps + steps)
         compiled_scenario = CompiledScenario.new(parse_tree_has_steps)
-        all_steps.map {|step| compiled_scenario.add_child(CompiledStep.new(step,@step_mother.step_match(step.name, step.name)) }
+        all_steps.map {|step| compiled_scenario.add_child(CompiledStep.new(step,@step_mother.step_match(step.name, step.name))) }
         @compiled_feature.add_child(compiled_scenario)
+        #TODO: Insert after hooks as children
       end
     end
   end
