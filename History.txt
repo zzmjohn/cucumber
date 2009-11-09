@@ -1,12 +1,15 @@
 == In Git
 
 === New features
+* Cucumber should use ActiveSupport::Callbacks for fixtures (#516 Adam Salter)
 * Make 'I' optional in all webrat steps. (Gavin Hughes)
 * Make generated cucumber.rake work with a vendored gem (Alex Rothenberg)
 * Native support for ANSIColor on IronRuby via the iron-term-ansicolor gem (Will Green)
 * Call a bunch of steps from step definitions - also with tables or pystrings. Copy-paste friendly (Bodaniel Jeanes, Jack Chen, Aslak Hellesøy) TODO - WIKI DOCUMENTATION BEFORE RELEASE
 
 === Bugfixes
+* Pretty printer fails when expanding scenario outlines with -x when the background includes a table (#515 Mike Sassak)
+* Define IRONRUBY correctly on Ruby 1.9 (Joe Van Dyk)
 * RbStepDefinition#invoke calls #backtrace_line on self rather than @proc (#503 Mike Sassak)
 * Avoid duplicate cucumber entries in database.yml (Daniel Hofstetter)
 * Added respond_to? when checking config.cache_classes for older Rails versions (Jeremy Durham)
