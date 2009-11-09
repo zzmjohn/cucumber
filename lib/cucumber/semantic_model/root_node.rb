@@ -2,7 +2,7 @@ require 'cucumber/semantic_model/node'
 
 module Cucumber
   module SemanticModel
-    class CompiledFeature
+    class RootNode
       include Node
     end
   end

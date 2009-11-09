@@ -1,12 +1,12 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
-require 'cucumber/semantic_model/compiled_feature'
+require 'cucumber/semantic_model/root_node'
 require 'cucumber/semantic_model/compiled_scenario'
 
 module Cucumber
   module SemanticModel
-    describe CompiledFeature do
+    describe RootNode do
       before(:each) do
-        @sm_node = CompiledFeature.new
+        @sm_node = RootNode.new
       end
 
       it_should_behave_like 'a Semantic Model Node' 

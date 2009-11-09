@@ -1,7 +1,7 @@
 require 'cucumber/ast/table'
 
 module Cucumber
-  module ParseTree
+  module NewAst
     class Examples
       def initialize(keyword, name, line)
       end

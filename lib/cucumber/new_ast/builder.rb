@@ -1,7 +1,7 @@
-require 'cucumber/parse_tree/feature'
+require 'cucumber/new_ast/feature'
 
 module Cucumber
-  module ParseTree
+  module NewAst
     # Implements the Gherkin listener API and builds an AST from Gherkin's scanner.
     class Builder
       def ast

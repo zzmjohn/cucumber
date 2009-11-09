@@ -15,7 +15,7 @@ module Cucumber
       end
  
       def name
-        @parse_tree_node.name
+        @ast_node.name
       end
     end
   end

@@ -1,7 +1,7 @@
-require 'cucumber/parse_tree/has_steps'
+require 'cucumber/new_ast/has_steps'
 
 module Cucumber
-  module ParseTree
+  module NewAst
     class Scenario < HasSteps
     end
   end

@@ -5,13 +5,13 @@ module Cucumber
     class CompiledStep
       include Node
 
-      def initialize(parse_tree_node, step_match)
-        @parse_tree_node = parse_tree_node
+      def initialize(ast_node, step_match)
+        @ast_node = ast_node
         @step_match = step_match
       end
 
       def announce
-        puts "  #{@parse_tree_node.keyword} #{@parse_tree_node.name}"
+        puts "  #{@ast_node.keyword} #{@ast_node.name}"
       end
 
       def invoke

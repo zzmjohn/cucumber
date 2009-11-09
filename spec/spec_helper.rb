@@ -2,7 +2,9 @@ require 'rubygems'
 gem 'rspec'
 require 'spec'
 require 'spec/autorun'
-require 'spec/cucumber/semantic_model/node_spec'
+#FIXME: 
+require File.expand_path(File.dirname(__FILE__) + "/cucumber/semantic_model/node_spec")
+
 
 ENV['CUCUMBER_COLORS']=nil
 $:.unshift(File.dirname(__FILE__) + '/../lib')

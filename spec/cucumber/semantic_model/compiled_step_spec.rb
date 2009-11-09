@@ -1,6 +1,5 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 require 'cucumber/semantic_model/compiled_scenario'
-require 'cucumber/semantic_model/compiled_feature'
 require 'cucumber/semantic_model/compiled_step'
 
 module Cucumber

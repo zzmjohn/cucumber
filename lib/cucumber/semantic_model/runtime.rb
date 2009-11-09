@@ -3,8 +3,8 @@ module Cucumber
     # Executes the Ast by walking it
     #
     class Runtime
-      def execute(compiled_feature)
-        visit(compiled_feature)
+      def execute(node)
+        visit(node)
       end
 
       def visit(node)

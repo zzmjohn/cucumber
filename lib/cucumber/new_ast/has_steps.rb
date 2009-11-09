@@ -1,7 +1,7 @@
-require 'cucumber/parse_tree/step'
+require 'cucumber/new_ast/step'
 
 module Cucumber
-  module ParseTree
+  module NewAst
     class HasSteps
       attr_reader :keyword, :name, :line
       

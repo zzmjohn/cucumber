@@ -1,5 +1,5 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
-require 'cucumber/parse_tree/step'
+require 'cucumber/new_ast/step'
 require 'cucumber/semantic_model/runtime'
 require 'cucumber/semantic_model/compiled_step'
 require 'cucumber/semantic_model/compiled_hook'
@@ -15,7 +15,7 @@ module Cucumber
       end
 
       it "should invoke a step definition" do
-        step = ParseTree::Step.new("Given", "I have 5 cukes in my belly", 9)
+        step = NewAst::Step.new("Given", "I have 5 cukes in my belly", 9)
         matched_cukes = nil
         @rb.register_rb_step_definition(/I have (.*) cukes in my belly/, lambda {|cukes| matched_cukes = cukes})
         sm_step = SemanticModel::CompiledStep.new(step, @step_mother.step_match(step.name, step.name))
