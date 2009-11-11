@@ -25,7 +25,6 @@ Feature: Feature Inputs
       
       """
 
-  @wip
   Scenario: Loading many features over HTTP
     Given a standard Cucumber project directory structure
     And a file named "features/remote_1.feature" with:
@@ -46,12 +45,16 @@ Feature: Feature Inputs
       """
     And a file named "features/feature.list" with:
       """
-      remote_1.feature
-      remote_2.feature
+      http://localhost:12345/features/remote_1.feature
+      http://localhost:12345/features/remote_2.feature
       """
     And an http server running on localhost:12345 is serving the contents of the features directory
-    When I run cucumber --dry-run -f pretty @http://localhost:12345/features/feature.list
+    When I run cucumber --dry-run -f progress @http://localhost:12345/features/feature.list
     Then it should pass with
       """
-      something
+      UUUU
+
+      2 scenarios (2 undefined)
+      4 steps (4 undefined)
+
       """
