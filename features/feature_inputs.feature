@@ -1,7 +1,8 @@
 Feature: Retrieving features from different sources
-  In order to work with customers who aren't comfortable with text editors
+  In order to work with customers who would like to create and store their features
+    in their preferred environments
   As a developer using Cucumber
-  I want to be able to load features from different sources
+  I want to be able to load features from wherever the customer keeps them
 
   Background:
     Given a standard Cucumber project directory structure
@@ -23,20 +24,20 @@ Feature: Retrieving features from different sources
       """
     And a file named "features/feature.list" with:
       """
-      http://localhost:12345/features/remote_1.feature
-      http://localhost:12345/features/remote_2.feature
+      http://localhost:22225/features/remote_1.feature
+      http://localhost:22225/features/remote_2.feature
       """
 
   Scenario: Single feature via HTTP
-    Given an http server on localhost:12345 is serving the contents of the features directory
+    Given an http server on localhost:22225 is serving the contents of the features directory
     When I run cucumber --dry-run -f pretty http://localhost:12345/features/remote_1.feature
     Then it should pass with
       """
       Feature: Remote Feature One
 
-        Scenario: Exploding the Furtwangler               # http://localhost:12345/features/remote_1.feature:3
-          Given the Furtwangler has become vicious        # http://localhost:12345/features/remote_1.feature:4
-          Then it should explode and spare us the whining # http://localhost:12345/features/remote_1.feature:5
+        Scenario: Exploding the Furtwangler               # http://localhost:22225/features/remote_1.feature:3
+          Given the Furtwangler has become vicious        # http://localhost:22225/features/remote_1.feature:4
+          Then it should explode and spare us the whining # http://localhost:22225/features/remote_1.feature:5
 
       1 scenario (1 undefined)
       2 steps (2 undefined)
@@ -44,8 +45,8 @@ Feature: Retrieving features from different sources
       """
 
   Scenario: Many features over HTTP
-    Given an http server on localhost:12345 is serving the contents of the features directory
-    When I run cucumber --dry-run -f progress @http://localhost:12345/features/feature.list
+    Given an http server on localhost:22225 is serving the contents of the features directory
+    When I run cucumber --dry-run -f progress @http://localhost:22225/features/feature.list
     Then it should pass with
       """
       UUUU
