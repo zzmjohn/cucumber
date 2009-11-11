@@ -29,8 +29,8 @@ Feature: Language help
       | ar      | Arabic                 | العربية              |
       | bg      | Bulgarian              | български            |
       | cat     | Catalan                | català               |
+      | cs      | Czech                  | Česky                |
       | cy      | Welsh                  | Cymraeg              |
-      | cz      | Czech                  | Česky                |
       | da      | Danish                 | dansk                |
       | de      | German                 | Deutsch              |
       | en      | English                | English              |

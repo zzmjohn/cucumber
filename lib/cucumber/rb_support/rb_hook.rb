@@ -7,7 +7,7 @@ module Cucumber
       def initialize(rb_language, location, tag_names, proc)
         @rb_language = rb_language
         @location = location
-        @tag_names = tag_names
+        @tag_names = tag_names.map {|tag_string| Ast::Tags.parse_tags(tag_string)}
         @proc = proc
       end
 
