@@ -30,7 +30,7 @@ Feature: Retrieving features from different sources
 
   Scenario: Single feature via HTTP
     Given an http server on localhost:22225 is serving the contents of the features directory
-    When I run cucumber --dry-run -f pretty http://localhost:12345/features/remote_1.feature
+    When I run cucumber --dry-run -f pretty http://localhost:22225/features/remote_1.feature
     Then it should pass with
       """
       Feature: Remote Feature One
