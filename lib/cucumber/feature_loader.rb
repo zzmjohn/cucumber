@@ -1,5 +1,6 @@
 require 'cucumber/formatter/duration'
 require 'cucumber/inputs/file'
+require 'cucumber/inputs/http'
 require 'cucumber/parsers/gherkin'
 require 'uri'
 
@@ -31,6 +32,7 @@ module Cucumber
       @inputs = {}
       register_parser(Parsers::Gherkin.new)
       register_input(Inputs::File.new)
+      register_input(Inputs::HTTP.new)
     end
 
     def register_input(input)

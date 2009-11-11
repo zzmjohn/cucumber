@@ -2,16 +2,14 @@ require 'sinatra/base'
 
 class FeatureServer
   class App < Sinatra::Base
-    get '/features/remote.feature' do
-      f = %Q{
-        Feature: foo
-      }
+    get '/features/:feature' do
+      send_file options.root + "/features/#{params[:feature]}"
     end
   end
 
-  def initialize(port)
+  def initialize(port, features_dir)
     Thread.new do
-      App.run! :host => 'localhost', :port => port
+      App.run! :host => 'localhost', :port => port, :root => features_dir
     end
   end
 end
