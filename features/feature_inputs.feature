@@ -28,6 +28,7 @@ Feature: Retrieving features from different sources
       http://localhost:22225/features/remote_2.feature
       """
 
+  @feature_server
   Scenario: Single feature via HTTP
     Given an http server on localhost:22225 is serving the contents of the features directory
     When I run cucumber --dry-run -f pretty http://localhost:22225/features/remote_1.feature
@@ -44,6 +45,7 @@ Feature: Retrieving features from different sources
       
       """
 
+  @feature_server
   Scenario: Many features over HTTP
     Given an http server on localhost:22225 is serving the contents of the features directory
     When I run cucumber --dry-run -f progress @http://localhost:22225/features/feature.list
