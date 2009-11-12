@@ -60,31 +60,37 @@ Feature: Loading features from remote sources
 
   @feature_server @wip
   Scenario: Loading features via an input plugin
+    The --plugin argument currently requires the complete path to the plugin file, because the process
+    of loading code and support files needs to be refactored a bit before we can ensure that requiring a 
+    plugin will not happen before the object it registers itself with has been loaded.
+
     Given a fakeproto server on localhost:22225 is serving the contents of the features directory
     And a file named "features/support/fake_proto_input.rb" with:
       """
       # The FakeProto input is really an HTTP input so we can use the Sinatra feature-server for testing
       require 'open-uri'
+      require 'cucumber/plugin'
 
-      class FakeProto < Cucumber::Inputs::Plugin
-        register(self)
-
+      class FakeProto 
         def protocols
-          :fakeproto
+          [:fakeproto]
         end
 
         def read(uri)
           uri.gsub!(/^fakeproto/, 'http')
           open(uri).read
         end
+
+        include Cucumber::Plugin
+        register_input(self)
       end
       """
-    When I run cucumber --dry-run -f progress --plugin FakeProtoInput fakeproto://localhost:22225/features/remote_1.feature
+    When I run cucumber --dry-run -f progress --plugin features/support/fake_proto_input.rb fakeproto://localhost:22225/features/remote_1.feature
     Then it should pass with
       """
       UU
 
-      1 Scenario (1 undefined)
-      2 Steps (2 undefined)
+      1 scenario (1 undefined)
+      2 steps (2 undefined)
 
       """

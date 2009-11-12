@@ -151,6 +151,12 @@ module Cucumber
         end
       end
 
+      def load_plugins
+        @options[:plugins].each do |plugin_name|
+          require underscore(plugin_name)
+        end
+      end
+
       private
 
       class LogFormatter < ::Logger::Formatter
