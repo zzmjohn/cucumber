@@ -46,7 +46,7 @@ Feature: Loading features from remote sources
       """
 
   @feature_server
-  Scenario: Many features over HTTP
+  Scenario: Many features via HTTP
     Given an http server on localhost:22225 is serving the contents of the features directory
     When I run cucumber --dry-run -f progress @http://localhost:22225/features/feature.list
     Then it should pass with
@@ -55,5 +55,36 @@ Feature: Loading features from remote sources
 
       2 scenarios (2 undefined)
       4 steps (4 undefined)
+
+      """
+
+  @feature_server @wip
+  Scenario: Loading features via an input plugin
+    Given a fakeproto server on localhost:22225 is serving the contents of the features directory
+    And a file named "features/support/fake_proto_input.rb" with:
+      """
+      # The FakeProto input is really an HTTP input so we can use the Sinatra feature-server for testing
+      require 'open-uri'
+
+      class FakeProto < Cucumber::Inputs::Plugin
+        register(self)
+
+        def protocols
+          :fakeproto
+        end
+
+        def read(uri)
+          uri.gsub!(/^fakeproto/, 'http')
+          open(uri).read
+        end
+      end
+      """
+    When I run cucumber --dry-run -f progress --plugin FakeProtoInput fakeproto://localhost:22225/features/remote_1.feature
+    Then it should pass with
+      """
+      UU
+
+      1 Scenario (1 undefined)
+      2 Steps (2 undefined)
 
       """

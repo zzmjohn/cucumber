@@ -19,6 +19,14 @@ module Cucumber
   end
   
   class FeatureLoader
+    class << self
+      @@inputs = {}
+
+      def register_input(input)
+        input.protocols.each { |proto| @@inputs[proto] = input }
+      end
+    end
+
     SOURCE_COLON_LINE_PATTERN = /^([\w\W]*?):([\d:]+)$/ #:nodoc:
     
     attr_writer :options, :log
@@ -29,14 +37,9 @@ module Cucumber
       @adverbs = ["Given", "When", "Then", "And", "But"]
       @format_rules = {}
       @parsers = {}
-      @inputs = {}
       register_parser(Parsers::Gherkin.new)
-      register_input(Inputs::File.new)
-      register_input(Inputs::HTTP.new)
-    end
-
-    def register_input(input)
-      input.protocols.each { |proto| @inputs[proto] = input }
+      self.class.register_input(Inputs::File.new)
+      self.class.register_input(Inputs::HTTP.new)
     end
 
     def register_parser(parser)
@@ -48,7 +51,7 @@ module Cucumber
     end
     
     def protocols
-      @inputs.keys
+      @@inputs.keys
     end
     
     def formats
@@ -98,7 +101,7 @@ module Cucumber
     def input(name)
       uri = URI.parse(URI.escape(name))
       proto = (uri.scheme || :file).to_sym
-      @inputs[proto] || raise(InputServiceNotFound.new(proto, protocols))
+      @@inputs[proto] || raise(InputServiceNotFound.new(proto, protocols))
     end
     
     def parser(name)      

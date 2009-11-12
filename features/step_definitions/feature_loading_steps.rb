@@ -1,4 +1,4 @@
-Given /^an http server on localhost:(\d+) is serving the contents of the features directory$/ do |port|
+Given /^an? \w+ server on localhost:(\d+) is serving the contents of the features directory$/ do |port|
   @feature_server_pid = fork do
     FeatureServer.run! :host => 'localhost', :port => port, :root => working_dir
   end
