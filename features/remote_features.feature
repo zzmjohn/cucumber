@@ -1,4 +1,4 @@
-Feature: Retrieving features from different sources
+Feature: Loading features from remote sources
   In order to work with customers who would like to create and store their features
     in their preferred environments
   As a developer using Cucumber
