@@ -47,6 +47,8 @@ module Cucumber
         feature_loader.log = configuration.log
 
         configuration.load_plugins
+
+        feature_loader.instantiate_plugins!
       
         step_mother.register_adverbs(feature_loader.adverbs) # Set up default 'en' adverbs
         step_mother.load_code_files(configuration.support_to_load)

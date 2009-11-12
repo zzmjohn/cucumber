@@ -58,7 +58,7 @@ Feature: Loading features from remote sources
 
       """
 
-  @feature_server @wip
+  @feature_server
   Scenario: Loading features via an input plugin
     The --plugin argument currently requires the complete path to the plugin file, because the process
     of loading code and support files needs to be refactored a bit before we can ensure that requiring a 
@@ -72,6 +72,9 @@ Feature: Loading features from remote sources
       require 'cucumber/plugin'
 
       class FakeProto 
+        include Cucumber::Plugin
+        register_input(self)
+
         def protocols
           [:fakeproto]
         end
@@ -80,9 +83,6 @@ Feature: Loading features from remote sources
           uri.gsub!(/^fakeproto/, 'http')
           open(uri).read
         end
-
-        include Cucumber::Plugin
-        register_input(self)
       end
       """
     When I run cucumber --dry-run -f progress --plugin features/support/fake_proto_input.rb fakeproto://localhost:22225/features/remote_1.feature

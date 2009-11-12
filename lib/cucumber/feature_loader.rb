@@ -20,10 +20,10 @@ module Cucumber
   
   class FeatureLoader
     class << self
-      @@inputs = {}
+      @@input_plugins = [Inputs::File, Inputs::HTTP]
 
-      def register_input(input)
-        input.protocols.each { |proto| @@inputs[proto] = input }
+      def register_input(input_class)
+        @@input_plugins << input_class
       end
     end
 
@@ -38,8 +38,14 @@ module Cucumber
       @format_rules = {}
       @parsers = {}
       register_parser(Parsers::Gherkin.new)
-      self.class.register_input(Inputs::File.new)
-      self.class.register_input(Inputs::HTTP.new)
+    end
+
+    def instantiate_plugins!
+      @inputs ||= {}
+      @@input_plugins.each do |input_class|
+        input = input_class.new
+        input.protocols.each { |proto| @inputs[proto] = input }
+      end
     end
 
     def register_parser(parser)
@@ -51,7 +57,7 @@ module Cucumber
     end
     
     def protocols
-      @@inputs.keys
+      @inputs.keys
     end
     
     def formats
@@ -101,7 +107,7 @@ module Cucumber
     def input(name)
       uri = URI.parse(URI.escape(name))
       proto = (uri.scheme || :file).to_sym
-      @@inputs[proto] || raise(InputServiceNotFound.new(proto, protocols))
+      @inputs[proto] || raise(InputServiceNotFound.new(proto, protocols))
     end
     
     def parser(name)      

@@ -6,7 +6,7 @@ module Cucumber
 
     module PluginMethods
       def register_input(input_class)
-        FeatureLoader.register_input(input_class.new)
+        FeatureLoader.register_input(input_class)
       end
     end
   end
