@@ -1,11 +1,16 @@
-require 'cucumber/asg/compiled_scenario'
+require 'cucumber/semantic_model/compiled_scenario'
+require 'cucumber/semantic_model/compiled_step'
 
 module Cucumber
-  module Asg
-    # Builds an Asg by walking the Ast
+  module SemanticModel
+    # Builds an Ast by walking the Ast
     class Compiler
-      def initialize(compiled_feature)
-        @compiled_feature = compiled_feature
+
+      attr_reader :root
+
+      def initialize(step_mother)
+        @step_mother = step_mother
+        @root = RootNode.new
       end
 
       def visit_feature(ast_feature)
@@ -56,8 +61,12 @@ module Cucumber
       private
       
       def compile_scenario(ast_has_steps, steps)
+        #TODO: Insert world hook, then other before hooks as children
         all_steps = (@background_steps + steps)
-        @compiled_feature.add_compiled_scenario(CompiledScenario.new(ast_has_steps, all_steps))
+        compiled_scenario = CompiledScenario.new(ast_has_steps)
+        all_steps.map {|step| compiled_scenario.add_child(CompiledStep.new(step,@step_mother.step_match(step.name, step.name))) }
+        @root.add_child(compiled_scenario)
+        #TODO: Insert after hooks as children
       end
     end
   end

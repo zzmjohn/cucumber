@@ -59,19 +59,16 @@ module Cucumber
       end
 
       def gherkin_parse(source, path, filter)
-        require 'gherkin/syntax_policy/feature_policy'
         require 'cucumber/new_ast/builder'
 
         builder = NewAst::Builder.new
-        policy = Gherkin::SyntaxPolicy::FeaturePolicy.new(builder, false)
-        gherkin_parser.new(policy).scan(source)
+        new_gherkin_parser(builder).scan(source)
         builder.ast
       end
 
-      def gherkin_parser
+      def new_gherkin_parser(builder)
         require "gherkin/parser"
-        require "gherkin/parser/parser_#{@lang}"
-        Gherkin::Parser[@lang]
+        Gherkin::Parser.new(@lang, builder, false)
       end
 
       def keywords(key, raw=false)

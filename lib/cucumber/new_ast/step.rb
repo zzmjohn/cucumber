@@ -10,7 +10,7 @@ module Cucumber
       def table(raw, line)
       end
 
-      def py_string(string, line, col)
+      def py_string(col, string, line)
       end
 
       def clone_from_cells(cells)
