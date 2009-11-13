@@ -19,6 +19,14 @@ module Cucumber
   end
   
   class FeatureLoader
+    class << self
+      @@input_plugins = [Inputs::File, Inputs::HTTP]
+
+      def register_input(input_class)
+        @@input_plugins << input_class
+      end
+    end
+
     SOURCE_COLON_LINE_PATTERN = /^([\w\W]*?):([\d:]+)$/ #:nodoc:
     
     attr_writer :options, :log
@@ -29,14 +37,15 @@ module Cucumber
       @adverbs = ["Given", "When", "Then", "And", "But"]
       @format_rules = {}
       @parsers = {}
-      @inputs = {}
       register_parser(Parsers::Gherkin.new)
-      register_input(Inputs::File.new)
-      register_input(Inputs::HTTP.new)
     end
 
-    def register_input(input)
-      input.protocols.each { |proto| @inputs[proto] = input }
+    def instantiate_plugins!
+      @inputs ||= {}
+      @@input_plugins.each do |input_class|
+        input = input_class.new
+        input.protocols.each { |proto| @inputs[proto] = input }
+      end
     end
 
     def register_parser(parser)

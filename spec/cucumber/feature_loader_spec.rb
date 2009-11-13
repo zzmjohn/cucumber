@@ -5,16 +5,24 @@ require 'cucumber'
 module Cucumber
   describe FeatureLoader do
     before do
+      @file_input = mock('file input service', :read => "Feature: test", :protocols => [:file])
+      Inputs::File.stub!(:new).and_return(@file_input)
+      FeatureLoader.register_input(Inputs::File)
+
+      @http_input = mock('http input service', :read => "Feature: test", :protocols => [:http, :https])
+      Inputs::HTTP.stub!(:new).and_return(@http_input)
+      FeatureLoader.register_input(Inputs::HTTP)
+
       @out = StringIO.new
       @log = Logger.new(@out)
 
       @feature_loader = FeatureLoader.new
       @feature_loader.log = @log
 
-      @file_input = mock('file input service', :read => "Feature: test", :protocols => [:file])
-      @feature_loader.register_input(@file_input)
       @gherkin_parser = mock('gherkin parser', :adverbs => ["Given"], :parse => mock('feature', :features= => true), :format => :gherkin)
       @feature_loader.register_parser(@gherkin_parser)
+
+      @feature_loader.instantiate_plugins!
     end
 
     it "should split the content name and line numbers from the sources" do
@@ -33,17 +41,13 @@ module Cucumber
     end
     
     it "should load features from multiple input sources" do
-      http_input = mock('http input service', :read => "Feature: test", :protocols => [:http])
-      http_input.should_receive(:read).with("http://test.domain/http.feature").once
+      @http_input.should_receive(:read).with("http://test.domain/http.feature").once
       @file_input.should_receive(:read).with("example.feature").once
-
-      @feature_loader.register_input(http_input)
       @feature_loader.load_features(["example.feature", "http://test.domain/http.feature"])
     end
     
-    it "should say it supports the protocols provided by a registered input service" do
-      @feature_loader.register_input(mock('http', :protocols => [:http, :https]))
-      @feature_loader.protocols.should include(:http, :https)
+    it "should say it supports the protocols provided by the registered input services" do
+      @feature_loader.protocols.should include(:http, :https, :file)
     end
     
     it "should raise if it has no input service for the protocol" do

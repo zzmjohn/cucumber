@@ -6,6 +6,7 @@ module Cucumber
     describe Feature do
       before do
         @feature_loader = FeatureLoader.new
+        @feature_loader.instantiate_plugins!
         @parser = NaturalLanguage.get('en').parser
       end
 
