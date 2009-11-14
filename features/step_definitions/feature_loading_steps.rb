@@ -1,3 +1,10 @@
-Given /^an http server running on localhost:12345 is serving the contents of the features directory$/ do
-  FeatureServer.new(12345, working_dir)
+Given /^an? \w+ server on localhost:(\d+) is serving the contents of the features directory$/ do |port|
+  @feature_server_pid = fork do
+    FeatureServer.run! :host => 'localhost', :port => port, :root => working_dir
+  end
+end
+
+After('@feature_server') do
+  Process.kill('TERM', @feature_server_pid)
+  Process.wait(@feature_server_pid, Process::WNOHANG)
 end

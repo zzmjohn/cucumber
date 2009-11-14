@@ -243,6 +243,9 @@ module Cucumber
             options[:parser] = v.to_sym
             Parser::NaturalLanguage.parser = v.to_sym
           end
+          opts.on("--plugin=PLUGIN", "Specify a plugin class. Same rules as formatter. Expand this description") do |v|
+            options[:plugins] << v
+          end
           opts.on_tail("--version", "Show version.") do
             @out_stream.puts Cucumber::VERSION
             Kernel.exit(0)
@@ -399,7 +402,8 @@ module Cucumber
           :name_regexps => [],
           :env_vars     => {},
           :diff_enabled => true,
-          :parser       => :treetop
+          :parser       => :treetop,
+          :plugins      => []
         }
       end
     end
