@@ -1,8 +1,12 @@
 require 'open-uri'
+require 'cucumber/plugin'
 
 module Cucumber
   module Inputs
     class HTTP
+      extend Cucumber::Plugin
+      register_input(self)
+
       def protocols
         [:http, :https]
       end
