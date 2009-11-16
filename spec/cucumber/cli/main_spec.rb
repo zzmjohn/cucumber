@@ -28,7 +28,7 @@ module Cucumber
           @cli.stub!(:require)
 
           feature_loader = FeatureLoader.new
-          feature_loader.stub!(:load_feature).and_return(mock('feature ast', :features= => true, :accept => true))
+          feature_loader.stub!(:load_feature).and_return(mock('feature ast', :adverbs => [], :features= => true, :accept => true))
           @cli.execute!(StepMother.new, feature_loader)
 
           @out.string.should include('example.feature')
@@ -92,7 +92,8 @@ module Cucumber
         it "should load files and execute hooks in order" do
           Configuration.stub!(:new).and_return(configuration = mock('configuration', :null_object => true))
           step_mother = mock('step mother', :null_object => true)
-          feature_loader = mock('feature_loader', :null_object => true)
+          feature_suite = mock('feature suite', :adverbs => [])
+          feature_loader = mock('feature_loader', :load_features => feature_suite, :null_object => true)
           configuration.stub!(:drb?).and_return false
           cli = Main.new(%w{--verbose example.feature}, @out)
           cli.stub!(:require)
@@ -100,12 +101,6 @@ module Cucumber
           configuration.stub!(:support_to_load).and_return(['support'])
           configuration.stub!(:step_defs_to_load).and_return(['step defs'])
 
-          # Feature files must be loaded before step definitions are required,
-          # and their adverbs must be registered on StepMother before she
-          # begins her work. This is because i18n step methods are only aliased 
-          # when features are loaded. If we don't register the adverbs, i18n 
-          # steps will fail. 
-          step_mother.should_receive(:register_adverbs).ordered
           # Support must be loaded first to ensure post configuration hook can
           # run before anything else.
           step_mother.should_receive(:load_code_files).with(['support']).ordered

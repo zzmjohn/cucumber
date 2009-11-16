@@ -70,6 +70,10 @@ module Cucumber
         end
       end
 
+      def adverbs
+        language.adverbs
+      end
+
       def to_sexp
         sexp = [:feature, @file, @name]
         comment = @comment.to_sexp

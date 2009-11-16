@@ -50,11 +50,10 @@ module Cucumber
 
         feature_loader.instantiate_plugins!
       
-        step_mother.register_adverbs(feature_loader.adverbs) # Set up default 'en' adverbs
         step_mother.load_code_files(configuration.support_to_load)
         step_mother.after_configuration(configuration)
         features = feature_loader.load_features(configuration.feature_files)
-        step_mother.register_adverbs(feature_loader.adverbs) # Re-register to catch any i18n adverbs
+        step_mother.register_adverbs(features.adverbs)
         step_mother.load_code_files(configuration.step_defs_to_load)
 
         enable_diffing

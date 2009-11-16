@@ -19,7 +19,7 @@ module Cucumber
       @feature_loader = FeatureLoader.new
       @feature_loader.log = @log
 
-      @gherkin_parser = mock('gherkin parser', :adverbs => ["Given"], :parse => mock('feature', :features= => true), :format => :gherkin)
+      @gherkin_parser = mock('gherkin parser', :parse => mock('feature', :features= => true, :adverbs => []), :format => :gherkin)
       @feature_loader.register_parser(@gherkin_parser)
 
       @feature_loader.instantiate_plugins!
@@ -62,7 +62,7 @@ module Cucumber
     end
     
     it "should determine the feature format by the file extension" do
-      textile_parser = mock('textile parser', :adverbs => ["Given"], :parse => mock('feature', :features= => true), :format => :textile)
+      textile_parser = mock('textile parser', :parse => mock('feature', :adverbs => [], :features= => true), :format => :textile)
       textile_parser.should_receive(:parse).with(anything(), "example.textile", anything(), anything()).once
       @gherkin_parser.should_receive(:parse).with(anything(), "example.feature", anything(), anything()).once
       
@@ -117,13 +117,5 @@ module Cucumber
       @file_input.should_receive(:list).with("my_feature_list.txt").and_return(["features/foo.feature", "features/bar.feature"])
       @feature_loader.load_features(["@my_feature_list.txt"])
     end
-
-    it "should have English adverbs by default" do
-      @feature_loader.adverbs.should == ["Given", "When", "Then", "And", "But"]
-    end
-    
-    it "should have other adverbs if other languages are used" do
-      pending "Adverbs should be moved into the ast feature node and the feature suite"
-    end        
   end
 end

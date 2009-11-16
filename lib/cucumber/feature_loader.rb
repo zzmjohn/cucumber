@@ -28,11 +28,10 @@ module Cucumber
     SOURCE_COLON_LINE_PATTERN = /^([\w\W]*?):([\d:]+)$/ #:nodoc:
     
     attr_writer :options, :log
-    attr_reader :adverbs, :format_rules
+    attr_reader :format_rules
     include Formatter::Duration
     
     def initialize
-      @adverbs = ["Given", "When", "Then", "And", "But"]
       @format_rules = {}
       @parsers = {}
       register_parser(Parsers::Gherkin.new)
@@ -92,14 +91,7 @@ module Cucumber
       end
 
       content = input(name).read(name)                 
-      feature = parser(name).parse(content, name, lines || nil, options)
-
-      # It would be nice if adverbs lived on Ast::Feature, 
-      # then adding them to the feature suite could merge them.
-      # And maybe StepMother could get them from there?
-      self.adverbs = parser(name).adverbs if feature
-
-      feature
+      parser(name).parse(content, name, lines || nil, options)
     end
 
     def input(name)
@@ -120,11 +112,6 @@ module Cucumber
       end
     end
     
-    def adverbs=(adverbs)
-      @adverbs += adverbs
-      @adverbs.uniq!
-    end
-              
     def log
       @log ||= Logger.new(STDOUT)
     end
