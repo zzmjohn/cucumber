@@ -72,7 +72,7 @@ Feature: Loading features from remote sources
       require 'cucumber/plugin'
 
       class FakeProto 
-        include Cucumber::Plugin
+        extend Cucumber::Plugin
         register_input(self)
 
         def protocols
