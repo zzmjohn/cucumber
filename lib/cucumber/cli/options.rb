@@ -404,7 +404,7 @@ module Cucumber
           :env_vars     => {},
           :diff_enabled => true,
           :parser       => :treetop,
-          :plugins      => []
+          :plugins      => ['cucumber/inputs/file', 'cucumber/inputs/http']
         }
       end
     end

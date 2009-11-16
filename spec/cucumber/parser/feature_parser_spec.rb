@@ -6,6 +6,7 @@ module Cucumber
     describe Feature do
       before do
         @feature_loader = FeatureLoader.new
+        require 'cucumber/inputs/file' # Load the input plugin
         @feature_loader.instantiate_plugins!
         @parser = NaturalLanguage.get('en').parser
       end
