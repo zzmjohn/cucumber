@@ -4,8 +4,6 @@ require 'cucumber/filter'
 module Cucumber
   module Parsers
     class Gherkin
-      attr_reader :adverbs
-      
       LANGUAGE_PATTERN = /language\s*:\s*(.*)/ #:nodoc:
 
       def format
@@ -18,7 +16,6 @@ module Cucumber
       def parse(content, path, lines, options)
         filter = Filter.new(lines, options)
         language = load_natural_language(lang(content) || options[:lang] || 'en')
-        @adverbs = language.adverbs
         language.parse(content, path, filter)
       end
       

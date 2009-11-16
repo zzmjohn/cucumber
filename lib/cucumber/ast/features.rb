@@ -3,10 +3,11 @@ module Cucumber
     class Features #:nodoc:
       include Enumerable
 
-      attr_reader :duration
+      attr_reader :duration, :adverbs
 
       def initialize
         @features = []
+        @adverbs = []
       end
 
       def [](index)
@@ -19,6 +20,8 @@ module Cucumber
 
       def add_feature(feature)
         feature.features = self
+        @adverbs += feature.adverbs
+        @adverbs.uniq!
         @features << feature
       end
 
