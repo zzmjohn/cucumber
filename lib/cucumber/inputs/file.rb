@@ -1,6 +1,11 @@
+require 'cucumber/plugin'
+
 module Cucumber
   module Inputs
     class File
+      extend Cucumber::Plugin
+      register_input(self)
+
       def protocols
         [:file]
       end

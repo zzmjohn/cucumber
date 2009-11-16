@@ -1,6 +1,4 @@
 require 'cucumber/formatter/duration'
-require 'cucumber/inputs/file'
-require 'cucumber/inputs/http'
 require 'cucumber/parsers/gherkin'
 require 'uri'
 
@@ -20,7 +18,7 @@ module Cucumber
   
   class FeatureLoader
     class << self
-      @@input_plugins = [Inputs::File, Inputs::HTTP]
+      @@input_plugins = []
 
       def register_input(input_class)
         @@input_plugins << input_class
