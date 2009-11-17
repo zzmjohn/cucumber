@@ -5,13 +5,13 @@ require 'cucumber'
 module Cucumber
   describe FeatureLoader do
     before do
+      require 'cucumber/inputs/file' # Requiring registers plugins
       @file_input = mock('file input service', :read => "Feature: test", :protocols => [:file])
       Inputs::File.stub!(:new).and_return(@file_input)
-      FeatureLoader.register_input(Inputs::File)
 
+      require 'cucumber/inputs/http'
       @http_input = mock('http input service', :read => "Feature: test", :protocols => [:http, :https])
       Inputs::HTTP.stub!(:new).and_return(@http_input)
-      FeatureLoader.register_input(Inputs::HTTP)
 
       @out = StringIO.new
       @log = Logger.new(@out)
