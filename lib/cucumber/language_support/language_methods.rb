@@ -66,6 +66,10 @@ module Cucumber
 
       private
 
+      def default_adverbs
+        ["Given", "When", "Then", "And", "But"]
+      end
+
       def available_step_definition_hash
         @available_step_definition_hash ||= {}
       end

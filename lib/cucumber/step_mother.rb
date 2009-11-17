@@ -73,7 +73,6 @@ module Cucumber
       return @language_map[ext] if @language_map[ext]
       programming_language_class = constantize("Cucumber::#{ext.capitalize}Support::#{ext.capitalize}Language")
       programming_language = programming_language_class.new(self)
-      programming_language.alias_adverbs(@adverbs || ["Given", "When", "Then", "And", "But"])
       @programming_languages << programming_language
       @language_map[ext] = programming_language
       programming_language

@@ -36,6 +36,7 @@ module Cucumber
         @step_definitions = []
         RbDsl.rb_language = self
         @world_proc = @world_modules = nil
+        alias_adverbs(default_adverbs)
       end
 
       # Tell the language about other i18n translations so that
