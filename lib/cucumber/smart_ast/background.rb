@@ -5,8 +5,6 @@ require 'cucumber/smart_ast/py_strings'
 module Cucumber
   module SmartAst
     class Background < StepContainer
-      include Steps
-      include PyStrings
     end
   end
 end

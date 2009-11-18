@@ -3,14 +3,9 @@ require 'cucumber/smart_ast/step_container'
 
 module Cucumber
   module SmartAst
-    class TestContainer < StepContainer
-      include Steps
-      include Tables
-    end
-
     describe StepContainer do
       before do
-        @step_container = TestContainer.new("Test", "Step container test", 1)
+        @step_container = StepContainer.new("Test", "Step container test", 1)
       end
 
       it "should have a list of steps" do
@@ -25,14 +20,14 @@ module Cucumber
         @step_container.table(rows, 3)
         @step_container.should have(1).steps
         step = @step_container.steps.first
-        step.argument.should == rows
+        step.argument.raw.should == rows
       end
 
       it "should include py_string argument to a step" do
         @step_container.step("Given", "a py_string", 2)
         py_string = "Long string"
         @step_container.py_string(1, py_string, 3)
-        @step_container.steps.first.argument.should == py_string
+        @step_container.steps.first.argument.to_s.should == "Long string"
       end
     end
   end

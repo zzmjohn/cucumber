@@ -2,10 +2,14 @@ require 'cucumber/smart_ast/step_container'
 
 module Cucumber
   module SmartAst
-    class Examples < StepContainer
-      attr_reader :argument
+    class Examples 
+      attr_reader :table
+      def initialize(name, description, line)
+        @name, @description, @line = name, description, line
+      end
+
       def table(rows, line)
-        @argument = Table.new(rows, line)
+        @table = Table.new(rows, line)
       end
     end
   end

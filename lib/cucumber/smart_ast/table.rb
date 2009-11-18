@@ -4,6 +4,10 @@ module Cucumber
       def initialize(rows, line)
         @rows, @line = rows, line
       end
+
+      def raw
+        @rows
+      end
     end
   end
 end
