@@ -17,8 +17,12 @@ module Cucumber
         @name, @description, @line = name, description, line
       end
 
-      def background(background=nil)
-        @background || (@background = background)
+      def background(background)
+        @background = background
+      end
+
+      def bg
+        @background
       end
 
       def scenario(scenario)

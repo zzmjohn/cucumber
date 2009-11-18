@@ -6,12 +6,17 @@ module Cucumber
       end
 
       def execute(ast)
-        count = 0
-        background = ast.background
+        background = ast.bg
         ast.scenarios.each do |scenario|
-          count += [background.steps + scenario.steps].flatten.size
+          if background
+            background.steps { |step| invoke(step) }
+          end
+          scenario.steps { |step| invoke(step) }
         end
-        count
+      end
+
+      def invoke(step)
+        @step_mother.invoke(step.name)
       end
     end
   end

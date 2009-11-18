@@ -38,8 +38,8 @@ module Cucumber
         register_tags(@current)
       end
 
-      def step(adverb, body, line)
-        @current.step(adverb, body, line)
+      def step(adverb, name, line)
+        @current.step(adverb, name, line)
       end
 
       def table(rows, line)
