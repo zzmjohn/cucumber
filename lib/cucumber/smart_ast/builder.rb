@@ -11,10 +11,12 @@ module Cucumber
 
       def initialize
         @current = @ast = Feature.new
+        @tag_cache = []
       end
 
       def feature(name, description, line)
         @ast.feature(name, description, line)
+        register_tags(@ast)
       end
 
       def background(name, description, line)
@@ -23,14 +25,17 @@ module Cucumber
 
       def scenario(name, description, line)
         @current = @ast.scenario(Scenario.new(name, description, line))
+        register_tags(@current)
       end
 
       def scenario_outline(name, description, line)
         @current = @ast.scenario_outline(ScenarioOutline.new(name, description, line))
+        register_tags(@current)
       end
 
       def examples(name, description, line)
         @current = @ast.examples(Examples.new(name, description, line))
+        register_tags(@current)
       end
 
       def step(adverb, body, line)
@@ -46,11 +51,17 @@ module Cucumber
       end
 
       def tag(tag, line)
-        @current.tag(tag, line)
+        @tag_cache << [tag, line]
       end
 
       def comment(comment, line)
-        @current.comment(tag, line)
+      end
+
+      private
+
+      def register_tags(container)
+        @tag_cache.each { |tag| @current.tag(tag[0], tag[1]) }
+        @tag_cache.clear
       end
     end
   end
