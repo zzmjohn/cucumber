@@ -122,14 +122,13 @@ module Cucumber
       end
 
       def execute_ast(features, step_mother, runner)
-        require 'cucumber/semantic_model/compiler'
-        require 'cucumber/semantic_model/root_node'
-        require 'cucumber/semantic_model/runtime'
         features.each do |feature|
-          builder = SemanticModel::Compiler.new(step_mother)
-          builder.visit_feature(feature)
-          runtime = SemanticModel::Runtime.new
-          runtime.execute(builder.root)
+          executor = Executor.new(step_mother)
+          executor.execute(feature)
+          # builder = SemanticModel::Compiler.new(step_mother)
+          # builder.visit_feature(feature)
+          # runtime = SemanticModel::Runtime.new
+          # runtime.execute(builder.root)
         end
       end
 
