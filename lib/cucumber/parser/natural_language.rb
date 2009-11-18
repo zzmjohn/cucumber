@@ -59,16 +59,16 @@ module Cucumber
       end
 
       def gherkin_parse(source, path, filter)
-        require 'cucumber/new_ast/builder'
+        require 'cucumber/smart_ast/builder'
 
-        builder = NewAst::Builder.new
+        builder = SmartAst::Builder.new
         new_gherkin_parser(builder).scan(source)
         builder.ast
       end
 
       def new_gherkin_parser(builder)
-        require "gherkin/parser"
-        Gherkin::Parser.new(@lang, builder, false)
+        require "gherkin"
+        Gherkin::Feature.new(@lang, builder)
       end
 
       def keywords(key, raw=false)
