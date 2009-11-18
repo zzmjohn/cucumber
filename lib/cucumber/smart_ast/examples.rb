@@ -1,9 +1,8 @@
+require 'cucumber/smart_ast/step_container'
+
 module Cucumber
   module SmartAst
-    class Examples
-      def initialize(name, description, line)
-        @name, @description, @line = name, description, line
-      end
+    class Examples < StepContainer
     end
   end
 end

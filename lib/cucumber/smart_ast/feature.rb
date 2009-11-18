@@ -1,8 +1,10 @@
 module Cucumber
   module SmartAst
     class Feature
+      attr_accessor :language, :features
+
       def feature(name, description, line)
-        @name, @description, @line
+        @name, @description, @line = name, description, line
       end
 
       def background(background)
@@ -19,6 +21,10 @@ module Cucumber
 
       def examples(examples)
         @scenario_outlines.last.examples(examples)
+      end
+
+      def adverbs
+        @language.adverbs
       end
     end
   end

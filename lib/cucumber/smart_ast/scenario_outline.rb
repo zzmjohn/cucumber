@@ -1,9 +1,8 @@
+require 'cucumber/smart_ast/step_container'
+
 module Cucumber
   module SmartAst
-    class ScenarioOutline
-      def initialize(name, description, line)
-        @name, @description, @line
-      end
+    class ScenarioOutline < StepContainer
     end
   end
 end
