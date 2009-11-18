@@ -6,6 +6,7 @@ module Cucumber
       include Tags
 
       attr_accessor :language, :features
+      attr_reader :scenarios
 
       def initialize
         @scenarios = []

@@ -122,8 +122,9 @@ module Cucumber
       end
 
       def execute_ast(features, step_mother, runner)
+        require 'cucumber/smart_ast/executor'
         features.each do |feature|
-          executor = Executor.new(step_mother)
+          executor = SmartAst::Executor.new(step_mother)
           executor.execute(feature)
           # builder = SemanticModel::Compiler.new(step_mother)
           # builder.visit_feature(feature)
