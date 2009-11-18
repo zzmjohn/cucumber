@@ -1,7 +1,7 @@
 module Cucumber
   module Parser
     class NaturalLanguage
-      KEYWORD_KEYS = %w{name native encoding space_after_keyword feature background scenario scenario_outline examples given when then and but}
+      KEYWORD_KEYS = %w{name native feature background scenario scenario_outline examples given when then and but}
 
       class << self
         def get(lang)
@@ -30,7 +30,7 @@ module Cucumber
       end
       
       def adverbs
-        %w{given when then and but}.map{|keyword| @keywords[keyword].split('|').map{|w| w.gsub(/\s/, '')}}.flatten
+        %w{given when then and but}.map{|keyword| @keywords[keyword].split('|').map{|w| w.gsub(/[\s<']/, '')}}.flatten
       end
 
       def parse(source, path, filter)
@@ -75,7 +75,11 @@ module Cucumber
         return @keywords[key] if raw
         return nil unless @keywords[key]
         values = @keywords[key].to_s.split('|')
-        values.map{|value| "'#{value}'"}.join(" / ")
+        if ['given', 'when', 'and', 'then', 'but'].include? key
+          values.map{|value| %Q{"#{keyword_space(value)}"}}.join(" / ")
+        else
+          values.map{|value| %Q{"#{(value)}"}}.join(" / ")
+        end 
       end
 
       def incomplete?
@@ -95,11 +99,13 @@ module Cucumber
       end
 
       def step_keywords
-        %w{given when then and but}.map{|key| @keywords[key].split('|')}.flatten.uniq
+        %w{given when then and but}.map{|key| @keywords[key].split('|').map{|kw| keyword_space(kw).delete("'")}}.flatten.uniq
       end
 
-      def space_after_keyword
-        @keywords['space_after_keyword']
+      private
+ 
+      def keyword_space(val)
+        (val + ' ').sub(/< $/,'')
       end
     end
   end

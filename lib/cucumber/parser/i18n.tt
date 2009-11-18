@@ -2,10 +2,8 @@ module Cucumber
   module Parser
     module I18n
       grammar <%= keywords('grammar_name', true) %>
-        include Common
         include Feature
         include Table
-        include PyString
 
         rule feature
           feature_sub
@@ -29,10 +27,6 @@ module Cucumber
           (<%= keywords('then') %>) /
           (<%= keywords('and') %>) /
           (<%= keywords('but') %>)
-        end
-
-        rule keyword_space
-          <%= keywords('space_after_keyword', true) ? 'space+' : 'space*' %>
         end
 
         rule examples_keyword
