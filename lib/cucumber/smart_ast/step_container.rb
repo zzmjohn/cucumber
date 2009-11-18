@@ -1,17 +1,22 @@
-require 'cucumber/smart_ast/steps'
 require 'cucumber/smart_ast/comments'
 require 'cucumber/smart_ast/tags'
+require 'cucumber/smart_ast/step'
 require 'cucumber/smart_ast/table'
 require 'cucumber/smart_ast/py_string'
 
 module Cucumber
   module SmartAst
     class StepContainer
-      include Steps
-
-      attr_reader :name, :description, :line
+      attr_reader :name, :description, :line, :steps
       def initialize(name, description, line)
         @name, @description, @line = name, description, line
+        @steps = []
+      end
+
+      def step(adverb, body, line)
+        step = Step.new(adverb, body, line)
+        @steps << step
+        step
       end
 
       def table(rows, line)
