@@ -9,9 +9,9 @@ module Cucumber
         background = ast.bg
         ast.scenarios.each do |scenario|
           if background
-            background.steps { |step| invoke(step) }
+            background.steps.each { |step| invoke(step) }
           end
-          scenario.steps { |step| invoke(step) }
+          scenario.steps.each { |step| invoke(step) }
         end
       end
 
