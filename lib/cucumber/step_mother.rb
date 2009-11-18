@@ -46,6 +46,7 @@ module Cucumber
       @programming_languages = []
       @language_map = {}
       @current_scenario = nil
+      @adverbs = []
     end
 
     def load_code_files(step_def_files)
@@ -73,6 +74,7 @@ module Cucumber
       return @language_map[ext] if @language_map[ext]
       programming_language_class = constantize("Cucumber::#{ext.capitalize}Support::#{ext.capitalize}Language")
       programming_language = programming_language_class.new(self)
+      programming_language.alias_adverbs(@adverbs)
       @programming_languages << programming_language
       @language_map[ext] = programming_language
       programming_language
@@ -250,7 +252,6 @@ module Cucumber
     end
 
     def register_adverbs(adverbs) #:nodoc:
-      @adverbs ||= []
       @adverbs += adverbs
       @adverbs.uniq!
       @programming_languages.each do |programming_language|
