@@ -8,10 +8,12 @@ module Cucumber
       def execute(ast)
         background = ast.bg
         ast.scenarios.each do |scenario|
-          if background
-            background.steps.each { |step| invoke(step) }
+          @step_mother.before_and_after(scenario) do 
+            if background
+              background.steps.each { |step| invoke(step) }
+            end
+            scenario.steps.each { |step| invoke(step) }
           end
-          scenario.steps.each { |step| invoke(step) }
         end
       end
 

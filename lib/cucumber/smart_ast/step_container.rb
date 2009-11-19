@@ -7,6 +7,8 @@ require 'cucumber/smart_ast/py_string'
 module Cucumber
   module SmartAst
     class StepContainer
+      attr_accessor :feature
+      
       attr_reader :name, :description, :line, :steps
       def initialize(name, description, line)
         @name, @description, @line = name, description, line
@@ -25,6 +27,18 @@ module Cucumber
 
       def py_string(start_col, content, line)
         steps.last.argument = PyString.new(start_col, content, line)
+      end
+      
+      def language
+        @feature.language
+      end
+      
+      def accept_hook?(hook)
+        true
+      end
+      
+      def status
+        :passed
       end
     end
   end

@@ -24,7 +24,9 @@ module Cucumber
       end
 
       def scenario(name, description, line)
-        @current = @ast.scenario(Scenario.new(name, description, line))
+        scenario = Scenario.new(name, description, line)
+        scenario.feature = @ast
+        @current = @ast.scenario(scenario)
         register_tags(@current)
       end
 
