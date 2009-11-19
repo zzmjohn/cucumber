@@ -35,7 +35,7 @@ module Cucumber
       end
       
       def adverbs
-        %w{given when then and but}.map{|keyword| @keywords[keyword].split('|').map{|w| w.gsub(/\s/, '')}}.flatten
+        %w{given when then and but}.map{|keyword| @keywords[keyword].split('|').map{|w| w.gsub(/[\s<']/, '')}}.flatten
       end
 
       def parse(source, path, filter)
@@ -49,7 +49,7 @@ module Cucumber
       end
 
       def register_adverbs(step_mother)
-        adverbs = %w{given when then and but}.map{|keyword| @keywords[keyword].split('|').map{|w| w.gsub(/[\s<']/, '')}}.flatten
+        adverbs = step_keywords.map{|w| w.gsub(/[\s']/, '')}.flatten
         step_mother.register_adverbs(adverbs) if step_mother
       end
 
