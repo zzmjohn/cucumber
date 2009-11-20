@@ -13,6 +13,7 @@ module Cucumber
       def initialize(name, description, line)
         @name, @description, @line = name, description, line
         @steps = []
+        yield self if block_given?
       end
 
       def step(adverb, name, line)
