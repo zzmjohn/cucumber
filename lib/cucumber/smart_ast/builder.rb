@@ -14,35 +14,35 @@ module Cucumber
         @tag_cache = []
       end
 
-      def feature(name, description, line)
-        @ast.feature(name, description, line)
+      def feature(kw, description, line)
+        @ast.feature(kw, description, line)
         register_tags(@ast)
       end
 
-      def background(name, description, line)
-        background = Background.new(name, description, line) { |bg| bg.feature = @ast }
+      def background(kw, description, line)
+        background = Background.new(kw, description, line) { |bg| bg.feature = @ast }
         @current = @ast.background(background)
       end
 
-      def scenario(name, description, line)
-        scenario = Scenario.new(name, description, line) { |s| s.feature = @ast }
+      def scenario(kw, description, line)
+        scenario = Scenario.new(kw, description, line) { |s| s.feature = @ast }
         @current = @ast.scenario(scenario)
         register_tags(@current)
       end
 
-      def scenario_outline(name, description, line)
-        scenario_outline = ScenarioOutline.new(name, description, line) { |so| so.feature = @ast }
+      def scenario_outline(kw, description, line)
+        scenario_outline = ScenarioOutline.new(kw, description, line) { |so| so.feature = @ast }
         @current = @ast.scenario_outline(scenario_outline)
         register_tags(@current)
       end
 
-      def examples(name, description, line)
-        @current = @ast.examples(Examples.new(name, description, line) { |ex| ex.feature = @ast })
+      def examples(kw, description, line)
+        @current = @ast.examples(Examples.new(kw, description, line) { |ex| ex.feature = @ast })
         register_tags(@current)
       end
 
-      def step(adverb, name, line)
-        @current.step(adverb, name, line)
+      def step(adverb, kw, line)
+        @current.step(adverb, kw, line)
       end
 
       def table(rows, line)

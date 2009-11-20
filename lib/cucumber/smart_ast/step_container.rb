@@ -8,10 +8,10 @@ module Cucumber
   module SmartAst
     class StepContainer
       attr_accessor :feature, :steps
-      attr_reader :name, :description, :line
+      attr_reader :kw, :description, :line
       
-      def initialize(name, description, line)
-        @name, @description, @line = name, description, line
+      def initialize(kw, description, line)
+        @kw, @description, @line = kw, description, line
         @steps = []
         yield self if block_given?
       end
@@ -29,10 +29,14 @@ module Cucumber
       def py_string(start_col, content, line)
         steps.last.argument = PyString.new(start_col, content, line)
       end
-            
+         
+      def name
+        "#{@kw}: #{@description}"
+      end
+           
       def language
         @feature.language
-      end      
+      end
     end
   end
 end

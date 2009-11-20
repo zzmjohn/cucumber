@@ -6,13 +6,17 @@ module Cucumber
       include Tags
       
       attr_writer :steps, :feature
-      def initialize(name, description, line)
-        @name, @description, @line = name, description, line
+      def initialize(kw, description, line)
+        @kw, @description, @line = kw, description, line
         yield self if block_given?
       end
 
       def table(rows, line)
         @table = Table.new(rows, line)
+      end
+      
+      def name
+        "#{@kw}: #{@description}"
       end
       
       def scenarios
