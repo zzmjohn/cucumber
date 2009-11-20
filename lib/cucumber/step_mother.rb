@@ -46,6 +46,7 @@ module Cucumber
       @programming_languages = []
       @language_map = {}
       @current_scenario = nil
+      @adverbs = []
     end
 
     def load_code_files(step_def_files)
@@ -73,6 +74,7 @@ module Cucumber
       return @language_map[ext] if @language_map[ext]
       programming_language_class = constantize("Cucumber::#{ext.capitalize}Support::#{ext.capitalize}Language")
       programming_language = programming_language_class.new(self)
+      programming_language.alias_adverbs(@adverbs)
       @programming_languages << programming_language
       @language_map[ext] = programming_language
       programming_language
@@ -141,13 +143,12 @@ module Cucumber
     #   })
     def invoke_steps(steps_text, natural_language)
       ored_keywords = natural_language.step_keywords.join("|")
-      after_keyword = natural_language.space_after_keyword ? ' ' : ''
       # TODO Gherkin:
       # This a bit hacky and fragile. When we move to Gherkin we should replace this entire method body
       # with a call to the parser - parsing the body of a scenario. We may need to put the parser/policy in the
       # appropriate state (the same state it's in after parsing a Scenario: line).
       steps_text.strip.split(/(?=^\s*(?:#{ored_keywords}))/).map { |step| step.strip }.each do |step|
-        output = step.match(/^\s*(#{ored_keywords})#{after_keyword}([^\n]+)(\n.*)?$/m)
+        output = step.match(/^\s*(#{ored_keywords})([^\n]+)(\n.*)?$/m)
 
         action, step_name, table_or_string = output[1], output[2], output[3]
         if table_or_string.to_s.strip =~ /^\|/
@@ -251,7 +252,6 @@ module Cucumber
     end
 
     def register_adverbs(adverbs) #:nodoc:
-      @adverbs ||= []
       @adverbs += adverbs
       @adverbs.uniq!
       @programming_languages.each do |programming_language|

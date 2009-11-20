@@ -1,5 +1,6 @@
 <% nowip = 'features --format progress --strict --tags ~@wip' %>
-default:     <%= nowip %>
-jruby:       <%= nowip %>,~@spork
+default: <%= nowip %>
+jruby: <%= nowip %>,~@spork
+run_code_run: <%= nowip %>,~@spork
 windows_mri: <%= nowip %>,~@spork
-wip: --tags @wip --wip features
+wip: --tags @wip:3 --wip features
