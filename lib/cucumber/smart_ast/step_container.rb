@@ -32,15 +32,7 @@ module Cucumber
             
       def language
         @feature.language
-      end
-      
-      def accept_hook?(hook)
-       true
-      end
-      
-      def status
-        :passed
-      end
+      end      
     end
   end
 end
