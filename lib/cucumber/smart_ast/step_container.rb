@@ -6,7 +6,7 @@ require 'cucumber/smart_ast/py_string'
 
 module Cucumber
   module SmartAst
-    class StepContainer
+    class StepContainer      
       attr_accessor :feature
       
       attr_reader :name, :description, :line, :steps

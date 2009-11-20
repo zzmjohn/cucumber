@@ -20,22 +20,16 @@ module Cucumber
       end
 
       def background(name, description, line)
-        background = Background.new(name, description, line)
-        background.feature = @ast
-        @current = @ast.background(background)
+        @current = @ast.background(build(Background, name, description, line))
       end
 
       def scenario(name, description, line)
-        scenario = Scenario.new(name, description, line)
-        scenario.feature = @ast
-        @current = @ast.scenario(scenario)
+        @current = @ast.scenario(build(Scenario, name, description, line))
         register_tags(@current)
       end
 
       def scenario_outline(name, description, line)
-        scenario_outline = ScenarioOutline.new(name, description, line)
-        scenario_outline.feature = @ast
-        @current = @ast.scenario_outline(scenario_outline)
+        @current = @ast.scenario_outline(build(ScenarioOutline, name, description, line))
         register_tags(@current)
       end
 
@@ -70,6 +64,11 @@ module Cucumber
         @tag_cache.clear
       end
     
+      def build(klass, name, description, line)
+        obj = klass.new(name, description, line)
+        obj.feature = @ast
+        obj
+      end
     end
   end
 end

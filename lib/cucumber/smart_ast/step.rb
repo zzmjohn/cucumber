@@ -1,11 +1,24 @@
 module Cucumber
   module SmartAst
-    class Step 
+    class Step
       attr_accessor :argument
       attr_reader :adverb, :name, :line
+      
       def initialize(adverb, name, line)
         @adverb, @name, @line = adverb, name, line
-      end      
+      end
+      
+      def interpolate(args)
+        name = @name.dup
+        args.each_pair { |k, v| name.gsub!(/<#{k}>/, v) }
+        step = self.class.new(@adverb, name, @line)
+        step.argument = @argument if @argument
+        step
+      end
+      
+      def ==(obj)
+        @name == obj.name
+      end
     end
   end
 end
