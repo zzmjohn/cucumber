@@ -37,7 +37,7 @@ module Cucumber
       end
 
       def examples(name, description, line)
-        @current = @ast.examples(Examples.new(name, description, line))
+        @current = @ast.examples(Examples.new(name, description, line) { |ex| ex.feature = @ast })
         register_tags(@current)
       end
 
