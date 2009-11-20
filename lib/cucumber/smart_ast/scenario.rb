@@ -12,7 +12,7 @@ module Cucumber
       end
       
       def accept_hook?(hook)
-       true
+        false
       end
       
       def status
