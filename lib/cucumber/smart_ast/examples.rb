@@ -5,7 +5,6 @@ module Cucumber
     class Examples 
       include Tags
       
-      attr_reader :table
       def initialize(name, description, line)
         @name, @description, @line = name, description, line
       end
