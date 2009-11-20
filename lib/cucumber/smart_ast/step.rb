@@ -5,7 +5,7 @@ module Cucumber
       attr_reader :adverb, :name, :line
       def initialize(adverb, name, line)
         @adverb, @name, @line = adverb, name, line
-      end
+      end      
     end
   end
 end

@@ -20,7 +20,9 @@ module Cucumber
       end
 
       def background(name, description, line)
-        @current = @ast.background(Background.new(name, description, line))
+        background = Background.new(name, description, line)
+        background.feature = @ast
+        @current = @ast.background(background)
       end
 
       def scenario(name, description, line)
@@ -31,7 +33,9 @@ module Cucumber
       end
 
       def scenario_outline(name, description, line)
-        @current = @ast.scenario_outline(ScenarioOutline.new(name, description, line))
+        scenario_outline = ScenarioOutline.new(name, description, line)
+        scenario_outline.feature = @ast
+        @current = @ast.scenario_outline(scenario_outline)
         register_tags(@current)
       end
 
@@ -65,6 +69,7 @@ module Cucumber
         @tag_cache.each { |tag| @current.tag(tag[0], tag[1]) }
         @tag_cache.clear
       end
+    
     end
   end
 end
