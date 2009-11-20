@@ -39,6 +39,10 @@ module Cucumber
         @scenario_outlines.last.examples(examples)
       end
 
+      def name
+        "#{@name}: #{@description}"
+      end
+      
       def adverbs
         @language.adverbs
       end

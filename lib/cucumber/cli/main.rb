@@ -57,13 +57,12 @@ module Cucumber
         step_mother.load_code_files(configuration.step_defs_to_load)
 
         enable_diffing
-
-        runner = configuration.build_runner(step_mother, @out_stream)
-        step_mother.visitor = runner # Needed to support World#announce
         
         if(step_mother.options[:parser] == :gherkin)
-          execute_ast(features, step_mother, runner)
+          execute_ast(features, step_mother)
         else
+          runner = configuration.build_runner(step_mother, @out_stream)
+          step_mother.visitor = runner # Needed to support World#announce
           runner.visit_features(features)
         end
 
@@ -121,16 +120,11 @@ module Cucumber
         end
       end
 
-      def execute_ast(features, step_mother, runner)
+      def execute_ast(features, step_mother)
         require 'cucumber/smart_ast/executor'
-        features.each do |feature|
-          executor = SmartAst::Executor.new(step_mother)
-          executor.execute(feature)
-          # builder = SemanticModel::Compiler.new(step_mother)
-          # builder.visit_feature(feature)
-          # runtime = SemanticModel::Runtime.new
-          # runtime.execute(builder.root)
-        end
+        executor = SmartAst::Executor.new(step_mother, configuration.formatters(step_mother), configuration.options, @out_stream)
+        executor.visit_features(features)
+        features.each { |feature| executor.execute(feature) }
       end
 
       def trap_interrupt

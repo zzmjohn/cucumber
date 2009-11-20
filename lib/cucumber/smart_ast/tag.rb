@@ -1,8 +1,9 @@
 module Cucumber
   module SmartAst
     class Tag
-      def initialize(tag, line)
-        @tag, @line = tag, line
+      attr_reader :name
+      def initialize(name, line)
+        @name, @line = name, line
       end
     end
   end
