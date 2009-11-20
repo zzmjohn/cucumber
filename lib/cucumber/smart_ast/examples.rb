@@ -24,7 +24,7 @@ module Cucumber
           end
         end
         scenarios
-      end      
+      end
     end
   end
 end

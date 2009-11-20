@@ -20,7 +20,7 @@ module Cucumber
       end
       
       def fail!(exception)
-        puts "#{@name} #{@description} failed!: #{exception.to_s}"
+        puts "#{@name}: #{@description} failed!"
         raise exception
       end
     end
