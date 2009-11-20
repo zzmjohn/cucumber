@@ -19,6 +19,10 @@ module Cucumber
       def ==(obj)
         @name == obj.name
       end
+      
+      def to_s
+        "#{@adverb} #{@name}"
+      end
     end
   end
 end

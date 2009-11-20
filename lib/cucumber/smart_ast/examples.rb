@@ -1,4 +1,4 @@
-require 'cucumber/smart_ast/step_container'
+require 'cucumber/smart_ast/scenario'
 
 module Cucumber
   module SmartAst
@@ -15,9 +15,13 @@ module Cucumber
       end
       
       def scenarios
-        @table.collect do |row|
-          "Foo"
+        scenarios = []
+        @table.each_with_index do |row, idx|
+          scenario = Scenario.new("Scenario", row.values.join(" | "), @table.line + idx)
+          scenario.steps = @steps.collect { |step| step.interpolate(row) }
+          scenarios << scenario
         end
+        scenarios
       end
     end
   end

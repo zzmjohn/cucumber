@@ -3,7 +3,7 @@ module Cucumber
     class Table
       include Enumerable
       
-      attr_reader :raw
+      attr_reader :raw, :line
       def initialize(rows, line)
         @raw, @line = rows, line
       end
