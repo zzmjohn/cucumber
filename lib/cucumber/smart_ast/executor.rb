@@ -19,43 +19,30 @@ module Cucumber
           end
         end
         
-        ast.scenarios.each do |scenario|
-          broadcast_feature_element(scenario)
-          broadcast_scenario_name(scenario.kw, scenario.description, "placeholder:-1", 0)
-          @step_mother.before_and_after(scenario) do 
-            if background
-              background.steps.each { |step| invoke(step) }
-            end
-            scenario.steps.each do |step| 
-              invoke(step)
-              broadcast_step_name(step.adverb, @step_mother.step_match(step.name), :passed, 0, scenario)
-            end
+        ast.units.each do |unit|
+          unit.steps.unshift(background.steps) if background          
+          broadcast_feature_element(unit)
+          broadcast_scenario_name(unit.kw, unit.description, "placeholder:-1", 0)
+          @step_mother.execute(unit)
+          unit.steps.each do |step|
+            broadcast_step_name(step.adverb, @step_mother.step_match(step.name), :passed, 0, unit)
           end
         end
         
-        ast.scenario_outlines.each do |scenario_outline|
-          scenario_outline.each do |examples|
-            examples.scenarios.each do |scenario|
-              @step_mother.before_and_after(scenario) do
-                if background
-                  background.steps.each { |step| invoke(step) }
-                end
-                scenario.steps.each { |step| invoke(step) }
-              end
-            end
-          end
-        end
+        # ast.scenario_outlines.each do |scenario_outline|
+        #   scenario_outline.each do |examples|
+        #     examples.scenarios.each do |scenario|
+        #       @step_mother.before_and_after(scenario) do
+        #         if background
+        #           background.steps.each { |step| invoke(step) }
+        #         end
+        #         scenario.steps.each { |step| invoke(step) }
+        #       end
+        #     end
+        #   end
+        # end
       end
-      
-      def invoke(step)
-        # puts "Invoking #{step.to_s}"
-        if step.argument
-          @step_mother.invoke(step.name, step.argument.to_s)
-        else
-          @step_mother.invoke(step.name)
-        end
-      end
-      
+            
       #
       # Copied from ast/tree_walker.rb and modifed
       #

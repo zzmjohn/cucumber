@@ -4,7 +4,7 @@ module Cucumber
   module SmartAst
     class Unit < Scenario
       def accept_hook?(hook)
-        false
+        true
       end
       
       def status

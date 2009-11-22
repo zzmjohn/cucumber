@@ -1,4 +1,5 @@
 require 'cucumber/smart_ast/tags'
+require 'cucumber/smart_ast/unit'
 
 module Cucumber
   module SmartAst
@@ -37,6 +38,16 @@ module Cucumber
       
       def adverbs
         @language.adverbs
+      end
+      
+      def units
+        scenarios.collect do |scenario|
+          Unit.new(scenario.kw, scenario.description, scenario.line) do |unit|
+            unit.steps << scenario.steps.dup
+            unit.steps.flatten!
+            unit.feature = self
+          end
+        end
       end
     end
   end

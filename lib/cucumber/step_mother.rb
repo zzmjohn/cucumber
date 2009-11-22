@@ -134,6 +134,14 @@ module Cucumber
         raise e
       end
     end
+    
+    def execute(unit)
+      before_and_after(unit) do
+        unit.steps.each do |step|
+          invoke(step.name, (step.argument.to_s if step.argument))
+        end
+      end
+    end
 
     # Invokes a series of steps +steps_text+. Example:
     #
