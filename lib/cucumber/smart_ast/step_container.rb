@@ -28,15 +28,7 @@ module Cucumber
 
       def py_string(start_col, content, line)
         steps.last.argument = PyString.new(start_col, content, line)
-      end
-         
-      def name
-        "#{@kw}: #{@description}"
-      end
-           
-      def language
-        @feature.language
-      end
+      end         
     end
   end
 end

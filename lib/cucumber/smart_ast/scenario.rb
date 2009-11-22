@@ -9,20 +9,7 @@ module Cucumber
       
       def each(&block)
         @steps.each { |step| yield step }
-      end
-      
-      def accept_hook?(hook)
-        false
-      end
-      
-      def status
-        :passed
-      end
-      
-      def fail!(exception)
-        puts "#{@name}: #{@description} failed!"
-        raise exception
-      end
+      end      
     end
   end
 end
