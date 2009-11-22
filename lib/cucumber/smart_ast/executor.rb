@@ -10,7 +10,7 @@ module Cucumber
       
       def execute(ast)
         broadcast_feature(ast)
-        background = ast.bg
+        background = ast.background
         
         if background
           broadcast_background(background)

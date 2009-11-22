@@ -5,7 +5,7 @@ module Cucumber
     class Feature
       include Tags
 
-      attr_accessor :language, :features
+      attr_accessor :language, :features, :background
       attr_reader :scenarios, :scenario_outlines
 
       def initialize
@@ -15,14 +15,6 @@ module Cucumber
 
       def feature(name, description, line)
         @name, @description, @line = name, description, line
-      end
-
-      def background(background)
-        @background = background
-      end
-
-      def bg
-        @background
       end
 
       def scenario(scenario)

@@ -20,8 +20,7 @@ module Cucumber
       end
 
       def background(kw, description, line)
-        background = Background.new(kw, description, line) { |bg| bg.feature = @ast }
-        @current = @ast.background(background)
+        @current = @ast.background = Background.new(kw, description, line) { |bg| bg.feature = @ast }
       end
 
       def scenario(kw, description, line)
