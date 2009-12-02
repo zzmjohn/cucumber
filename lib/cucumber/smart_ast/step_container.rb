@@ -26,8 +26,8 @@ module Cucumber
         steps.last.argument = Table.new(rows, line)
       end
 
-      def py_string(start_col, content, line)
-        steps.last.argument = PyString.new(start_col, content, line)
+      def py_string(content, line)
+        steps.last.argument = PyString.new(content, line)
       end         
     end
   end

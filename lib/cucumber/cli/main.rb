@@ -123,7 +123,6 @@ module Cucumber
       def execute_ast(features, step_mother)
         require 'cucumber/smart_ast/executor'
         executor = SmartAst::Executor.new(step_mother, configuration.formatters(step_mother), configuration.options, @out_stream)
-        executor.broadcast_features(features)
         features.each { |feature| executor.execute(feature) }
       end
 

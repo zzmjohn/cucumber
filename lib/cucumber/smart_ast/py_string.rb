@@ -1,8 +1,8 @@
 module Cucumber
   module SmartAst
     class PyString
-      def initialize(start_col, content, line)
-        @start_col, @content, @line = start_col, content, line
+      def initialize(content, line)
+        @content, @line = content, line
       end
 
       # def to_s

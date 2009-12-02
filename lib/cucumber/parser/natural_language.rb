@@ -78,7 +78,7 @@ module Cucumber
 
       def new_gherkin_parser(builder)
         require "gherkin"
-        Gherkin::Feature.new(@lang, builder)
+        Gherkin::Lexer[@lang].new(builder)
       end
 
       def incomplete?

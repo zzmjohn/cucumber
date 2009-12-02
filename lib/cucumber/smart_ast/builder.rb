@@ -48,8 +48,8 @@ module Cucumber
         @current.table(rows, line)
       end
 
-      def py_string(start_col, content, line)
-        @current.py_string(start_col, content, line)
+      def py_string(content, line)
+        @current.py_string(content, line)
       end
 
       def tag(tag, line)
