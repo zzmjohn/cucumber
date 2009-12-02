@@ -4,10 +4,6 @@ module Cucumber
       def initialize(content, line)
         @content, @line = content, line
       end
-
-      # def to_s
-      #   @content
-      # end
       
       # copied from ast/py_string and modified
       attr_accessor :file
@@ -22,7 +18,7 @@ module Cucumber
       # end
 
       def to_s
-        @content.indent(-@start_col)
+        @content
       end
 
       # def accept(visitor)
@@ -36,7 +32,7 @@ module Cucumber
           value ||= ''
           string = string.gsub(name, value)
         end
-        PyString.new(@start_col, string, @start_line)
+        PyString.new(string, @start_line)
       end
 
       def has_text?(text)
