@@ -29,7 +29,7 @@ module Cucumber
       end
       
       def load_features(content)
-        parser = Parsers::Gherkin.new 
+        parser = Parsers::Treetop.new 
         features = Ast::Features.new
         features.add_feature(parser.parse(content, 'spec.feature', nil, options))
         features

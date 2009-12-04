@@ -19,7 +19,7 @@ module Cucumber
       @feature_loader = FeatureLoader.new
       @feature_loader.log = @log
 
-      @gherkin_parser = mock('gherkin parser', :parse => mock('feature', :features= => true, :adverbs => []), :format => :gherkin)
+      @gherkin_parser = mock('gherkin parser', :parse => mock('feature', :features= => true, :adverbs => []), :format => :treetop)
       @feature_loader.register_parser(@gherkin_parser)
 
       @feature_loader.instantiate_plugins!

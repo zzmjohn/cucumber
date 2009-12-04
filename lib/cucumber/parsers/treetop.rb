@@ -3,18 +3,17 @@ require 'cucumber/filter'
 
 module Cucumber
   module Parsers
-    class Gherkin
+    class Treetop
       LANGUAGE_PATTERN = /language\s*:\s*(.*)/ #:nodoc:
 
       def format
-        :gherkin
+        :treetop
       end
       
       # Parses a file and returns a Cucumber::Ast
       # If +options+ contains :tag_names or :name_regexps, the result will
       # be filtered.
       def parse(content, path, lines, options)
-        puts "Using Gherkin parser"
         filter = Filter.new(lines, options)
         language = load_natural_language(lang(content) || options[:lang] || 'en')
         language.parse(content, path, filter)
