@@ -48,11 +48,6 @@ module Cucumber
         parser.parse_or_fail(source, path, filter)
       end
 
-      # def register_adverbs(step_mother)
-      #   adverbs = step_keywords.map{|w| w.gsub(/[\s']/, '')}.flatten
-      #   step_mother.register_adverbs(adverbs) if step_mother
-      # end
-
       # Treetop parser
       def parser
         return @parser if @treetop_parser
