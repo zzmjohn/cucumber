@@ -1,5 +1,7 @@
 require 'gherkin'
+require 'gherkin/i18n'
 require 'cucumber/filter'
+require 'cucumber/smart_ast/builder'
 
 module Cucumber
   module Parsers
@@ -16,10 +18,26 @@ module Cucumber
       def parse(content, path, lines, options)
         puts "Using Gherkin parser"
         filter = Filter.new(lines, options)
-        language = load_natural_language(lang(content) || options[:lang] || 'en')
-        language.parse(content, path, filter)
+        
+        builder = SmartAst::Builder.new
+        parser = ::Gherkin::Parser.new(builder, true, "root")
+        
+        # TODO: I18n Lexer should attach the proper instance of I18n to the Lexer it 
+        # returns so we don't need to find it separately; the adverbs method should be 
+        # added to the I18n class in Gherkin proper.
+        language = ::Gherkin::I18n.get(lang(content) || 'en')
+        def language.adverbs
+          %w{given when then and but}.map{|keyword| @keywords[keyword].split('|').map{|w| w.gsub(/[\s<']/, '')}}.flatten
+        end
+
+        lexer = ::Gherkin::I18nLexer.new(parser)
+        lexer.scan(content)
+        
+        # builder.language = lexer.language
+        builder.language = language
+        builder.ast        
       end
-      
+    
       def lang(content)
         line_one = content.split(/\n/)[0]
         if line_one =~ LANGUAGE_PATTERN
@@ -27,23 +45,7 @@ module Cucumber
         else
           nil
         end
-      end
-      
-      def load_natural_language(lang)
-        Parser::NaturalLanguage.get(lang)
-      end
-      
-      def gherkin_parse(source, path, filter)
-        require 'cucumber/smart_ast/builder'
-
-        builder = SmartAst::Builder.new
-        new_gherkin_parser(builder).scan(source)
-        builder.ast
-      end
-
-      def new_gherkin_parser(builder)
-        Gherkin::Lexer[@lang].new(builder)
-      end
+      end      
     end
   end
 end

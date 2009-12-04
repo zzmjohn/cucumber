@@ -58,6 +58,10 @@ module Cucumber
 
       def comment(comment, line)
       end
+      
+      def language=(language)
+        @ast.language = language
+      end
 
       private
 
