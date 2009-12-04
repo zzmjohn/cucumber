@@ -6,7 +6,7 @@ Feature: Pluggable parsers
   @wip
   Scenario: Gherkin plugin
     Given a standard Cucumber project directory structure
-    And a file named "features/gherkin.feature" with:
+    And a file named "features/feature.gherkin" with:
       """
       Feature: Use the gherkin parser
 
@@ -14,7 +14,7 @@ Feature: Pluggable parsers
           Given the Furtwangler has become vicious
           Then it should explode and spare us the whining
       """  
-    When I run cucumber --dry-run --plugin cucumber/parsers/gherkin.rb features/gherkin.feature
+    When I run cucumber --dry-run --plugin cucumber/parsers/gherkin.rb features/feature.gherkin
     Then it should pass with
       """
       Using Gherkin parser

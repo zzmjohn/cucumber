@@ -1,4 +1,4 @@
-require 'cucumber/parser/natural_language'
+require 'gherkin'
 require 'cucumber/filter'
 
 module Cucumber
@@ -31,6 +31,18 @@ module Cucumber
       
       def load_natural_language(lang)
         Parser::NaturalLanguage.get(lang)
+      end
+      
+      def gherkin_parse(source, path, filter)
+        require 'cucumber/smart_ast/builder'
+
+        builder = SmartAst::Builder.new
+        new_gherkin_parser(builder).scan(source)
+        builder.ast
+      end
+
+      def new_gherkin_parser(builder)
+        Gherkin::Lexer[@lang].new(builder)
       end
     end
   end

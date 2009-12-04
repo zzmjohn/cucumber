@@ -1,5 +1,6 @@
 require 'cucumber/formatter/duration'
 require 'cucumber/parsers/treetop'
+require 'cucumber/parsers/gherkin'
 require 'uri'
 
 module Cucumber
@@ -35,6 +36,7 @@ module Cucumber
       @format_rules = {}
       @parsers = {}
       register_parser(Parsers::Treetop.new)
+      register_parser(Parsers::Gherkin.new)
     end
 
     def instantiate_plugins!
@@ -104,7 +106,7 @@ module Cucumber
       matches = @format_rules.select { |rule, _| rule.match(name) }
       if matches.empty?
         format = name.split('.').last.to_sym
-        @parsers[format] || @parsers[:treetop]
+        @parsers[format] || @parsers[:treetop] # Change back to :gherkin when Gherkin replaces Treetop
       elsif matches.length > 1
         raise AmbiguousFormatRules.new(name, matches)
       else
