@@ -82,10 +82,9 @@ module Cucumber
     end
         
     it "should allow a format rule to override extension-based format determination" do
-      textile_parser = mock('textile parser', :format => :textile)
+      textile_parser = mock('textile parser', :format => :textile, :format_rules => { /\.txt$/ => :textile })
       textile_parser.should_receive(:parse).once
       
-      @feature_loader.register_format_rule(/\.txt$/, :textile)
       @feature_loader.register_parser(textile_parser)
       @feature_loader.load_feature("example.txt")
     end
@@ -95,13 +94,12 @@ module Cucumber
       @feature_loader.load_feature("example")
     end
     
-    it "should allow a format rule set to formats for the same extension via location" do
-      textile_parser = mock('textile parser', :format => :textile)
-      textile_parser.should_receive(:parse).once      
+    it "should allow format rules to enable parsing features with the same extension in different formats" do
+      textile_parser = mock('textile parser', :format => :textile, :format_rules => { /features\/test\/\w+\.feature$/ => :textile })
+      textile_parser.should_receive(:parse).once
       @gherkin_parser.should_receive(:parse).once
       
       @feature_loader.register_parser(textile_parser)
-      @feature_loader.register_format_rule(/features\/test\/\w+\.feature$/, :textile)
       @feature_loader.load_feature("features/example.feature")
       @feature_loader.load_feature("features/test/example.feature")
     end

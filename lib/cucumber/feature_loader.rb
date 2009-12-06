@@ -25,14 +25,7 @@ module Cucumber
       def register_parser(parser_class)
         @@parser_plugins ||= []
         @@parser_plugins << parser_class
-      end
-      
-      # Should not exist as class method, instantiating a parser should check
-      # for format rules defined on the parser plugin
-      def register_format_rule(rule, format)
-        @@format_rules ||= {}
-        @@format_rules[rule] = format
-      end
+      end      
     end
 
     SOURCE_COLON_LINE_PATTERN = /^([\w\W]*?):([\d:]+)$/ #:nodoc:
@@ -53,8 +46,6 @@ module Cucumber
       @@parser_plugins.each do |parser_class|
         register_parser(parser_class.new)
       end
-      
-      @format_rules.merge!(@@format_rules) if defined?(@@format_rules)
     end
     
     def register_input(input)
@@ -65,6 +56,12 @@ module Cucumber
     def register_parser(parser)
       @parsers ||= {}
       @parsers[parser.format] = parser
+      
+      if parser.respond_to?(:format_rules)
+        parser.format_rules.each_pair do |rule, format| 
+          register_format_rule(rule, format)
+        end
+      end
     end
     
     def register_format_rule(rule, format)
