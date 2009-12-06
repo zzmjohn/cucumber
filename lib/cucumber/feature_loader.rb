@@ -1,5 +1,4 @@
 require 'cucumber/formatter/duration'
-require 'cucumber/parsers/treetop'
 require 'cucumber/parsers/gherkin'
 require 'uri'
 

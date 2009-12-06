@@ -1,9 +1,13 @@
+require 'cucumber/plugin'
 require 'cucumber/parser/natural_language'
 require 'cucumber/filter'
 
 module Cucumber
   module Parsers
     class Treetop
+      extend Cucumber::Plugin
+      register_parser(self)
+      
       LANGUAGE_PATTERN = /language\s*:\s*(.*)/ #:nodoc:
 
       def format
