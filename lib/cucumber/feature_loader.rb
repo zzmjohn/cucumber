@@ -17,15 +17,9 @@ module Cucumber
   
   class FeatureLoader
     class << self
-      def register_input(input_class)
-        @@input_plugins ||= []
-        @@input_plugins << input_class
+      def registry
+        @@registry ||= { :inputs => [], :parsers => [] }
       end
-      
-      def register_parser(parser_class)
-        @@parser_plugins ||= []
-        @@parser_plugins << parser_class
-      end      
     end
 
     SOURCE_COLON_LINE_PATTERN = /^([\w\W]*?):([\d:]+)$/ #:nodoc:
@@ -35,26 +29,21 @@ module Cucumber
     include Formatter::Duration
     
     def initialize
+      @inputs = {}
+      @parsers = {}
       @format_rules = {}
     end
 
     def instantiate_plugins!
-      @@input_plugins.each do |input_class|
-        register_input(input_class.new)
-      end
-      
-      @@parser_plugins.each do |parser_class|
-        register_parser(parser_class.new)
-      end
+      @@registry[:inputs].each { |input| register_input(input.new) }
+      @@registry[:parsers].each { |parser| register_parser(parser.new) }
     end
-    
+            
     def register_input(input)
-      @inputs ||= {}
       input.protocols.each { |proto| @inputs[proto] = input }
     end
         
     def register_parser(parser)
-      @parsers ||= {}
       @parsers[parser.format] = parser
       
       if parser.respond_to?(:format_rules)
@@ -65,7 +54,6 @@ module Cucumber
     end
     
     def register_format_rule(rule, format)
-      @format_rules ||= {}
       @format_rules[rule] = format
     end
     
@@ -134,6 +122,6 @@ module Cucumber
         
     def options
       @options ||= {}
-    end
+    end    
   end
 end
