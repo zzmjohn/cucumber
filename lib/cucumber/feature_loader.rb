@@ -30,7 +30,6 @@ module Cucumber
       # Should not exist as class method, instantiating a parser should check
       # for format rules defined on the parser plugin
       def register_format_rule(rule, format)
-        puts "Registering #{rule} for #{format}"
         @@format_rules ||= {}
         @@format_rules[rule] = format
       end

@@ -240,9 +240,8 @@ module Cucumber
           opts.on("--port PORT", "Specify DRb port.  Ignored without --drb") do |port|
             @options[:drb_port] = port
           end
-          opts.on("--parser=PARSER", "Available: gherkin|treetop. Default: #{@options[:parser]}") do |v|
-            options[:parser] = v.to_sym
-            Parser::NaturalLanguage.parser = v.to_sym
+          opts.on("--gherkin", "Use experimental Gherkin parser.") do |v|
+            options[:plugins] << "cucumber/parsers/gherkin.rb"
           end
           opts.on("--plugin=PLUGIN", "Specify a plugin class. Same rules as formatter. Expand this description") do |v|
             options[:plugins] << v
@@ -403,7 +402,6 @@ module Cucumber
           :name_regexps => [],
           :env_vars     => {},
           :diff_enabled => true,
-          :parser       => :treetop,
           :plugins      => default_plugins
         }
       end

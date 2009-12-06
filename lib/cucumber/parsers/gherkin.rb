@@ -21,7 +21,7 @@ module Cucumber
       # If +options+ contains :tag_names or :name_regexps, the result will
       # be filtered.
       def parse(content, path, lines, options)
-        puts "Using Gherkin parser"
+        puts "Parsing #{path} with Gherkin"
         filter = Filter.new(lines, options)
         
         builder = SmartAst::Builder.new
