@@ -404,8 +404,16 @@ module Cucumber
           :env_vars     => {},
           :diff_enabled => true,
           :parser       => :treetop,
-          :plugins      => ['cucumber/inputs/file', 'cucumber/inputs/http']
+          :plugins      => default_plugins
         }
+      end
+      
+      def default_plugins
+        [
+          'cucumber/inputs/file', 
+          'cucumber/inputs/http', 
+          'cucumber/parsers/treetop'
+        ]
       end
     end
 

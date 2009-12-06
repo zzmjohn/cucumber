@@ -19,9 +19,14 @@ module Cucumber
   class FeatureLoader
     class << self
       @@input_plugins = []
+      @@parser_plugins = []
 
       def register_input(input_class)
         @@input_plugins << input_class
+      end
+      
+      def register_parser(parser_class)
+        @@parser_plugins << parser_class
       end
     end
 
@@ -34,7 +39,6 @@ module Cucumber
     def initialize
       @format_rules = {}
       @parsers = {}
-      register_parser(Parsers::Treetop.new)
       register_parser(Parsers::Gherkin.new)
     end
 
@@ -43,6 +47,12 @@ module Cucumber
       @@input_plugins.each do |input_class|
         input = input_class.new
         input.protocols.each { |proto| @inputs[proto] = input }
+      end
+      
+      @parsers ||= {}
+      @@parser_plugins.each do |parser_class|
+        parser = parser_class.new
+        @parsers[parser.format] = parser
       end
     end
 

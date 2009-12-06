@@ -13,14 +13,15 @@ module Cucumber
       @http_input = mock('http input service', :read => "Feature: test", :protocols => [:http, :https])
       Inputs::HTTP.stub!(:new).and_return(@http_input)
 
+      require 'cucumber/parsers/treetop'
+      @gherkin_parser = mock('gherkin parser', :parse => mock('feature', :features= => true, :adverbs => []), :format => :treetop)
+      Parsers::Treetop.stub!(:new).and_return(@gherkin_parser)
+      
       @out = StringIO.new
       @log = Logger.new(@out)
 
       @feature_loader = FeatureLoader.new
       @feature_loader.log = @log
-
-      @gherkin_parser = mock('gherkin parser', :parse => mock('feature', :features= => true, :adverbs => []), :format => :treetop)
-      @feature_loader.register_parser(@gherkin_parser)
 
       @feature_loader.instantiate_plugins!
     end
