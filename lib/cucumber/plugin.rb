@@ -8,8 +8,8 @@ module Cucumber
       FeatureLoader.register_parser(parser_class)
     end
     
-    def register_format_rule(re, format)
-      FeatureLoader.register_format_rule(re, format)
+    def register_format_rule(rule, format)
+      FeatureLoader.register_format_rule(rule, format)
     end
   end
 end

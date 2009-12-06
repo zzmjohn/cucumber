@@ -85,7 +85,7 @@ module Cucumber
       textile_parser = mock('textile parser', :format => :textile)
       textile_parser.should_receive(:parse).once
       
-      @feature_loader.add_format_rule(/\.txt/, :textile)
+      @feature_loader.register_format_rule(/\.txt$/, :textile)
       @feature_loader.register_parser(textile_parser)
       @feature_loader.load_feature("example.txt")
     end
@@ -101,14 +101,14 @@ module Cucumber
       @gherkin_parser.should_receive(:parse).once
       
       @feature_loader.register_parser(textile_parser)
-      @feature_loader.add_format_rule(/features\/test\/\w+\.feature$/, :textile)
+      @feature_loader.register_format_rule(/features\/test\/\w+\.feature$/, :textile)
       @feature_loader.load_feature("features/example.feature")
       @feature_loader.load_feature("features/test/example.feature")
     end
     
     it "should raise AmbiguousFormatRules if two or more format rules match" do
-      @feature_loader.add_format_rule(/\.foo$/, :gherkin)
-      @feature_loader.add_format_rule(/.*/, :gherkin)
+      @feature_loader.register_format_rule(/\.foo$/, :gherkin)
+      @feature_loader.register_format_rule(/.*/, :gherkin)
       lambda { 
         @feature_loader.load_feature("example.foo")
       }.should raise_error(AmbiguousFormatRules)

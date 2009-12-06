@@ -1,11 +1,16 @@
-require 'gherkin'
-require 'gherkin/i18n'
+require 'cucumber/plugin'
 require 'cucumber/filter'
 require 'cucumber/smart_ast/builder'
+require 'gherkin'
+require 'gherkin/i18n'
 
 module Cucumber
   module Parsers
     class Gherkin
+      extend Cucumber::Plugin
+      register_parser(self)
+      register_format_rule(/\.feature$/, :gherkin) # Remove when Gherkin replaces Treetop completely
+      
       LANGUAGE_PATTERN = /language\s*:\s*(.*)/ #:nodoc:
 
       def format

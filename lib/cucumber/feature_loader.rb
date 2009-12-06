@@ -1,5 +1,4 @@
 require 'cucumber/formatter/duration'
-require 'cucumber/parsers/gherkin'
 require 'uri'
 
 module Cucumber
@@ -18,15 +17,22 @@ module Cucumber
   
   class FeatureLoader
     class << self
-      @@input_plugins = []
-      @@parser_plugins = []
-
       def register_input(input_class)
+        @@input_plugins ||= []
         @@input_plugins << input_class
       end
       
       def register_parser(parser_class)
+        @@parser_plugins ||= []
         @@parser_plugins << parser_class
+      end
+      
+      # Should not exist as class method, instantiating a parser should check
+      # for format rules defined on the parser plugin
+      def register_format_rule(rule, format)
+        puts "Registering #{rule} for #{format}"
+        @@format_rules ||= {}
+        @@format_rules[rule] = format
       end
     end
 
@@ -38,29 +44,32 @@ module Cucumber
     
     def initialize
       @format_rules = {}
-      @parsers = {}
-      register_parser(Parsers::Gherkin.new)
     end
 
     def instantiate_plugins!
-      @inputs ||= {}
       @@input_plugins.each do |input_class|
-        input = input_class.new
-        input.protocols.each { |proto| @inputs[proto] = input }
+        register_input(input_class.new)
       end
       
-      @parsers ||= {}
       @@parser_plugins.each do |parser_class|
-        parser = parser_class.new
-        @parsers[parser.format] = parser
+        register_parser(parser_class.new)
       end
+      
+      @format_rules.merge!(@@format_rules) if defined?(@@format_rules)
     end
-
+    
+    def register_input(input)
+      @inputs ||= {}
+      input.protocols.each { |proto| @inputs[proto] = input }
+    end
+        
     def register_parser(parser)
+      @parsers ||= {}
       @parsers[parser.format] = parser
     end
     
-    def add_format_rule(rule, format)
+    def register_format_rule(rule, format)
+      @format_rules ||= {}
       @format_rules[rule] = format
     end
     
