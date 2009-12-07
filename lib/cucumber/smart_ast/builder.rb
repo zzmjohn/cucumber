@@ -65,6 +65,7 @@ module Cucumber
 
       private
 
+      # TODO: do something with +container+ ?
       def register_tags(container)
         @tag_cache.each { |tag| @current.tag(tag[0], tag[1]) }
         @tag_cache.clear
