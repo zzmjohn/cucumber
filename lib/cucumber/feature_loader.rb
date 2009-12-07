@@ -25,7 +25,7 @@ module Cucumber
     SOURCE_COLON_LINE_PATTERN = /^([\w\W]*?):([\d:]+)$/ #:nodoc:
     
     attr_writer :options, :log
-    attr_reader :format_rules
+    attr_accessor :format_rules
     include Formatter::Duration
     
     def initialize
@@ -45,18 +45,11 @@ module Cucumber
         
     def register_parser(parser)
       @parsers[parser.format] = parser
-      
-      if parser.respond_to?(:format_rules)
-        parser.format_rules.each_pair do |rule, format| 
-          register_format_rule(rule, format)
-        end
-      end
-    end
     
-    def register_format_rule(rule, format)
-      @format_rules[rule] = format
+      return unless parser.respond_to?(:format_rules)
+      @format_rules.merge!(parser.format_rules)      
     end
-    
+        
     def protocols
       @inputs.keys
     end

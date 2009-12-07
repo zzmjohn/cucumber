@@ -105,8 +105,8 @@ module Cucumber
     end
     
     it "should raise AmbiguousFormatRules if two or more format rules match" do
-      @feature_loader.register_format_rule(/\.foo$/, :gherkin)
-      @feature_loader.register_format_rule(/.*/, :gherkin)
+      @feature_loader.format_rules.merge!({/\.foo$/ => :gherkin, /.*/ => :gherkin})
+      
       lambda { 
         @feature_loader.load_feature("example.foo")
       }.should raise_error(AmbiguousFormatRules)
