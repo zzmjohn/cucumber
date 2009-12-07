@@ -25,6 +25,10 @@ module Cucumber
 
       @feature_loader.instantiate_plugins!
     end
+    
+    after do
+      FeatureLoader.registry[:format_rules].clear
+    end
 
     it "should split the content name and line numbers from the sources" do
       @file_input.should_receive(:read).with("example.feature")
@@ -82,9 +86,10 @@ module Cucumber
     end
         
     it "should allow a format rule to override extension-based format determination" do
-      textile_parser = mock('textile parser', :format => :textile, :format_rules => { /\.txt$/ => :textile })
+      textile_parser = mock('textile parser', :format => :textile)
       textile_parser.should_receive(:parse).once
       
+      FeatureLoader.registry[:format_rules].store(/\.txt$/, :textile)
       @feature_loader.register_parser(textile_parser)
       @feature_loader.load_feature("example.txt")
     end
@@ -95,18 +100,19 @@ module Cucumber
     end
     
     it "should allow format rules to enable parsing features with the same extension in different formats" do
-      textile_parser = mock('textile parser', :format => :textile, :format_rules => { /features\/test\/\w+\.feature$/ => :textile })
+      textile_parser = mock('textile parser', :format => :textile)
       textile_parser.should_receive(:parse).once
       @gherkin_parser.should_receive(:parse).once
       
+      FeatureLoader.registry[:format_rules].store(/features\/test\/\w+\.feature$/, :textile)
       @feature_loader.register_parser(textile_parser)
       @feature_loader.load_feature("features/example.feature")
       @feature_loader.load_feature("features/test/example.feature")
     end
     
     it "should raise AmbiguousFormatRules if two or more format rules match" do
-      @feature_loader.format_rules.merge!({/\.foo$/ => :gherkin, /.*/ => :gherkin})
-      
+      FeatureLoader.registry[:format_rules].merge!({/\.foo$/ => :gherkin, /.*/ => :gherkin})
+        
       lambda { 
         @feature_loader.load_feature("example.foo")
       }.should raise_error(AmbiguousFormatRules)

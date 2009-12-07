@@ -6,6 +6,10 @@ module Cucumber
     
     def register_parser(parser_class)
       FeatureLoader.registry[:parsers] << parser_class
-    end    
+    end
+    
+    def register_format_rule(rule, format)
+      FeatureLoader.registry[:format_rules].store(rule, format)
+    end
   end
 end

@@ -18,19 +18,17 @@ module Cucumber
   class FeatureLoader
     class << self
       def registry
-        @@registry ||= { :inputs => [], :parsers => [] }
+        @@registry ||= { :inputs => [], :parsers => [], :format_rules => {} }
       end
     end
 
     SOURCE_COLON_LINE_PATTERN = /^([\w\W]*?):([\d:]+)$/ #:nodoc:
     
     attr_writer :options, :log
-    attr_accessor :format_rules
     include Formatter::Duration
     
     def initialize
       @parsers = {}
-      @format_rules = {}
     end
 
     def instantiate_plugins!
@@ -38,16 +36,17 @@ module Cucumber
     end
         
     def register_parser(parser)
-      @parsers[parser.format] = parser
-    
-      return unless parser.respond_to?(:format_rules)
-      @format_rules.merge!(parser.format_rules)      
+      @parsers[parser.format] = parser    
     end
             
     def formats
       @parsers.keys
     end
-        
+    
+    def format_rules
+      @@registry[:format_rules]
+    end
+    
     def load_features(uris)
       feature_suite = Ast::Features.new
 
@@ -96,7 +95,7 @@ module Cucumber
     end
     
     def parser(name)      
-      matches = @format_rules.select { |rule, _| rule.match(name) }
+      matches = format_rules.select { |rule, _| rule.match(name) }
       if matches.empty?
         format = name.split('.').last.to_sym
         @parsers[format] || @parsers[:treetop] # Change back to :gherkin when Gherkin replaces Treetop

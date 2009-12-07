@@ -9,15 +9,12 @@ module Cucumber
     class Gherkin
       extend Cucumber::Plugin
       register_parser(self)
+      register_format_rule(/\.feature$/, :gherkin)
       
       LANGUAGE_PATTERN = /language\s*:\s*(.*)/ #:nodoc:
 
       def format
         :gherkin
-      end
-      
-      def format_rules
-        { /\.feature$/ => :gherkin }
       end
       
       # Parses a file and returns a Cucumber::Ast
