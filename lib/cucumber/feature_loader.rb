@@ -27,26 +27,6 @@ module Cucumber
     attr_writer :options, :log
     include Formatter::Duration
     
-    def initialize
-      @parsers = {}
-    end
-
-    def instantiate_plugins!
-      @@registry[:parsers].each { |parser| register_parser(parser.new) }
-    end
-        
-    def register_parser(parser)
-      @parsers[parser.format] = parser    
-    end
-            
-    def formats
-      @parsers.keys
-    end
-    
-    def format_rules
-      @@registry[:format_rules]
-    end
-    
     def load_features(uris)
       feature_suite = Ast::Features.new
 
@@ -87,10 +67,10 @@ module Cucumber
     end
     
     def inputs
-      @inputs ||= @@registry[:inputs].inject({}) do |inputs, input_class|
-        input = input_class.new
-        input.protocols.each { |proto| inputs[proto] = input }
-        inputs
+      @inputs ||= load(:inputs) do |input_collection, input| 
+        input.protocols.each do |proto| 
+          input_collection[proto] = input
+        end
       end
     end
     
@@ -98,24 +78,48 @@ module Cucumber
       matches = format_rules.select { |rule, _| rule.match(name) }
       if matches.empty?
         format = name.split('.').last.to_sym
-        @parsers[format] || @parsers[:treetop] # Change back to :gherkin when Gherkin replaces Treetop
+        parsers[format] || parsers[:treetop] # Change back to :gherkin when Gherkin replaces Treetop
       elsif matches.length > 1
         raise AmbiguousFormatRules.new(name, matches)
       else
-        @parsers[matches[0].last]
+        parsers[matches[0].last]
       end
+    end
+
+    def parsers
+      @parsers ||= load(:parsers) do |parser_collection, parser| 
+        parser_collection[parser.format] = parser
+      end
+    end
+    
+    def format_rules
+      @format_rules ||= @@registry[:format_rules]
     end
     
     def protocols
       inputs.keys
     end
     
+    def formats
+      parsers.keys
+    end
+            
     def log
       @log ||= Logger.new(STDOUT)
     end
         
     def options
       @options ||= {}
+    end
+    
+    private
+    
+    def load(plugin_type)
+      @@registry[plugin_type].inject({}) do |collection, plugin_class|
+        plugin = plugin_class.new
+        yield collection, plugin
+        collection
+      end
     end    
   end
 end
