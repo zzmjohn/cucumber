@@ -14,14 +14,6 @@ module Cucumber
           @languages ||= {}
         end
 
-        def parser=(treetop_or_gherkin)
-          @parser = treetop_or_gherkin
-        end
-
-        def parser
-          @parser ||= :treetop
-        end
-
         # Used by code generators for other lexer tools like pygments lexer and textmate bundle
         def all(step_mother=nil)
           Cucumber::LANGUAGES.keys.sort.map{|lang| get(step_mother, lang)}
@@ -33,7 +25,6 @@ module Cucumber
         @keywords = Cucumber::LANGUAGES[lang]
         raise "Language not supported: #{lang.inspect}" if @keywords.nil?
         @keywords['grammar_name'] = @keywords['name'].gsub(/\s/, '')
-        @parser = nil
       end
       
       def adverbs
@@ -41,18 +32,9 @@ module Cucumber
       end
 
       def parse(source, path, filter)
-        feature = (self.class.parser == :treetop) ? treetop_parse(source, path, filter) : gherkin_parse(source, path, filter)
+        feature = parser.parse_or_fail(source, path, filter)
         feature.language = self if feature
         feature
-      end
-
-      def treetop_parse(source, path, filter)
-        parser.parse_or_fail(source, path, filter)
-      end
-
-      def register_adverbs(step_mother)
-        adverbs = step_keywords.map{|w| w.gsub(/[\s']/, '')}.flatten
-        step_mother.register_adverbs(adverbs) if step_mother
       end
 
       # Treetop parser
@@ -68,19 +50,6 @@ module Cucumber
           "#<#{self.class.name}>"
         end
         @parser
-      end
-
-      def gherkin_parse(source, path, filter)
-        require 'cucumber/new_ast/builder'
-
-        builder = NewAst::Builder.new
-        new_gherkin_parser(builder).scan(source)
-        builder.ast
-      end
-
-      def new_gherkin_parser(builder)
-        require "gherkin/parser"
-        Gherkin::Parser.new(@lang, builder, false)
       end
 
       def incomplete?

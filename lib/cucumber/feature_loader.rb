@@ -1,5 +1,4 @@
 require 'cucumber/formatter/duration'
-require 'cucumber/parsers/gherkin'
 require 'uri'
 
 module Cucumber
@@ -18,49 +17,16 @@ module Cucumber
   
   class FeatureLoader
     class << self
-      @@input_plugins = []
-
-      def register_input(input_class)
-        @@input_plugins << input_class
+      def registry
+        @@registry ||= { :inputs => [], :parsers => [], :format_rules => {} }
       end
     end
 
     SOURCE_COLON_LINE_PATTERN = /^([\w\W]*?):([\d:]+)$/ #:nodoc:
     
     attr_writer :options, :log
-    attr_reader :format_rules
     include Formatter::Duration
     
-    def initialize
-      @format_rules = {}
-      @parsers = {}
-      register_parser(Parsers::Gherkin.new)
-    end
-
-    def instantiate_plugins!
-      @inputs ||= {}
-      @@input_plugins.each do |input_class|
-        input = input_class.new
-        input.protocols.each { |proto| @inputs[proto] = input }
-      end
-    end
-
-    def register_parser(parser)
-      @parsers[parser.format] = parser
-    end
-    
-    def add_format_rule(rule, format)
-      @format_rules[rule] = format
-    end
-    
-    def protocols
-      @inputs.keys
-    end
-    
-    def formats
-      @parsers.keys
-    end
-        
     def load_features(uris)
       feature_suite = Ast::Features.new
 
@@ -97,21 +63,47 @@ module Cucumber
     def input(name)
       uri = URI.parse(URI.escape(name))
       proto = (uri.scheme || :file).to_sym
-      @inputs[proto] || raise(InputServiceNotFound.new(proto, protocols))
+      inputs[proto] || raise(InputServiceNotFound.new(proto, protocols))
     end
     
-    def parser(name)      
-      matches = @format_rules.select { |rule, _| rule.match(name) }
-      if matches.empty?
-        format = name.split('.').last.to_sym
-        @parsers[format] || @parsers[:gherkin]
-      elsif matches.length > 1
-        raise AmbiguousFormatRules.new(name, matches)
-      else
-        @parsers[matches[0].last]
+    def inputs
+      @inputs ||= load(:inputs) do |input_collection, input| 
+        input.protocols.each do |proto| 
+          input_collection[proto] = input
+        end
       end
     end
     
+    def parser(name)      
+      matches = format_rules.select { |rule, _| rule.match(name) }
+      if matches.empty?
+        format = name.split('.').last.to_sym
+        parsers[format] || parsers[:treetop] # Change back to :gherkin when Gherkin replaces Treetop
+      elsif matches.length > 1
+        raise AmbiguousFormatRules.new(name, matches)
+      else
+        parsers[matches[0].last]
+      end
+    end
+
+    def parsers
+      @parsers ||= load(:parsers) do |parser_collection, parser| 
+        parser_collection[parser.format] = parser
+      end
+    end
+    
+    def format_rules
+      @format_rules ||= @@registry[:format_rules]
+    end
+    
+    def protocols
+      inputs.keys
+    end
+    
+    def formats
+      parsers.keys
+    end
+            
     def log
       @log ||= Logger.new(STDOUT)
     end
@@ -119,5 +111,15 @@ module Cucumber
     def options
       @options ||= {}
     end
+    
+    private
+    
+    def load(plugin_type)
+      @@registry[plugin_type].inject({}) do |collection, plugin_class|
+        plugin = plugin_class.new
+        yield collection, plugin
+        collection
+      end
+    end    
   end
 end

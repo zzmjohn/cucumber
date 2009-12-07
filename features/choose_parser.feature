@@ -1,7 +1,6 @@
-@wip
 Feature: Choose Parser
   In order to let people play with gherkin before we ditch treetop
-  Users should be able to set the parser with --parser.
+  Users should be able to choose the gherkin parser with --gherkin
 
   Scenario: Use Gherkin
     Given a standard Cucumber project directory structure
@@ -16,16 +15,8 @@ Feature: Choose Parser
       Given /G/ do
       end
       """
-    When I run cucumber -q --format pretty --parser gherkin features/f.feature
-    Then STDERR should be empty
-    Then it should pass with
+    When I run cucumber -q --format pretty --gherkin features/f.feature
+    Then the output should contain
       """
-      Feature: F
-
-        Scenario: S
-          Given G
-
-      1 scenario (1 passed)
-      1 step (1 passed)
-
+      Parsing features/f.feature with Gherkin
       """
