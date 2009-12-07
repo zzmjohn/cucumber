@@ -29,18 +29,12 @@ module Cucumber
     include Formatter::Duration
     
     def initialize
-      @inputs = {}
       @parsers = {}
       @format_rules = {}
     end
 
     def instantiate_plugins!
-      @@registry[:inputs].each { |input| register_input(input.new) }
       @@registry[:parsers].each { |parser| register_parser(parser.new) }
-    end
-            
-    def register_input(input)
-      input.protocols.each { |proto| @inputs[proto] = input }
     end
         
     def register_parser(parser)
@@ -49,11 +43,7 @@ module Cucumber
       return unless parser.respond_to?(:format_rules)
       @format_rules.merge!(parser.format_rules)      
     end
-        
-    def protocols
-      @inputs.keys
-    end
-    
+            
     def formats
       @parsers.keys
     end
@@ -94,7 +84,15 @@ module Cucumber
     def input(name)
       uri = URI.parse(URI.escape(name))
       proto = (uri.scheme || :file).to_sym
-      @inputs[proto] || raise(InputServiceNotFound.new(proto, protocols))
+      inputs[proto] || raise(InputServiceNotFound.new(proto, protocols))
+    end
+    
+    def inputs
+      @inputs ||= @@registry[:inputs].inject({}) do |inputs, input_class|
+        input = input_class.new
+        input.protocols.each { |proto| inputs[proto] = input }
+        inputs
+      end
     end
     
     def parser(name)      
@@ -107,6 +105,10 @@ module Cucumber
       else
         @parsers[matches[0].last]
       end
+    end
+    
+    def protocols
+      inputs.keys
     end
     
     def log
