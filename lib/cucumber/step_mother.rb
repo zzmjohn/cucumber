@@ -135,10 +135,15 @@ module Cucumber
       end
     end
     
-    def execute(unit)
+    def execute(unit, &block)
       before_and_after(unit) do
         unit.steps.each do |step|
-          invoke(step.name, (step.argument.to_s if step.argument))
+          begin
+            invoke(step.name, (step.argument.to_s if step.argument))
+            yield "Passed: #{step}"
+          rescue Exception
+            yield "Failed: #{step}"
+          end
         end
       end
     end

@@ -28,7 +28,7 @@ Feature: Pluggable parsers
     Then the output should be
       """
       Parsing features/test_gherkin.feature with Gherkin
-
       Passed: Given the Furtwangler has become vicious
       Failed: Then it should explode and spare us the whining
+
       """
