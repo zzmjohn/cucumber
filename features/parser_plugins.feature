@@ -14,7 +14,7 @@ Feature: Pluggable parsers
           Given the Furtwangler has become vicious
           Then it should explode and spare us the whining
       """  
-    When I run cucumber --gherkin --format pretty
+    When I run cucumber --gherkin --plugin cucumber/parsers/gherkin.rb --format pretty --dry-run
     Then it should pass with
       """
       Parsing features/test_gherkin.feature with Gherkin

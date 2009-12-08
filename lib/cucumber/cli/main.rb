@@ -56,7 +56,7 @@ module Cucumber
 
         enable_diffing
         
-        if(step_mother.options[:gherkin])
+        if(step_mother.options[:parser] == :gherkin)
           execute_ast(features, step_mother)
         else
           runner = configuration.build_runner(step_mother, @out_stream)
