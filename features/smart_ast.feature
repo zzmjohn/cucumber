@@ -41,6 +41,9 @@ Feature: Executing features with the Smart AST
       Given "the Furtwangler has become vicious" do
         pending
       end
+
+      Given "it should explode and spare us the whining" do
+      end
       """
     When I run cucumber --gherkin --format pretty
     Then the output should be

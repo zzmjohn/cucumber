@@ -141,6 +141,10 @@ module Cucumber
           begin
             invoke(step.name, (step.argument.to_s if step.argument))
             yield "Passed: #{step}"
+          rescue Pending
+            yield "Pending: #{step}"
+          rescue Undefined
+            yield "Undefined: #{step}"
           rescue Exception
             yield "Failed: #{step}"
           end
