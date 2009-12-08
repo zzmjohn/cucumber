@@ -1,24 +1,8 @@
-require 'cucumber/smart_ast/scenario'
+require 'cucumber/smart_ast/result'
 
 module Cucumber
   module SmartAst
     class Unit 
-      class Result
-        attr_reader :status, :step
-
-        def initialize(status, step)
-          @status, @step = status, step
-        end
-
-        def to_s
-          "#{status.to_s.capitalize}: #{step}"
-        end
-
-        def failure?
-          [:undefined, :pending, :failed].include?(@status)
-        end
-      end
-
       attr_reader :steps, :language
 
       def initialize(steps, language)
@@ -26,7 +10,7 @@ module Cucumber
       end
 
       def accept_hook?(hook)
-        true
+       true
       end
       
       def status
@@ -42,7 +26,7 @@ module Cucumber
         "#{@kw}: #{@description}"
       end
 
-      def skip!
+      def skip_step_execution!
         @skip = true
       end
 
@@ -52,16 +36,7 @@ module Cucumber
             if @skip
               yield Result.new(:skipped, step)
             else
-              begin
-                step_mother.invoke(step.name, (step.argument.to_s if step.argument))
-                yield Result.new(:passed, step)
-              rescue Pending
-                yield Result.new(:pending, step)
-              rescue Undefined
-                yield Result.new(:undefined, step)
-              rescue Exception
-                yield Result.new(:failed, step)
-              end
+              yield step_mother.execute(step)
             end
           end
         end

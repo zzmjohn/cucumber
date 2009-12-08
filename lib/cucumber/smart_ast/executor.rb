@@ -11,7 +11,7 @@ module Cucumber
       def execute(ast)
         ast.units.each do |unit|
           unit.execute(@step_mother) do |result|
-            unit.skip! if result.failure?
+            unit.skip_step_execution! if result.failure?
             puts result
           end
         end
