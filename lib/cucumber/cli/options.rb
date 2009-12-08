@@ -241,6 +241,7 @@ module Cucumber
             @options[:drb_port] = port
           end
           opts.on("--gherkin", "Use experimental Gherkin parser.") do |v|
+            options[:gherkin] = true
             options[:plugins] << "cucumber/parsers/gherkin.rb"
           end
           opts.on("--plugin=PLUGIN", "Specify a plugin class. Same rules as formatter. Expand this description") do |v|
