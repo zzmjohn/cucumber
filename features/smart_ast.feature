@@ -34,7 +34,6 @@ Feature: Executing features with the Smart AST
 
       """
 
-  @wip
   Scenario: Gherkin plugin pending/skipped steps
     Given a file named "features/step_definitions/steps.rb" with:
       """
