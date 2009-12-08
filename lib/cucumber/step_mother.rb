@@ -135,23 +135,6 @@ module Cucumber
       end
     end
     
-    def execute(unit, &block)
-      before_and_after(unit) do
-        unit.steps.each do |step|
-          begin
-            invoke(step.name, (step.argument.to_s if step.argument))
-            yield "Passed: #{step}"
-          rescue Pending
-            yield "Pending: #{step}"
-          rescue Undefined
-            yield "Undefined: #{step}"
-          rescue Exception
-            yield "Failed: #{step}"
-          end
-        end
-      end
-    end
-
     # Invokes a series of steps +steps_text+. Example:
     #
     #   invoke(%Q{

@@ -10,11 +10,11 @@ module Cucumber
       
       def execute(ast)
         ast.units.each do |unit|
-          @step_mother.execute(unit) do |result|
-            puts result
+          unit.execute(@step_mother) do |result|
+            puts result.to_s
           end
-        end        
-      end            
+        end
+      end
     end
   end
 end
