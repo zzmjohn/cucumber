@@ -42,7 +42,7 @@ module Cucumber
       
       def units
         scenarios.collect do |scenario|
-          Unit.from_scenario(scenario)
+          Unit.new(scenario.steps, scenario.language)
         end
       end
     end
