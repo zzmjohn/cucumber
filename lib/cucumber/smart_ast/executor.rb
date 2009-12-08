@@ -9,16 +9,7 @@ module Cucumber
       end
       
       def execute(ast)
-        background = ast.background
-        
-        if background
-          background.steps.each do |step|
-            puts step
-          end
-        end
-        
         ast.units.each do |unit|
-          unit.steps.unshift(background.steps) if background          
           @step_mother.execute(unit)
           unit.steps.each do |step|
             puts step

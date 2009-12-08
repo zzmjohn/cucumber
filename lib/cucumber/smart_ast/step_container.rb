@@ -29,6 +29,10 @@ module Cucumber
       def py_string(content, line)
         steps.last.argument = PyString.new(content, line)
       end         
+
+      def language
+        feature.language
+      end
     end
   end
 end

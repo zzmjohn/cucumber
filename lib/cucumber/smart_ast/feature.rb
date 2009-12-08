@@ -42,11 +42,7 @@ module Cucumber
       
       def units
         scenarios.collect do |scenario|
-          Unit.new(scenario.kw, scenario.description, scenario.line) do |unit|
-            unit.steps << scenario.steps.dup
-            unit.steps.flatten!
-            unit.feature = self
-          end
+          Unit.from_scenario(scenario)
         end
       end
     end
