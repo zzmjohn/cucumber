@@ -35,7 +35,7 @@ Feature: Executing features with the Smart AST
       """
 
   @wip
-  Scenario: Gherkin plugin pending steps
+  Scenario: Gherkin plugin pending/skipped steps
     Given a file named "features/step_definitions/steps.rb" with:
       """
       Given "the Furtwangler has become vicious" do
@@ -43,10 +43,11 @@ Feature: Executing features with the Smart AST
       end
       """
     When I run cucumber --gherkin --format pretty
-    Then the output should be 
+    Then the output should be
       """
       Parsing features/test_gherkin.feature with Gherkin
       Pending: Given the Furtwangler has become vicious
+      Skipped: Then it should explode and spare us the whining
 
       """
 
