@@ -41,13 +41,22 @@ module Cucumber
       end
       
       def units
-        scenarios.collect do |scenario|
-          Unit.new(scenario.kw, scenario.description, scenario.line) do |unit|
-            unit.steps << scenario.steps.dup
-            unit.steps.flatten!
-            unit.feature = self
+        background_steps = background ? background.steps : []
+        
+        all_scenarios = scenarios.collect do |scenario|
+          Unit.new(background_steps + scenario.steps, (tags + scenario.tags).uniq, scenario.language)
+        end
+        
+        # TODO: Stop touching the parse tree inappropriately
+        scenario_outlines.each do |scenario_outline|
+          scenario_outline.each do |examples|
+            examples.scenarios.each do |scenario|
+              all_scenarios << Unit.new(background_steps + scenario.steps, (tags + scenario.tags).uniq, scenario.language)
+            end
           end
         end
+        
+        all_scenarios
       end
     end
   end

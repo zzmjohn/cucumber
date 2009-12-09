@@ -18,7 +18,7 @@ module Cucumber
       # end
 
       def to_s
-        @content
+        @content.gsub(/\\"/, '"')
       end
 
       # def accept(visitor)

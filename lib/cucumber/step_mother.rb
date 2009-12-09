@@ -1,6 +1,7 @@
 require 'cucumber/constantize'
 require 'cucumber/core_ext/instance_exec'
 require 'cucumber/language_support/language_methods'
+require 'cucumber/smart_ast/result'
 
 module Cucumber
   # Raised when there is no matching StepDefinition for a step.
@@ -134,15 +135,29 @@ module Cucumber
         raise e
       end
     end
-    
-    def execute(unit)
-      before_and_after(unit) do
-        unit.steps.each do |step|
-          invoke(step.name, (step.argument.to_s if step.argument))
-        end
-      end
-    end
 
+    def execute(step) # TODO: combine execute and invoke when Treetop is removed, or have them both return Results
+      status =
+        begin
+          # Oh my goodness!
+          if step.argument && step.argument.kind_of?(SmartAst::PyString)
+            invoke(step.name, step.argument.to_s)
+          elsif step.argument && step.argument.kind_of?(SmartAst::Table)
+            invoke(step.name, step.argument)
+          else
+            invoke(step.name)
+          end
+          :passed
+        rescue Undefined
+          :undefined
+        rescue Pending
+          :pending
+        rescue Exception => e
+          :failed
+        end
+      res = SmartAst::Result.new(status, step, e ? e : nil)
+    end
+    
     # Invokes a series of steps +steps_text+. Example:
     #
     #   invoke(%Q{

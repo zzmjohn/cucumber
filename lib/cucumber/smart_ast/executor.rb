@@ -1,6 +1,9 @@
+require 'cucumber/formatter/ansicolor'
+
 module Cucumber
   module SmartAst
     class Executor
+      include Formatter::ANSIColor
       attr_accessor :options #:nodoc:
       attr_reader   :step_mother #:nodoc:
 
@@ -9,22 +12,31 @@ module Cucumber
       end
       
       def execute(ast)
-        background = ast.background
-        
-        if background
-          background.steps.each do |step|
-            puts step
-          end
-        end
-        
         ast.units.each do |unit|
-          unit.steps.unshift(background.steps) if background          
-          @step_mother.execute(unit)
-          unit.steps.each do |step|
-            puts step
+          unit.execute(@step_mother) do |result|
+            unit.skip_step_execution! if result.failure?
+            @io << colorize(result)
+            @io.puts
           end
-        end        
-      end            
+          @io.flush
+        end
+      end
+      
+      def colorize(result)
+        str = result.to_s
+        case result.status
+        when :passed
+          green(str)
+        when :pending || :undefined
+          yellow(str)
+        when :skipped
+          cyan(str)
+        when :failed
+          red(str)
+        else
+          grey(str)
+        end
+      end
     end
   end
 end
