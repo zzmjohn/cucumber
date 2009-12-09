@@ -14,10 +14,6 @@ module Cucumber
       def accept_hook?(hook)
         Cucumber::Ast::Tags.matches?(@tags, hook.tag_name_lists)
       end
-            
-      # def status
-      #   :passed
-      # end
       
       def fail!(exception)
         puts "Unit failed!"
