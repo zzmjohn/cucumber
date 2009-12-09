@@ -15,20 +15,15 @@ module Cucumber
         Cucumber::Ast::Tags.matches?(@tags, hook.tag_name_lists)
       end
             
-      def status
-        :passed
-      end
+      # def status
+      #   :passed
+      # end
       
       def fail!(exception)
-        # puts "#{@name}: #{@description} failed!"
         puts "Unit failed!"
         raise exception
       end
       
-      def name
-        "#{@kw}: #{@description}"
-      end
-
       def skip_step_execution!
         @skip = true
       end

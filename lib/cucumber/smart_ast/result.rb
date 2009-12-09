@@ -9,7 +9,7 @@ module Cucumber
 
       def to_s
         msg = "#{status.to_s.capitalize}: #{step} on line #{step.line}"
-        msg += @exception.to_s if @exception
+        msg += " #{@exception.to_s}" if @exception
         msg
       end
 

@@ -45,8 +45,11 @@ Feature: Executing features with the Smart AST
       Parsing features/test_gherkin.feature with Gherkin
       Passed: Given some happy little trees on line 4
       Passed: Given the Furtwangler has become vicious on line 7
-      Failed: Then it should explode and spare us the whining on line 8
 
+      """
+    And the output should contain
+      """
+      Failed: Then it should explode and spare us the whining on line 8
       """
 
   Scenario: Pending/skipped steps
