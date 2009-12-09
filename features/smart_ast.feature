@@ -9,6 +9,9 @@ Feature: Executing features with the Smart AST
       """
       Feature: Use the gherkin parser
       
+        Background:
+          Given some happy little trees
+          
         Scenario: Exploding the Furtwangler
           Given the Furtwangler has become vicious
           Then it should explode and spare us the whining
@@ -17,6 +20,12 @@ Feature: Executing features with the Smart AST
         Scenario: Healing the Jackanapes
           Given our pet Jackanapes has scurvy
           Then we should take him to the doctor       
+      """
+    And a file named "features/step_definitions/gherkin_background_steps.rb" with:
+      """
+      Given "some happy little trees" do
+        @little_trees = "happy"
+      end
       """
   
   Scenario: Simple passing/failing
@@ -34,6 +43,7 @@ Feature: Executing features with the Smart AST
     Then the output should contain
       """
       Parsing features/test_gherkin.feature with Gherkin
+      Passed: Given some happy little trees
       Passed: Given the Furtwangler has become vicious
       Failed: Then it should explode and spare us the whining
 
@@ -53,6 +63,7 @@ Feature: Executing features with the Smart AST
     Then the output should contain
       """
       Parsing features/test_gherkin.feature with Gherkin
+      Passed: Given some happy little trees
       Pending: Given the Furtwangler has become vicious
       Skipped: Then it should explode and spare us the whining
 
@@ -73,6 +84,7 @@ Feature: Executing features with the Smart AST
     Then the output should contain
       """
       Before hook!
+      Passed: Given some happy little trees
       Undefined: Given the Furtwangler has become vicious
       Skipped: Then it should explode and spare us the whining
       After hook!
@@ -102,5 +114,6 @@ Feature: Executing features with the Smart AST
     Then the output should contain
       """
       I have been tagged!
+      Passed: Given some happy little trees
       Undefined: Given our pet Jackanapes has scurvy
       """
