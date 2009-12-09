@@ -1,4 +1,5 @@
 require 'cucumber/formatter/ansicolor'
+require 'cucumber/smart_ast/unit'
 
 module Cucumber
   module SmartAst

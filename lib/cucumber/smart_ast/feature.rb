@@ -1,5 +1,4 @@
 require 'cucumber/smart_ast/tags'
-require 'cucumber/smart_ast/unit'
 
 module Cucumber
   module SmartAst
@@ -41,9 +40,10 @@ module Cucumber
       end
 
       def all_scenarios
+        return @all_scenarios if @all_scenarios
         @all_scenarios = scenarios 
         @all_scenarios += scenario_outlines.collect { |outline| outline.scenarios }
-        @all_scenarios.flatten
+        @all_scenarios = @all_scenarios.flatten
       end
 
       def background_steps
