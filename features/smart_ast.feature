@@ -74,7 +74,6 @@ Feature: Executing features with the Smart AST
       After hook!
       """
   
-  @wip
   Scenario: Before hooks execute only for tagged scenarios
     Given a file named "features/support/env.rb" with:
       """

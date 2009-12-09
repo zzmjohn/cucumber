@@ -1,3 +1,4 @@
+require 'cucumber/ast/tags'
 require 'cucumber/smart_ast/result'
 
 module Cucumber
@@ -5,20 +6,21 @@ module Cucumber
     class Unit 
       attr_reader :steps, :language
 
-      def initialize(steps, language)
-        @steps, @language = steps, language
+      def initialize(steps, tags, language)
+        @steps, @tags, @language = steps, tags, language
       end
 
       def accept_hook?(hook)
-       true
+        Cucumber::Ast::Tags.matches?(@tags, hook.tag_name_lists)
       end
-      
+            
       def status
         :passed
       end
       
       def fail!(exception)
-        puts "#{@name}: #{@description} failed!"
+        # puts "#{@name}: #{@description} failed!"
+        puts "Unit failed!"
         raise exception
       end
       
