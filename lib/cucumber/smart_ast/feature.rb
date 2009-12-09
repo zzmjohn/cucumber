@@ -1,5 +1,4 @@
 require 'cucumber/smart_ast/tags'
-require 'cucumber/smart_ast/unit'
 
 module Cucumber
   module SmartAst
@@ -39,24 +38,16 @@ module Cucumber
       def adverbs
         @language.adverbs
       end
-      
-      def units
-        background_steps = background ? background.steps : []
-        
-        all_scenarios = scenarios.collect do |scenario|
-          Unit.new(background_steps + scenario.steps, (tags + scenario.tags).uniq, scenario.language)
-        end
-        
-        # TODO: Stop touching the parse tree inappropriately
-        scenario_outlines.each do |scenario_outline|
-          scenario_outline.each do |examples|
-            examples.scenarios.each do |scenario|
-              all_scenarios << Unit.new(background_steps + scenario.steps, (tags + scenario.tags).uniq, scenario.language)
-            end
-          end
-        end
-        
-        all_scenarios
+
+      def all_scenarios
+        return @all_scenarios if @all_scenarios
+        @all_scenarios = scenarios 
+        @all_scenarios += scenario_outlines.collect { |outline| outline.scenarios }
+        @all_scenarios = @all_scenarios.flatten
+      end
+
+      def background_steps
+        background ? background.steps : []
       end
     end
   end

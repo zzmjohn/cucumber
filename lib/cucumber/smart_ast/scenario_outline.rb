@@ -12,7 +12,17 @@ module Cucumber
         @examples << examples
         examples
       end
-      
+
+      def scenarios
+        scenarios = []
+        @examples.each do |example|
+          example.scenarios.each do |scenario|
+            scenarios << scenario
+          end
+        end
+        scenarios
+      end
+
       def each(&block)
         @examples.each { |examples| yield examples }
       end
