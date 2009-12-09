@@ -8,7 +8,7 @@ module Cucumber
       end
 
       def to_s
-        "#{status.to_s.capitalize}: #{step}"
+        "#{status.to_s.capitalize}: #{step} on line #{step.line}"
       end
 
       def failure?

@@ -43,9 +43,9 @@ Feature: Executing features with the Smart AST
     Then the output should contain
       """
       Parsing features/test_gherkin.feature with Gherkin
-      Passed: Given some happy little trees
-      Passed: Given the Furtwangler has become vicious
-      Failed: Then it should explode and spare us the whining
+      Passed: Given some happy little trees on line 4
+      Passed: Given the Furtwangler has become vicious on line 7
+      Failed: Then it should explode and spare us the whining on line 8
 
       """
 
@@ -63,9 +63,9 @@ Feature: Executing features with the Smart AST
     Then the output should contain
       """
       Parsing features/test_gherkin.feature with Gherkin
-      Passed: Given some happy little trees
-      Pending: Given the Furtwangler has become vicious
-      Skipped: Then it should explode and spare us the whining
+      Passed: Given some happy little trees on line 4
+      Pending: Given the Furtwangler has become vicious on line 7
+      Skipped: Then it should explode and spare us the whining on line 8
 
       """
   
@@ -84,9 +84,9 @@ Feature: Executing features with the Smart AST
     Then the output should contain
       """
       Before hook!
-      Passed: Given some happy little trees
-      Undefined: Given the Furtwangler has become vicious
-      Skipped: Then it should explode and spare us the whining
+      Passed: Given some happy little trees on line 4
+      Undefined: Given the Furtwangler has become vicious on line 7
+      Skipped: Then it should explode and spare us the whining on line 8
       After hook!
       """
   
@@ -114,6 +114,6 @@ Feature: Executing features with the Smart AST
     Then the output should contain
       """
       I have been tagged!
-      Passed: Given some happy little trees
-      Undefined: Given our pet Jackanapes has scurvy
+      Passed: Given some happy little trees on line 4
+      Undefined: Given our pet Jackanapes has scurvy on line 12
       """
