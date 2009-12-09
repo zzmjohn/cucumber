@@ -145,10 +145,10 @@ module Cucumber
           :undefined
         rescue Pending
           :pending
-        rescue Exception
+        rescue Exception => e
           :failed
         end
-      SmartAst::Result.new(status, step)
+      res = SmartAst::Result.new(status, step, e ? e : nil)
     end
     
     # Invokes a series of steps +steps_text+. Example:
