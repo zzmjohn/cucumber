@@ -20,7 +20,7 @@ Feature: Executing features with the Smart AST
       """
   
   Scenario: Simple passing/failing
-    Given a file named "features/step_definitions/steps.rb" with:
+    Given a file named "features/step_definitions/gherkin_steps.rb" with:
       """
       Given "the Furtwangler has become vicious" do
         @furtwangler = "vicious"
@@ -40,7 +40,7 @@ Feature: Executing features with the Smart AST
       """
 
   Scenario: Pending/skipped steps
-    Given a file named "features/step_definitions/steps.rb" with:
+    Given a file named "features/step_definitions/gherkin_steps.rb" with:
       """
       Given "the Furtwangler has become vicious" do
         pending
@@ -59,7 +59,7 @@ Feature: Executing features with the Smart AST
       """
   
   Scenario: Before and After hooks
-    Given a file named "features/support/env.rb" with:
+    Given a file named "features/support/gherkin_hooks.rb" with:
       """
       Before do
         puts "Before hook!"
@@ -79,7 +79,7 @@ Feature: Executing features with the Smart AST
       """
   
   Scenario: Before hooks do not execute unless a scenario is tagged
-    Given a file named "features/support/env.rb" with:
+    Given a file named "features/support/gherkin_hooks.rb" with:
       """
       Before("@dne") do 
         puts "Tagged before hook!"
@@ -93,7 +93,7 @@ Feature: Executing features with the Smart AST
   
   @wip
   Scenario: Before hooks execute before the tagged scenario
-    Given a file named "features/support/env.rb" with:
+    Given a file named "features/support/gherkin_hooks.rb" with:
       """
       Before("@tagged") do
         puts "I have been tagged!"
