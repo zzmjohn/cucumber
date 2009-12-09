@@ -39,7 +39,7 @@ module Cucumber
       def adverbs
         @language.adverbs
       end
-      
+
       def units
         background_steps = background ? background.steps : []
         
@@ -47,11 +47,11 @@ module Cucumber
           Unit.new(background_steps + scenario.steps, (tags + scenario.tags).uniq, scenario.language)
         end
        
-        scenario_outlines.each do |scenario_outline|
-          scenario_outline.scenarios.each do |scenario|
-            all_scenarios << Unit.new(background_steps + scenario.steps, (tags + scenario.tags).uniq, scenario.language)
+        all_scenarios += scenario_outlines.collect do |scenario_outline|
+          scenario_outline.scenarios.collect do |scenario|
+            Unit.new(background_steps + scenario.steps, (tags + scenario.tags).uniq, scenario.language)
           end
-        end
+        end.flatten
         
         all_scenarios
       end
