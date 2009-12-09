@@ -40,20 +40,14 @@ module Cucumber
         @language.adverbs
       end
 
-      def units
-        background_steps = background ? background.steps : []
-        
-        all_scenarios = scenarios.collect do |scenario|
-          Unit.new(background_steps + scenario.steps, (tags + scenario.tags).uniq, scenario.language)
-        end
-       
-        all_scenarios += scenario_outlines.collect do |scenario_outline|
-          scenario_outline.scenarios.collect do |scenario|
-            Unit.new(background_steps + scenario.steps, (tags + scenario.tags).uniq, scenario.language)
-          end
-        end.flatten
-        
-        all_scenarios
+      def all_scenarios
+        @all_scenarios = scenarios 
+        @all_scenarios += scenario_outlines.collect { |outline| outline.scenarios }
+        @all_scenarios.flatten
+      end
+
+      def background_steps
+        background ? background.steps : []
       end
     end
   end

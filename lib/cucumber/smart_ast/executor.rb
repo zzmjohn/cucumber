@@ -12,7 +12,8 @@ module Cucumber
       end
       
       def execute(ast)
-        ast.units.each do |unit|
+        ast.all_scenarios.each do |scenario|
+          unit = Unit.new(ast.background_steps + scenario.steps, (ast.tags + scenario.tags).uniq, scenario.language)
           unit.execute(@step_mother) do |result|
             unit.skip_step_execution! if result.failure?
             @io << colorize(result)
