@@ -12,7 +12,11 @@ Feature: Executing features with the Smart AST
         Scenario: Exploding the Furtwangler
           Given the Furtwangler has become vicious
           Then it should explode and spare us the whining
-          
+        
+        @tagged
+        Scenario: Healing the Jackanapes
+          Given our pet Jackanapes has scurvy
+          Then we should take him to the doctor       
       """
   
   Scenario: Simple passing/failing
@@ -27,7 +31,7 @@ Feature: Executing features with the Smart AST
       end
       """
     When I run cucumber --gherkin --plugin cucumber/parsers/gherkin.rb --format pretty
-    Then the output should be
+    Then the output should contain
       """
       Parsing features/test_gherkin.feature with Gherkin
       Passed: Given the Furtwangler has become vicious
@@ -46,7 +50,7 @@ Feature: Executing features with the Smart AST
       end
       """
     When I run cucumber --gherkin --format pretty
-    Then the output should be
+    Then the output should contain
       """
       Parsing features/test_gherkin.feature with Gherkin
       Pending: Given the Furtwangler has become vicious
@@ -74,7 +78,7 @@ Feature: Executing features with the Smart AST
       After hook!
       """
   
-  Scenario: Before hooks execute only for tagged scenarios
+  Scenario: Before hooks do not execute unless a scenario is tagged
     Given a file named "features/support/env.rb" with:
       """
       Before("@dne") do 
@@ -85,4 +89,18 @@ Feature: Executing features with the Smart AST
     Then the output should not contain
       """
       Tagged before hook!
+      """
+  
+  @wip
+  Scenario: Before hooks execute before the tagged scenario
+    Given a file named "features/support/env.rb" with:
+      """
+      Before("@tagged") do
+        puts "I have been tagged!"
+      end
+      """
+    When I run cucumber --gherkin --format pretty
+    Then the output should contain
+      """
+      I have been tagged!
       """
