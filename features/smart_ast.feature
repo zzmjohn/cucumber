@@ -8,13 +8,14 @@ Feature: Executing features with the Smart AST
     And a file named "features/test_gherkin.feature" with:
       """
       Feature: Use the gherkin parser
-
+      
         Scenario: Exploding the Furtwangler
           Given the Furtwangler has become vicious
           Then it should explode and spare us the whining
+          
       """
   
-  Scenario: Gherkin plugin simple passing/failing
+  Scenario: Simple passing/failing
     Given a file named "features/step_definitions/steps.rb" with:
       """
       Given "the Furtwangler has become vicious" do
@@ -34,7 +35,7 @@ Feature: Executing features with the Smart AST
 
       """
 
-  Scenario: Gherkin plugin pending/skipped steps
+  Scenario: Pending/skipped steps
     Given a file named "features/step_definitions/steps.rb" with:
       """
       Given "the Furtwangler has become vicious" do
@@ -52,4 +53,37 @@ Feature: Executing features with the Smart AST
       Skipped: Then it should explode and spare us the whining
 
       """
-
+  
+  Scenario: Before and After hooks
+    Given a file named "features/support/env.rb" with:
+      """
+      Before do
+        puts "Before hook!"
+      end
+      
+      After do
+        puts "After hook!"
+      end
+      """
+    When I run cucumber --gherkin --format pretty
+    Then the output should contain
+      """
+      Before hook!
+      Undefined: Given the Furtwangler has become vicious
+      Skipped: Then it should explode and spare us the whining
+      After hook!
+      """
+  
+  @wip
+  Scenario: Before hooks execute only for tagged scenarios
+    Given a file named "features/support/env.rb" with:
+      """
+      Before("@dne") do 
+        puts "Tagged before hook!"
+      end
+      """
+    When I run cucumber --gherkin --format pretty
+    Then the output should not contain
+      """
+      Tagged before hook!
+      """
