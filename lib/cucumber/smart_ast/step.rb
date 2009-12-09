@@ -11,7 +11,7 @@ module Cucumber
       def interpolate(args)
         name = @name.dup
         args.each_pair { |k, v| name.gsub!(/<#{k}>/, v) }
-        step = self.class.new(@adverb, name, @line)
+        step = new(@adverb, name, @line)
         step.argument = @argument if @argument
         step
       end
