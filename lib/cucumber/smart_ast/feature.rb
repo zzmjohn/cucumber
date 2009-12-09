@@ -41,9 +41,20 @@ module Cucumber
       end
       
       def units
-        scenarios.collect do |scenario|
+        all_scenarios = scenarios.collect do |scenario|
           Unit.new(scenario.steps, scenario.language)
         end
+        
+        # TODO: Stop touching the parse tree inappropriately
+        scenario_outlines.each do |scenario_outline|
+          scenario_outline.each do |examples|
+            examples.scenarios.each do |scenario|
+              all_scenarios << Unit.new(scenario.steps, scenario.language)
+            end
+          end
+        end
+        
+        all_scenarios
       end
     end
   end
