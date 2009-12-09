@@ -16,17 +16,17 @@ begin
     gem.authors = ["Aslak Hellesøy"]
     gem.rubyforge_project = "rspec"
 
-    gem.add_dependency 'term-ansicolor', '1.0.4'
-    gem.add_dependency 'treetop', '1.4.2'
-    gem.add_dependency 'polyglot', '0.2.9'
-    gem.add_dependency 'builder', '2.1.2'
-    gem.add_dependency 'diff-lcs', '1.1.2'
+    gem.add_dependency 'term-ansicolor', '>= 1.0.4'
+    gem.add_dependency 'treetop', '>= 1.4.2'
+    gem.add_dependency 'polyglot', '>= 0.2.9'
+    gem.add_dependency 'builder', '>= 2.1.2'
+    gem.add_dependency 'diff-lcs', '>= 1.1.2'
 
-    gem.add_development_dependency 'nokogiri', '1.4.0'
-    gem.add_development_dependency 'prawn', '0.5.1'
-    gem.add_development_dependency 'rspec', '1.2.9'
-    gem.add_development_dependency 'spork', '0.7.3'
-    gem.add_development_dependency 'sinatra', '0.9.4'
+    gem.add_development_dependency 'nokogiri', '>= 1.4.0'
+    gem.add_development_dependency 'prawn', '>= 0.5.1'
+    gem.add_development_dependency 'rspec', '>= 1.2.9'
+    gem.add_development_dependency 'spork', '>= 0.7.3'
+    gem.add_development_dependency 'sinatra', '>= 0.9.4'
     
     extend Cucumber::Formatter::ANSIColor
     gem.post_install_message = <<-POST_INSTALL_MESSAGE
@@ -45,9 +45,6 @@ POST_INSTALL_MESSAGE
   end
 
   Jeweler::GemcutterTasks.new
-  Jeweler::RubyforgeTasks.new do |rubyforge|
-    rubyforge.doc_task = "sdoc"
-  end
 rescue LoadError
   puts "Jeweler (or a dependency) not available. Install it with: sudo gem install jeweler"
 end
