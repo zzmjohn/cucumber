@@ -22,7 +22,8 @@ module Cucumber
       # be filtered.
       def parse(content, path, lines, options)
         puts "Parsing #{path} with Gherkin"
-        filter = Filter.new(lines, options)
+        # Leave filtering for when the new ast is stable
+        # filter = Filter.new(lines, options) 
         
         builder = SmartAst::Builder.new
         parser = ::Gherkin::Parser.new(builder, true, "root")

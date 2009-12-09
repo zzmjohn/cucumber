@@ -9,10 +9,15 @@ module Cucumber
       def initialize(steps, tags, language)
         @steps, @language = steps, language
         @tags = tags.map { |tag| "@#{tag.name}" }
+        @statuses = []
       end
       
       def accept_hook?(hook)
         Cucumber::Ast::Tags.matches?(@tags, hook.tag_name_lists)
+      end
+
+      def status
+        @statuses.last # Not really right, but good enough for now
       end
       
       def fail!(exception)
@@ -27,11 +32,13 @@ module Cucumber
       def execute(step_mother, &block)
         step_mother.before_and_after(self) do
           steps.each do |step|
-            if @skip
-              yield Result.new(:skipped, step)
+            res = if @skip
+              Result.new(:skipped, step)
             else
-              yield step_mother.execute(step)
+              step_mother.execute(step)
             end
+            @statuses << res.status
+            yield res
           end
         end
       end
