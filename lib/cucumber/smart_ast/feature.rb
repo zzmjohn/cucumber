@@ -42,14 +42,14 @@ module Cucumber
       
       def units
         all_scenarios = scenarios.collect do |scenario|
-          Unit.new(scenario.steps, [tags + scenario.tags].uniq, scenario.language)
+          Unit.new(scenario.steps, (tags + scenario.tags).uniq, scenario.language)
         end
         
         # TODO: Stop touching the parse tree inappropriately
         scenario_outlines.each do |scenario_outline|
           scenario_outline.each do |examples|
             examples.scenarios.each do |scenario|
-              all_scenarios << Unit.new(scenario.steps, [tags + scenario.tags].uniq, scenario.language)
+              all_scenarios << Unit.new(scenario.steps, (tags + scenario.tags).uniq, scenario.language)
             end
           end
         end

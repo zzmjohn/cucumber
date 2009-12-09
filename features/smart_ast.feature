@@ -91,7 +91,6 @@ Feature: Executing features with the Smart AST
       Tagged before hook!
       """
   
-  @wip
   Scenario: Before hooks execute before the tagged scenario
     Given a file named "features/support/gherkin_hooks.rb" with:
       """
@@ -103,4 +102,5 @@ Feature: Executing features with the Smart AST
     Then the output should contain
       """
       I have been tagged!
+      Undefined: Given our pet Jackanapes has scurvy
       """

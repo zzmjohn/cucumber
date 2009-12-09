@@ -7,9 +7,10 @@ module Cucumber
       attr_reader :steps, :language
 
       def initialize(steps, tags, language)
-        @steps, @tags, @language = steps, tags, language
+        @steps, @language = steps, language
+        @tags = tags.map { |tag| "@#{tag.name}" }
       end
-
+      
       def accept_hook?(hook)
         Cucumber::Ast::Tags.matches?(@tags, hook.tag_name_lists)
       end
