@@ -31,6 +31,16 @@ module Cucumber
           hash_of(row)
         end
       end
+      
+      def transpose
+        self.class.new(@raw.transpose, @line)
+      end
+            
+      def rows_hash
+        return @rows_hash if @rows_hash
+        verify_table_width(2)
+        @rows_hash = self.transpose.hashes[0]
+      end
             
       private
       
@@ -40,6 +50,10 @@ module Cucumber
           hash[k] = v
         end
         hash
+      end
+      
+      def verify_table_width(width) #:nodoc:
+        raise %{The table must have exactly #{width} columns} unless raw[0].size == width
       end      
     end
   end

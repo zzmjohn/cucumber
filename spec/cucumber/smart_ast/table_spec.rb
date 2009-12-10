@@ -13,10 +13,13 @@ module Cucumber
       end
       
       it "should have the raw table" do
-        # @table.cells_rows[0].map{|cell| cell.value}.should == %w{one four seven}
         @table.raw[0].should == %w{one four seven}
       end
 
+      it "should have rows" do
+        @table.rows[0].should == %w{4444 55555 666666}
+      end
+      
       it "should have columns" do
         @table.columns[1].should == %w{four 55555}
       end
@@ -33,6 +36,39 @@ module Cucumber
       
       it "should accept symbols as keys for the hashes" do
         @table.hashes.first[:one].should == '4444'
+      end
+      
+      describe "#transpose" do
+        before(:each) do
+          @table = Table.new([
+            %w{one 1111},
+            %w{two 22222}
+          ], 1)
+        end
+
+        it "should be convertible in to an array where each row is a hash" do 
+          @table.transpose.hashes[0].should == {'one' => '1111', 'two' => '22222'}
+        end
+      end
+      
+      describe "#rows_hash" do          
+        it "should return a hash of the rows" do
+          table = Table.new([
+            %w{one 1111},
+            %w{two 22222}
+          ], 1)
+          table.rows_hash.should == {'one' => '1111', 'two' => '22222'}
+        end
+
+        it "should fail if the table doesn't have two columns" do
+          faulty_table = Table.new([
+            %w{one 1111 abc},
+            %w{two 22222 def}
+          ], 1)
+          lambda {
+            faulty_table.rows_hash
+          }.should raise_error('The table must have exactly 2 columns')
+        end
       end
     end
   end
