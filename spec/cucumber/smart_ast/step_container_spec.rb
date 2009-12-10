@@ -1,5 +1,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 require 'cucumber/smart_ast/step_container'
+require 'cucumber/smart_ast/table'
+require 'cucumber/smart_ast/py_string'
 
 module Cucumber
   module SmartAst
@@ -17,7 +19,7 @@ module Cucumber
       it "should include the table argument to a step" do
         rows = [%w(a b), %w(c d)]
         @step_container.step("Given", "a table", 2)
-        @step_container.table(rows, 3)
+        @step_container.table(Table.new(rows, 3))
         @step_container.should have(1).steps
         @step_container.steps[0].argument.raw.should == rows
       end
@@ -25,7 +27,7 @@ module Cucumber
       it "should include py_string argument to a step" do
         content = "Long string"
         @step_container.step("Given", "a py_string", 2)
-        @step_container.py_string(content, 3)
+        @step_container.py_string(PyString.new(content, 3))
         @step_container.steps[0].argument.to_s.should == content
       end
 
@@ -35,9 +37,9 @@ module Cucumber
 
         @step_container.step("Given", "a normal step", 2)
         @step_container.step("When", "a table", 3)
-        @step_container.table(rows, 4)
+        @step_container.table(Table.new(rows, 4))
         @step_container.step("Then", "a py_string", 5)
-        @step_container.py_string(content, 6)
+        @step_container.py_string(PyString.new(content, 6))
         @step_container.step("And", "another normal step", 7)
 
         @step_container.should have(4).steps

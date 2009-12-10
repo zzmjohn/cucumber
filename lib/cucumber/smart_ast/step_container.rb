@@ -1,8 +1,6 @@
 require 'cucumber/smart_ast/comments'
 require 'cucumber/smart_ast/tags'
 require 'cucumber/smart_ast/step'
-require 'cucumber/smart_ast/table'
-require 'cucumber/smart_ast/py_string'
 
 module Cucumber
   module SmartAst
@@ -21,12 +19,12 @@ module Cucumber
         step
       end
 
-      def table(rows, line)
-        steps.last.argument = Table.new(rows, line)
+      def table(table)
+        steps.last.argument = table
       end
 
-      def py_string(content, line)
-        steps.last.argument = PyString.new(content, line)
+      def py_string(py_string)
+        steps.last.argument = py_string
       end         
 
       def feature

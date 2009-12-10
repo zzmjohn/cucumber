@@ -1,7 +1,13 @@
 require 'cucumber/smart_ast/feature'
+require 'cucumber/smart_ast/step_container'
 require 'cucumber/smart_ast/scenario'
 require 'cucumber/smart_ast/scenario_outline'
 require 'cucumber/smart_ast/examples'
+require 'cucumber/smart_ast/step'
+require 'cucumber/smart_ast/py_string'
+require 'cucumber/smart_ast/table'
+require 'cucumber/smart_ast/tag'
+require 'cucumber/smart_ast/comment'
 
 module Cucumber
   module SmartAst
@@ -35,20 +41,20 @@ module Cucumber
       end
 
       def examples(kw, description, line)
-        @current = @ast.examples(Examples.new(kw, description, line, @ast))
+        @current = @ast.examples(Examples.new(kw, description, line, @current))
         register_tags(@current)
       end
 
       def step(adverb, kw, line)
-        @current.step(adverb, kw, line)
+        @current.steps << Step.new(adverb, kw, line)
       end
 
       def table(rows, line)
-        @current.table(rows, line)
+        @current.table(Table.new(rows, line))
       end
 
       def py_string(content, line)
-        @current.py_string(content, line)
+        @current.py_string(PyString.new(content, line))
       end
 
       def tag(tag, line)
@@ -65,7 +71,7 @@ module Cucumber
       private
 
       def register_tags(container)
-        @tag_cache.each { |tag| @current.tag(tag[0], tag[1]) }
+        @tag_cache.each { |tag| container.tags << Tag.new(tag[0], tag[1]) }
         @tag_cache.clear
       end    
     end

@@ -11,8 +11,8 @@ module Cucumber
         @kw, @description, @line, @parent = kw, description, line, parent
       end
 
-      def table(rows, line)
-        @table = Table.new(rows, line)
+      def table(table)
+        @table = table
       end
       
       def name
