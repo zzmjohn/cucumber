@@ -16,31 +16,29 @@ module Cucumber
         @raw[1..-1]
       end
       
-      def hashes
-        @hashes ||= rows.map do |row|
-          to_hash(row)
-        end
+      def columns
+        @raw.transpose
       end
       
-      def to_hash(cells) #:nodoc:
-        hash = Hash.new
-        headers.each_with_index do |column_name, column_index|
-          hash[column_name] = cells[column_index]
-        end
-        hash
+      def hashes
+        collect
       end
       
       def each(&block)
         rows.each do |row|
-          yield hash_of(headers, row)
+          yield hash_of(row)
         end
       end
       
       private
       
-      def hash_of(headers, row)
-        Hash[*headers.zip(row).flatten]
-      end
+      def hash_of(row)
+        hash = Hash.new { |h, k| h[k.to_s] if k.is_a? Symbol }
+        headers.zip(row).each do |k, v|
+          hash[k] = v
+        end
+        hash
+      end      
     end
   end
 end
