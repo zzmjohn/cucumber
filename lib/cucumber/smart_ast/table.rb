@@ -19,17 +19,19 @@ module Cucumber
       def columns
         @raw.transpose
       end
-      
-      def hashes
-        collect
-      end
-      
+              
       def each(&block)
         rows.each do |row|
-          yield hash_of(row)
+          yield row
         end
       end
       
+      def hashes
+        @hashes ||= collect do |row|
+          hash_of(row)
+        end
+      end
+            
       private
       
       def hash_of(row)
