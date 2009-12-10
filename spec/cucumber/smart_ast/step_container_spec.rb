@@ -5,7 +5,7 @@ module Cucumber
   module SmartAst
     describe StepContainer do
       before do
-        @step_container = StepContainer.new("Test", "Step container test", 1)
+        @step_container = StepContainer.new("Test", "Step container test", 1, nil)
       end
 
       it "should have a list of steps" do

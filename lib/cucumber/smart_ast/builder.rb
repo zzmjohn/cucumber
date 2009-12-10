@@ -1,5 +1,4 @@
 require 'cucumber/smart_ast/feature'
-require 'cucumber/smart_ast/background'
 require 'cucumber/smart_ast/scenario'
 require 'cucumber/smart_ast/scenario_outline'
 require 'cucumber/smart_ast/examples'
@@ -20,23 +19,23 @@ module Cucumber
       end
 
       def background(kw, description, line)
-        @current = @ast.background = StepContainer.new(kw, description, line) { |bg| bg.feature = @ast }
+        @current = @ast.background = StepContainer.new(kw, description, line, @ast)
       end
 
       def scenario(kw, description, line)
-        scenario = Scenario.new(kw, description, line) { |s| s.feature = @ast }
+        scenario = Scenario.new(kw, description, line, @ast)
         @current = @ast.scenario(scenario)
         register_tags(@current)
       end
 
       def scenario_outline(kw, description, line)
-        scenario_outline = ScenarioOutline.new(kw, description, line) { |so| so.feature = @ast }
+        scenario_outline = ScenarioOutline.new(kw, description, line, @ast)
         @current = @ast.scenario_outline(scenario_outline)
         register_tags(@current)
       end
 
       def examples(kw, description, line)
-        @current = @ast.examples(Examples.new(kw, description, line) { |ex| ex.feature = @ast })
+        @current = @ast.examples(Examples.new(kw, description, line, @ast))
         register_tags(@current)
       end
 

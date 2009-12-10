@@ -17,7 +17,7 @@ module Cucumber
           %w(10 belly vomit 8 2)
         ]
         
-        @examples = Examples.new("Examples", "Cucumber actions", 4)
+        @examples = Examples.new("Examples", "Cucumber actions", 4, nil)
         @examples.steps = @steps
         @examples.table(@table, 5)
       end

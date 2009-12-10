@@ -7,13 +7,12 @@ require 'cucumber/smart_ast/py_string'
 module Cucumber
   module SmartAst
     class StepContainer
-      attr_accessor :feature, :steps
-      attr_reader :kw, :description, :line
-      
-      def initialize(kw, description, line)
-        @kw, @description, @line = kw, description, line
+      attr_accessor :steps
+      attr_reader :kw, :description, :line, :parent
+
+      def initialize(kw, description, line, parent)
+        @kw, @description, @line, @parent = kw, description, line, parent
         @steps = []
-        yield self if block_given?
       end
 
       def step(adverb, name, line)
@@ -29,6 +28,10 @@ module Cucumber
       def py_string(content, line)
         steps.last.argument = PyString.new(content, line)
       end         
+
+      def feature
+        @parent
+      end
 
       def language
         feature.language
