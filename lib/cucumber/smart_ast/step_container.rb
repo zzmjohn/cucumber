@@ -13,10 +13,8 @@ module Cucumber
         @steps = []
       end
 
-      def step(adverb, name, line)
-        step = Step.new(adverb, name, line)
-        @steps << step
-        step
+      def steps
+        @steps ||= []
       end
 
       def table(table)
