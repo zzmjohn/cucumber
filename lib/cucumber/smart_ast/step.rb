@@ -15,6 +15,10 @@ module Cucumber
         step.argument = @argument if @argument
         step
       end
+            
+      def to_execution_format
+        [@name, @argument ? @argument.to_execution_format : nil]
+      end
       
       def ==(obj)
         @name == obj.name

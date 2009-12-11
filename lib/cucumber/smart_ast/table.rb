@@ -7,6 +7,10 @@ module Cucumber
       def initialize(rows, line)
         @raw, @line = rows, line
       end
+      
+      def to_execution_format
+        self
+      end
 
       def headers
         @raw.first

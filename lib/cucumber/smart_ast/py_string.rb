@@ -20,6 +20,10 @@ module Cucumber
       def to_s
         @content.gsub(/\\"/, '"')
       end
+      
+      def to_execution_format
+        to_s
+      end
 
       # def accept(visitor)
       #   return if Cucumber.wants_to_quit
