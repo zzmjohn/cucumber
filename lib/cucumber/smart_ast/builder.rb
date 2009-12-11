@@ -21,7 +21,7 @@ module Cucumber
 
       def feature(kw, description, line)
         @ast.feature(kw, description, line)
-        register_tags(@ast)
+        register_tags
       end
 
       def background(kw, description, line)
@@ -31,18 +31,18 @@ module Cucumber
       def scenario(kw, description, line)
         scenario = Scenario.new(kw, description, line, @ast)
         @current = @ast.scenario(scenario)
-        register_tags(@current)
+        register_tags
       end
 
       def scenario_outline(kw, description, line)
         scenario_outline = ScenarioOutline.new(kw, description, line, @ast)
         @current = @ast.scenario_outline(scenario_outline)
-        register_tags(@current)
+        register_tags
       end
 
       def examples(kw, description, line)
         @current = @ast.examples(Examples.new(kw, description, line, @current))
-        register_tags(@current)
+        register_tags
       end
 
       def step(adverb, kw, line)
@@ -70,9 +70,8 @@ module Cucumber
 
       private
 
-      # TODO: do something with +container+ ?
-      def register_tags(container)
-        @tag_cache.each { |tag| container.tags << Tag.new(tag[0], tag[1]) }
+      def register_tags
+        @tag_cache.each { |tag| @current.tags << Tag.new(tag[0], tag[1]) }
         @tag_cache.clear
       end    
     end
