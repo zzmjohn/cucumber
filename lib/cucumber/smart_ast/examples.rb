@@ -5,14 +5,14 @@ module Cucumber
     class Examples 
       include Tags
       
-      attr_writer :steps, :feature
-      def initialize(kw, description, line)
-        @kw, @description, @line = kw, description, line
-        yield self if block_given?
+      attr_writer :steps
+      attr_reader :parent
+      def initialize(kw, description, line, parent)
+        @kw, @description, @line, @parent = kw, description, line, parent
       end
 
-      def table(rows, line)
-        @table = Table.new(rows, line)
+      def table(table)
+        @table = table
       end
       
       def name
@@ -22,10 +22,9 @@ module Cucumber
       def scenarios
         scenarios = []
         @table.hashes.each_with_index do |row, idx|
-          scenarios << Scenario.new("Scenario", row.values.join(" | "), @table.line + idx) do |scenario|
-            scenario.feature = @feature
-            scenario.steps = @steps.collect { |step| step.interpolate(row) }
-          end
+          scenario = Scenario.new("Scenario", row.values.join(" | "), @table.line + idx, @parent)
+          scenario.steps << @steps.collect { |step| step.interpolate(row) }
+          scenarios << scenario
         end
         scenarios
       end

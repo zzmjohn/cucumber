@@ -32,7 +32,7 @@ module Cucumber
           value ||= ''
           string = string.gsub(name, value)
         end
-        PyString.new(string, @start_line)
+        self.class.new(string, @start_line)
       end
 
       def has_text?(text)

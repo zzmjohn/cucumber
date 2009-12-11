@@ -1,5 +1,6 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 require 'cucumber/smart_ast/examples'
+require 'cucumber/smart_ast/table'
 
 module Cucumber
   module SmartAst
@@ -17,9 +18,9 @@ module Cucumber
           %w(10 belly vomit 8 2)
         ]
         
-        @examples = Examples.new("Examples", "Cucumber actions", 4)
+        @examples = Examples.new("Examples", "Cucumber actions", 4, nil)
         @examples.steps = @steps
-        @examples.table(@table, 5)
+        @examples.table(Table.new(@table, 5))
       end
       
       it "should have one scenario for each table row" do
