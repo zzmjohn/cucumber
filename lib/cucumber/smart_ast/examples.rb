@@ -23,7 +23,7 @@ module Cucumber
         scenarios = []
         @table.hashes.each_with_index do |row, idx|
           scenario = Scenario.new("Scenario", row.values.join(" | "), @table.line + idx, @parent)
-          scenario.steps << @steps.collect { |step| step.interpolate(row) }
+          scenario.steps = @steps.collect { |step| step.interpolate(row) }
           scenarios << scenario
         end
         scenarios
