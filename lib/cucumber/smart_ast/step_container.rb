@@ -1,34 +1,33 @@
 require 'cucumber/smart_ast/comments'
 require 'cucumber/smart_ast/tags'
 require 'cucumber/smart_ast/step'
-require 'cucumber/smart_ast/table'
-require 'cucumber/smart_ast/py_string'
 
 module Cucumber
   module SmartAst
     class StepContainer
-      attr_accessor :feature, :steps
-      attr_reader :kw, :description, :line
-      
-      def initialize(kw, description, line)
-        @kw, @description, @line = kw, description, line
+      attr_accessor :steps
+      attr_reader :kw, :description, :line, :parent
+
+      def initialize(kw, description, line, parent)
+        @kw, @description, @line, @parent = kw, description, line, parent
         @steps = []
-        yield self if block_given?
       end
 
-      def step(adverb, name, line)
-        step = Step.new(adverb, name, line)
-        @steps << step
-        step
+      def steps
+        @steps ||= []
       end
 
-      def table(rows, line)
-        steps.last.argument = Table.new(rows, line)
+      def table(table)
+        steps.last.argument = table
       end
 
-      def py_string(content, line)
-        steps.last.argument = PyString.new(content, line)
+      def py_string(py_string)
+        steps.last.argument = py_string
       end         
+
+      def feature
+        @parent
+      end
 
       def language
         feature.language

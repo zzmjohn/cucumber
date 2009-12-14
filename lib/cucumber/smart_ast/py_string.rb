@@ -20,6 +20,10 @@ module Cucumber
       def to_s
         @content.gsub(/\\"/, '"')
       end
+      
+      def to_execution_format
+        to_s
+      end
 
       # def accept(visitor)
       #   return if Cucumber.wants_to_quit
@@ -32,7 +36,7 @@ module Cucumber
           value ||= ''
           string = string.gsub(name, value)
         end
-        PyString.new(string, @start_line)
+        self.class.new(string, @start_line)
       end
 
       def has_text?(text)

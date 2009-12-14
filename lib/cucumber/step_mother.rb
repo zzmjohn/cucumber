@@ -139,14 +139,7 @@ module Cucumber
     def execute(step) # TODO: combine execute and invoke when Treetop is removed, or have them both return Results
       status =
         begin
-          # Oh my goodness!
-          if step.argument && step.argument.kind_of?(SmartAst::PyString)
-            invoke(step.name, step.argument.to_s)
-          elsif step.argument && step.argument.kind_of?(SmartAst::Table)
-            invoke(step.name, step.argument)
-          else
-            invoke(step.name)
-          end
+          invoke(*step.to_execution_format)
           :passed
         rescue Undefined
           :undefined
