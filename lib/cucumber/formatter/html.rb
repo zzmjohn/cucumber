@@ -21,6 +21,22 @@ module Cucumber
         @header_red = nil
       end
 
+      def embed(file, mime_type)
+        case(mime_type)
+        when /^image\/(png|gif|jpg|jpeg)/
+          embed_image(file)
+        end
+      end
+
+      def embed_image(file)
+        id = file.hash
+        @builder.span(:class => 'embed') do |pre|
+          pre << %{<a href="" onclick="img=document.getElementById('#{id}'); img.style.display = (img.style.display == 'none' ? 'block' : 'none');return false">Screenshot</a><br>&nbsp;
+          <img id="#{id}" style="display: none" src="#{file}"/>}
+        end
+      end
+
+
       def before_features(features)
         @step_count = get_step_count(features)
 
@@ -220,7 +236,7 @@ module Cucumber
         if status == :undefined
           step_multiline_class = @step.multiline_arg ? @step.multiline_arg.class : nil
           @builder.pre do |pre|
-            pre << @step_mother.snippet_text(keyword,step_match.instance_variable_get("@name") || '',step_multiline_class)
+            pre << @step_mother.snippet_text(@step.actual_keyword,step_match.instance_variable_get("@name") || '',step_multiline_class)
           end
         end
         @builder << '</li>'

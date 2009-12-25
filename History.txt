@@ -1,6 +1,19 @@
-== In git
-* Refactored wire protocol code and added configurable timeout to allow for long
-running step definitions. (#546 Matt Wynne)
+== 0.5.3 2009-12-22
+
+Another small release today to please a sister project. This time Cuke4Nuke.
+
+=== New Features
+* Simplified wire protocol to mostly use success / fail responses (Matt Wynne)
+
+== 0.5.2 2009-12-22
+
+=== New Features
+* On JRuby/Cuke4Duke, --require DIR will put DIR on the $CLASSPATH, making it easier to load step def classes (Aslak Hellesøy)
+* New --jars option that will load jar files. Only available on JRuby. Practical for Cuke4Duke. (Aslak Hellesøy)
+
+=== Bugfixes
+* Add #embed back to html formatter (#547 Brandon Faloona)
+* Refactored wire protocol code and added configurable timeout to allow for long running step definitions. (#546 Matt Wynne)
 
 == 0.5.1 2009-12-16
 

@@ -21,6 +21,7 @@ module Cucumber
       before(:each) do
         @out = StringIO.new
         @formatter = Html.new(step_mother, @out, {})
+        step_mother.visitor = @formatter
       end
     
       it "should not raise an error when visiting a blank feature name" do
@@ -204,6 +205,29 @@ module Cucumber
           it { @doc.should have_css_node('.feature .background .step.failed', /eek/) }
           it { @doc.should_not have_css_node('.feature .scenario .step.failed', //) }
           it { @doc.should have_css_node('.feature .scenario .step.undefined', /yay/) }
+        end
+
+        describe "with a step that embeds a snapshot" do
+          define_steps do
+            Given(/snap/) { embed('snapshot.jpeg', 'image/jpeg') }
+          end
+
+          define_feature(<<-FEATURE)
+            Scenario:
+              Given snap
+            FEATURE
+
+          it { @doc.css('.embed img').first.attributes['src'].to_s.should == "snapshot.jpeg" }
+        end
+        
+        describe "with an undefined Given step then an undefined And step" do
+          define_feature(<<-FEATURE)
+            Scenario:
+              Given some undefined step
+              And another undefined step
+            FEATURE
+            
+          it { @doc.css('pre').map { |pre| /^(Given|And)/.match(pre.text)[1] }.should == ["Given", "Given"] }
         end
       
       end
