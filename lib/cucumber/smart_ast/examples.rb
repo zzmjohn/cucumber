@@ -19,12 +19,20 @@ module Cucumber
         "#{@kw}: #{@description}"
       end
       
+      def feature
+        @parent.feature
+      end
+      
       def language
-        parent.language
+        @parent.language
       end
       
       def background_steps
-        parent.background_steps
+        @parent.background_steps
+      end
+      
+      def scenario_outline
+        @parent
       end
       
       def scenarios
