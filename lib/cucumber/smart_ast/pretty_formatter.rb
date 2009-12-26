@@ -7,6 +7,9 @@ module Cucumber
       
       def before_feature(feature)
         @io.puts heading(feature)
+        feature.preamble.split("\n").each do |line|
+          @io.puts "  #{line}"
+        end
       end
       
       def before_scenario(scenario)
