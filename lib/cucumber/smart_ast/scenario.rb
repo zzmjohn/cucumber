@@ -11,8 +11,18 @@ module Cucumber
         @steps.each { |step| yield step }
       end
       
-      def from_outline?
+      def outline?
         !parent.is_a?(Cucumber::SmartAst::Feature)
+      end
+      
+      def outline
+        return nil unless outline?
+        examples.parent
+      end
+      
+      def examples
+        return nil unless outline?
+        parent
       end
       
       def title

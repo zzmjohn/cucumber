@@ -1,6 +1,7 @@
 module Cucumber
   module SmartAst
     class PrettyFormatter
+      include Formatter::ANSIColor
       def initialize(_,io,__)
         @io = io
       end
@@ -11,19 +12,24 @@ module Cucumber
       end
       
       def before_scenario(scenario)
-        if scenario.from_outline?
-          if scenario.parent != @current_scenario_outline
-            @current_scenario_outline = scenario.parent
+        if scenario.outline?
+          if scenario.outline != @current_scenario_outline
+            @current_scenario_outline = scenario.outline
             @io.puts
             @io.puts indent(2, heading(@current_scenario_outline))
+
             # random thought- should scenaro outlines have steps or something else,
             # maybe 'lines?'
-            @io.puts indent(4, @current_scenario_outline.steps.join("\n")) 
+            @io.puts colorize(indent(4, @current_scenario_outline.steps.join("\n")), :skipped)
           end
         else
           @io.puts
           @io.puts "  " + heading(scenario)
         end
+      end
+      
+      def after_step(result)
+        @io.puts indent(4, colorize(result.step.name, result.status))
       end
       
       def after_scenario(scenario)
@@ -39,6 +45,21 @@ module Cucumber
       
       def heading(element)
         "#{element.kw}: #{element.title}"
+      end
+      
+      def colorize(string, status)
+        case status
+        when :passed
+          green(string)
+        when :pending || :undefined
+          yellow(string)
+        when :skipped
+          cyan(string)
+        when :failed
+          red(string)
+        else
+          grey(string)
+        end
       end
     end
   end

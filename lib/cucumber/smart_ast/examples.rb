@@ -19,10 +19,18 @@ module Cucumber
         "#{@kw}: #{@description}"
       end
       
+      def language
+        parent.language
+      end
+      
+      def background_steps
+        parent.background_steps
+      end
+      
       def scenarios
         scenarios = []
         @table.hashes.each_with_index do |row, idx|
-          scenario = Scenario.new("Scenario", row.values.join(" | "), @table.line + idx, @parent)
+          scenario = Scenario.new("Scenario", row.values.join(" | "), @table.line + idx, self)
           scenario.steps = @steps.collect { |step| step.interpolate(row) }
           scenarios << scenario
         end
