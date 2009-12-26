@@ -10,22 +10,17 @@ module Cucumber
         scenario = unit.scenario
         
         if @current_feature != scenario.feature
+          @current_feature = scenario.feature
           print_feature(scenario.feature)
         end
         
         if scenario.outline?
           if scenario.outline != @current_scenario_outline
             @current_scenario_outline = scenario.outline
-            @io.puts
-            @io.puts indent(2, heading(@current_scenario_outline))
-
-            # random thought- should scenaro outlines have steps or something else,
-            # maybe 'lines?'
-            @io.puts colorize(indent(4, @current_scenario_outline.steps.join("\n")), :skipped)
+            print_scenario_outline(scenario.outline)
           end
         else
-          @io.puts
-          @io.puts "  " + heading(scenario)
+          print_scenario(scenario)
         end
       end
       
@@ -42,6 +37,20 @@ module Cucumber
       def print_feature(feature)
         @io.puts heading(feature)
         @io.puts indent(2, feature.preamble)
+      end
+      
+      def print_scenario_outline(outline)
+        @io.puts
+        @io.puts indent(2, heading(outline))
+
+        # random thought- should scenaro outlines have steps or something else,
+        # maybe 'lines?'
+        @io.puts colorize(indent(4, outline.steps.join("\n")), :skipped)
+      end
+      
+      def print_scenario(scenario)
+        @io.puts
+        @io.puts "  " + heading(scenario)
       end
       
       def indent(count, string)
