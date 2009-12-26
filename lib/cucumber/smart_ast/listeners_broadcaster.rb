@@ -3,10 +3,10 @@ module Cucumber
     module ListenersBroadcaster
       
       [
-        :before_scenario, 
-        :after_scenario, 
         :before_feature, 
         :after_feature,
+        :before_unit,
+        :after_unit,
         :before_step,
         :after_step
       ].each do |method|

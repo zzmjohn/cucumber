@@ -11,7 +11,8 @@ module Cucumber
         @io.puts indent(2, feature.preamble)
       end
       
-      def before_scenario(scenario)
+      def before_unit(unit)
+        scenario = unit.scenario
         if scenario.outline?
           if scenario.outline != @current_scenario_outline
             @current_scenario_outline = scenario.outline

@@ -5,7 +5,7 @@ require 'cucumber/smart_ast/listeners_broadcaster'
 module Cucumber
   module SmartAst
     class Unit 
-      attr_reader :steps, :language
+      attr_reader :steps, :language, :scenario
 
       def initialize(scenario)
         @scenario = scenario
@@ -29,7 +29,7 @@ module Cucumber
       end
       
       def execute(step_mother, listeners)
-        listeners.before_scenario(@scenario)
+        listeners.before_unit(self)
 
         step_mother.before_and_after(self) do
           steps.each do |step|
@@ -44,7 +44,7 @@ module Cucumber
           end
         end
 
-        listeners.after_scenario(@scenario)
+        listeners.after_unit(self)
       end
       
       private
