@@ -1,7 +1,7 @@
 module Cucumber
   module SmartAst
     class PrettyFormatter
-      def initialize(io)
+      def initialize(_,io,__)
         @io = io
       end
       
@@ -12,6 +12,10 @@ module Cucumber
       def before_scenario(scenario)
         @io.puts
         @io.puts "  " + scenario.name
+      end
+      
+      def after_scenario(scenario)
+        @io.puts
       end
     end
   end

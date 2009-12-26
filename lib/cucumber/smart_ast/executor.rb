@@ -39,7 +39,7 @@ module Cucumber
 
       def initialize(step_mother, listeners = [], options = {}, io = STDOUT)
         @step_mother, @listeners, @options, @io = step_mother, listeners, options, io
-        @listeners << SimpleFormatter.new
+#        @listeners << SimpleFormatter.new
         @listeners.extend(ListenersBroadcaster)
       end
       
