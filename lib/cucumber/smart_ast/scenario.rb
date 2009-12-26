@@ -11,8 +11,8 @@ module Cucumber
         @steps.each { |step| yield step }
       end
       
-      def name
-        "Scenario: #{@description}"
+      def title
+        @description.split("\n").first
       end
       
       def all_steps
