@@ -1,14 +1,17 @@
 require 'cucumber/ast/tags'
 require 'cucumber/smart_ast/result'
+require 'cucumber/smart_ast/listeners_broadcaster'
 
 module Cucumber
   module SmartAst
     class Unit 
       attr_reader :steps, :language
 
-      def initialize(steps, tags, language)
-        @steps, @language = steps, language
-        @tags = tags.map { |tag| "@#{tag.name}" }
+      def initialize(scenario)
+        @scenario = scenario
+        @language = scenario.language
+        @steps    = scenario.all_steps
+        @tags     = scenario.all_tags.map { |tag| "@#{tag.name}" }
         @statuses = []
       end
       
@@ -29,18 +32,26 @@ module Cucumber
         @skip = true
       end
 
-      def execute(step_mother, &block)
+      def execute(step_mother, listeners)
+        listeners.before_scenario(@scenario)
         step_mother.before_and_after(self) do
           steps.each do |step|
-            res = if @skip
-              Result.new(:skipped, step)
-            else
-              step_mother.execute(step)
-            end
-            @statuses << res.status
-            yield res
+            listeners.before_step(step)
+            
+            result = execute_step(step, step_mother)
+            @statuses << result.status
+            
+            listeners.after_step(result)
           end
         end
+        listeners.after_scenario(@scenario)
+      end
+      
+      private
+
+      def execute_step(step, step_mother)
+        Result.new(:skipped, step) if @skip
+        step_mother.execute(step)
       end
     end
   end

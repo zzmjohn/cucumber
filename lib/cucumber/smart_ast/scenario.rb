@@ -9,7 +9,19 @@ module Cucumber
       
       def each(&block)
         @steps.each { |step| yield step }
-      end      
+      end
+      
+      def name
+        "Scenario: #{@description}"
+      end
+      
+      def all_steps
+        feature.background_steps + self.steps
+      end
+      
+      def all_tags
+        (feature.tags + self.tags).uniq
+      end
     end
   end
 end
