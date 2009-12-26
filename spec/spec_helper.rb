@@ -6,6 +6,7 @@ require 'spec/autorun'
 ENV['CUCUMBER_COLORS']=nil
 $:.unshift(File.dirname(__FILE__) + '/../lib')
 require 'cucumber'
+require 'cucumber/parser/natural_language'
 $:.unshift(File.dirname(__FILE__))
 
 Spec::Runner.configure do |config|

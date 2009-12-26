@@ -2,6 +2,7 @@ Given /^an? \w+ server on localhost:(\d+) is serving the contents of the feature
   @feature_server_pid = fork do
     FeatureServer.run! :host => 'localhost', :port => port, :root => working_dir
   end
+  sleep 0.1
 end
 
 After('@feature_server') do

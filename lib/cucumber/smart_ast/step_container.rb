@@ -6,10 +6,10 @@ module Cucumber
   module SmartAst
     class StepContainer
       attr_accessor :steps
-      attr_reader :kw, :description, :line, :parent
+      attr_reader :kw, :description, :line, :feature
 
-      def initialize(kw, description, line, parent)
-        @kw, @description, @line, @parent = kw, description, line, parent
+      def initialize(kw, description, line, feature)
+        @kw, @description, @line, @feature = kw, description, line, feature
         @steps = []
       end
 
@@ -24,10 +24,6 @@ module Cucumber
       def py_string(py_string)
         steps.last.argument = py_string
       end         
-
-      def feature
-        @parent
-      end
 
       def language
         feature.language
