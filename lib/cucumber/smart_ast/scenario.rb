@@ -1,4 +1,5 @@
 require 'cucumber/smart_ast/step_container'
+require 'cucumber/smart_ast/description'
 
 module Cucumber
   module SmartAst
@@ -6,6 +7,15 @@ module Cucumber
       include Enumerable
       include Comments
       include Tags
+      include Description
+      
+      def initialize(keyword, description, line, parent)
+        valid_parents = [Cucumber::SmartAst::Feature, Cucumber::SmartAst::Examples]
+        unless valid_parents.include?(parent.class)
+          raise(ArgumentError, "parent must be a Feature or Examples but was #{parent.class}") 
+        end
+        super
+      end
       
       def initialize(keyword, description, line, parent)
         valid_parents = [Cucumber::SmartAst::Feature, Cucumber::SmartAst::Examples]
@@ -36,10 +46,6 @@ module Cucumber
       def examples
         return nil unless outline?
         @parent
-      end
-      
-      def title
-        @description.split("\n").first
       end
       
       def all_steps

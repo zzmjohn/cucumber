@@ -54,7 +54,7 @@ module Cucumber
       end
 
       def py_string(content, line)
-        @current.py_string(PyString.new(content, line))
+        @current.py_string = PyString.new(content, line)
       end
 
       def tag(tag, line)

@@ -4,7 +4,6 @@ module Cucumber
       def title
         @description.split("\n").first
       end
-      
       def preamble
         description_lines = @description.split("\n")
         description_lines.shift

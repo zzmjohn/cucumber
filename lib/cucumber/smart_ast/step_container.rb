@@ -17,11 +17,11 @@ module Cucumber
         @steps ||= []
       end
 
-      def table(table)
+      def table=(table)
         steps.last.argument = table
       end
 
-      def py_string(py_string)
+      def py_string=(py_string)
         steps.last.argument = py_string
       end         
 

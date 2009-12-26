@@ -13,7 +13,7 @@ module Cucumber
       end
 
       def accept(visitor)
-        visitor.visit_py_string(self)
+        visitor.py_string(self)
       end
 
       def to_s
@@ -24,11 +24,6 @@ module Cucumber
         to_s
       end
 
-      # def accept(visitor)
-      #   return if Cucumber.wants_to_quit
-      #   visitor.visit_py_string(to_s)
-      # end
-      
       def arguments_replaced(arguments) #:nodoc:
         string = @content
         arguments.each do |name, value|

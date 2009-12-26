@@ -9,7 +9,7 @@ module Cucumber
       end
 
       def accept(visitor)
-        visitor.visit_step_table(self)
+        visitor.step_table(self)
       end
 
       def to_execution_format
