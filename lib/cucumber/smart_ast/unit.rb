@@ -28,12 +28,9 @@ module Cucumber
         raise exception
       end
       
-      def skip_step_execution!
-        @skip = true
-      end
-
       def execute(step_mother, listeners)
         listeners.before_scenario(@scenario)
+
         step_mother.before_and_after(self) do
           steps.each do |step|
             listeners.before_step(step)
@@ -41,13 +38,20 @@ module Cucumber
             result = execute_step(step, step_mother)
             @statuses << result.status
             
+            skip_step_execution! if result.failure?
+            
             listeners.after_step(result)
           end
         end
+
         listeners.after_scenario(@scenario)
       end
       
       private
+      
+      def skip_step_execution!
+        @skip = true
+      end
 
       def execute_step(step, step_mother)
         Result.new(:skipped, step) if @skip

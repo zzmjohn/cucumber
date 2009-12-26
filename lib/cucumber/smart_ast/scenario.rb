@@ -16,11 +16,11 @@ module Cucumber
       end
       
       def all_steps
-        feature.background_steps + self.steps
+        parent.background_steps + self.steps
       end
       
       def all_tags
-        (feature.tags + self.tags).uniq
+        (parent.tags + self.tags).uniq
       end
     end
   end
