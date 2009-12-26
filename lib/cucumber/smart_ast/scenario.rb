@@ -11,6 +11,10 @@ module Cucumber
         @steps.each { |step| yield step }
       end
       
+      def from_outline?
+        !parent.is_a?(Cucumber::SmartAst::Feature)
+      end
+      
       def title
         @description.split("\n").first
       end
