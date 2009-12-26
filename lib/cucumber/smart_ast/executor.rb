@@ -12,9 +12,9 @@ module Cucumber
         @step_mother, @listeners, @options, @io = step_mother, listeners, options, io
       end
       
-      def execute(feature)
-        feature.all_scenarios.each do |scenario|
-          unit = Unit.new(feature.background_steps + scenario.steps, (feature.tags + scenario.tags).uniq, scenario.language)
+      def execute(ast)
+        ast.all_scenarios.each do |scenario|
+          unit = Unit.new(ast.background_steps + scenario.steps, (ast.tags + scenario.tags).uniq, scenario.language)
           unit.execute(@step_mother) do |result|
             unit.skip_step_execution! if result.failure?
             @io << colorize(result)
@@ -29,7 +29,7 @@ module Cucumber
         case result.status
         when :passed
           green(str)
-        when :pending, :undefined
+        when :pending || :undefined
           yellow(str)
         when :skipped
           cyan(str)
