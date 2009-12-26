@@ -21,6 +21,22 @@ module Cucumber
         @header_red = nil
       end
 
+      def embed(file, mime_type)
+        case(mime_type)
+        when /^image\/(png|gif|jpg|jpeg)/
+          embed_image(file)
+        end
+      end
+
+      def embed_image(file)
+        id = file.hash
+        @builder.span(:class => 'embed') do |pre|
+          pre << %{<a href="" onclick="img=document.getElementById('#{id}'); img.style.display = (img.style.display == 'none' ? 'block' : 'none');return false">Screenshot</a><br>&nbsp;
+          <img id="#{id}" style="display: none" src="#{file}"/>}
+        end
+      end
+
+
       def before_features(features)
         @step_count = get_step_count(features)
 
@@ -220,7 +236,7 @@ module Cucumber
         if status == :undefined
           step_multiline_class = @step.multiline_arg ? @step.multiline_arg.class : nil
           @builder.pre do |pre|
-            pre << @step_mother.snippet_text(keyword,step_match.instance_variable_get("@name") || '',step_multiline_class)
+            pre << @step_mother.snippet_text(@step.actual_keyword,step_match.instance_variable_get("@name") || '',step_multiline_class)
           end
         end
         @builder << '</li>'
@@ -315,16 +331,17 @@ module Cucumber
           backtrace = Array.new
           @builder.div(:class => 'message') do
             message = exception.message
-            if message.include?('Exception caught')
+            if defined?(RAILS_ROOT) && message.include?('Exception caught')
               matches = message.match(/Showing <i>(.+)<\/i>(?:.+)#(\d+)/)
               backtrace += ["#{RAILS_ROOT}/#{matches[1]}:#{matches[2]}"]
               message = message.match(/<code>([^(\/)]+)<\//m)[1]
             end
-            @builder << "<pre>#{message}</pre>"
+            @builder.pre do 
+              @builder.text!(message)
+            end
           end
           @builder.div(:class => 'backtrace') do
             @builder.pre do
-              # backtrace += (exception.backtrace.size == 1 || exception.backtrace[0].include?('(eval):')) ? ["#{RAILS_ROOT}/#{@step_match.file_colon_line}"] + exception.backtrace : exception.backtrace
               backtrace = exception.backtrace
               backtrace.delete_if { |x| x =~ /\/gems\/(cucumber|rspec)/ }
               @builder << backtrace_line(backtrace.join("\n"))

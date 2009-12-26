@@ -1,4 +1,6 @@
 require 'cucumber/cli/profile_loader'
+require 'cucumber/formatter/ansicolor'
+
 module Cucumber
   module Cli
 
@@ -114,18 +116,25 @@ module Cucumber
             "loaded first.",
             "This option can be specified multiple times.") do |v|
             @options[:require] << v
+            if(Cucumber::JRUBY && File.directory?(v))
+              $CLASSPATH << v
+            end
           end
-          opts.on("-l LANG", "--language LANG (DEPRECATED)",
-            "Specify language for features (Default: #{@options[:lang]})",
-            %{Run with "--language help" to see all languages},
-            %{Run with "--language LANG help" to list keywords for LANG}) do |v|
-            if v == 'help'
+
+          if(Cucumber::JRUBY)
+            opts.on("-j DIR", "--jars DIR",
+            "Load all the jars under DIR") do |jars|
+              Dir["#{jars}/**/*.jar"].each {|jar| require jar}
+            end
+          end
+
+          opts.on("--i18n LANG",
+            "List keywords for in a particular language",
+            %{Run with "--i18n help" to see all languages}) do |lang|
+            if lang == 'help'
               list_languages_and_exit
-            elsif args==['help']
-              list_keywords_and_exit(v)
             else
-              warn("\nWARNING: --language is deprecated and will be removed in version 0.5.\nSee http://wiki.github.com/aslakhellesoy/cucumber/spoken-languages")
-              @options[:lang] = v
+              list_keywords_and_exit(lang)
             end
           end
           opts.on("-f FORMAT", "--format FORMAT",
@@ -175,7 +184,7 @@ module Cucumber
             @profiles << v
           end
           opts.on(NO_PROFILE_SHORT_FLAG, NO_PROFILE_LONG_FLAG,
-            "Disables all profile laoding to avoid using the 'default' profile.") do |v|
+            "Disables all profile loading to avoid using the 'default' profile.") do |v|
             @disable_profile_loading = true
           end
           opts.on("-c", "--[no-]color",
@@ -374,11 +383,13 @@ module Cucumber
         unless Cucumber::LANGUAGES[lang]
           raise("No language with key #{lang}")
         end
+        require 'cucumber/cli/language_help_formatter'
         LanguageHelpFormatter.list_keywords(@out_stream, lang)
         Kernel.exit(0)
       end
 
       def list_languages_and_exit
+        require 'cucumber/cli/language_help_formatter'
         LanguageHelpFormatter.list_languages(@out_stream)
         Kernel.exit(0)
       end
