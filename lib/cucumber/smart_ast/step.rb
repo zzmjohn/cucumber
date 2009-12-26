@@ -15,6 +15,10 @@ module Cucumber
         step.argument = @argument if @argument
         step
       end
+      
+      def visit_argument(visitor)
+        argument.accept(visitor) if argument
+      end
             
       def to_execution_format
         [@name, @argument ? @argument.to_execution_format : nil]

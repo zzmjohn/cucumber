@@ -19,34 +19,34 @@ module Cucumber
         @tag_cache = []
       end
 
-      def feature(kw, description, line)
-        @ast.feature(kw, description, line)
+      def feature(keyword, description, line)
+        @ast.feature(keyword, description, line)
         register_tags
       end
 
-      def background(kw, description, line)
-        @current = @ast.background = StepContainer.new(kw, description, line, @ast)
+      def background(keyword, description, line)
+        @current = @ast.background = StepContainer.new(keyword, description, line, @ast)
       end
 
-      def scenario(kw, description, line)
-        scenario = Scenario.new(kw, description, line, @ast)
+      def scenario(keyword, description, line)
+        scenario = Scenario.new(keyword, description, line, @ast)
         @current = @ast.scenario(scenario)
         register_tags
       end
 
-      def scenario_outline(kw, description, line)
-        scenario_outline = ScenarioOutline.new(kw, description, line, @ast)
+      def scenario_outline(keyword, description, line)
+        scenario_outline = ScenarioOutline.new(keyword, description, line, @ast)
         @current = @ast.scenario_outline(scenario_outline)
         register_tags
       end
 
-      def examples(kw, description, line)
-        @current = @ast.examples(Examples.new(kw, description, line, @current))
+      def examples(keyword, description, line)
+        @current = @ast.examples(Examples.new(keyword, description, line, @current))
         register_tags
       end
 
-      def step(adverb, kw, line)
-        @current.steps << Step.new(adverb, kw, line)
+      def step(adverb, keyword, line)
+        @current.steps << Step.new(adverb, keyword, line)
       end
 
       def table(rows, line)

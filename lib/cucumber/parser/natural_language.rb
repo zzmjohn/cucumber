@@ -90,7 +90,7 @@ module Cucumber
 
       def keywords(key, space=false)
         raise "No #{key} in #{@keywords.inspect}" if @keywords[key].nil?
-        @keywords[key].split('|').map{|kw| space ? keyword_space(kw) : kw}
+        @keywords[key].split('|').map{|keyword| space ? keyword_space(keyword) : keyword}
       end
 
       private

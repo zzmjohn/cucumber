@@ -24,7 +24,6 @@ module Cucumber
       end
       
       def fail!(exception)
-        puts "Unit failed!"
         raise exception
       end
       
@@ -54,7 +53,7 @@ module Cucumber
       end
 
       def execute_step(step, step_mother)
-        Result.new(:skipped, step) if @skip
+        return Result.new(:skipped, step) if @skip
         step_mother.execute(step)
       end
     end

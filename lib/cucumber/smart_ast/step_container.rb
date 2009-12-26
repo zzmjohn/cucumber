@@ -6,10 +6,10 @@ module Cucumber
   module SmartAst
     class StepContainer
       attr_accessor :steps
-      attr_reader :kw, :description, :line
+      attr_reader :keyword, :description, :line
 
-      def initialize(kw, description, line, parent)
-        @kw, @description, @line, @parent = kw, description, line, parent
+      def initialize(keyword, description, line, parent)
+        @keyword, @description, @line, @parent = keyword, description, line, parent
         @steps = []
       end
 
