@@ -7,8 +7,8 @@ module Cucumber
       
       attr_writer :steps
       attr_reader :parent
-      def initialize(kw, description, line, parent)
-        @kw, @description, @line, @parent = kw, description, line, parent
+      def initialize(keyword, description, line, parent)
+        @keyword, @description, @line, @parent = keyword, description, line, parent
       end
 
       def table(table)
@@ -16,29 +16,13 @@ module Cucumber
       end
       
       def name
-        "#{@kw}: #{@description}"
-      end
-      
-      def feature
-        @parent.feature
-      end
-      
-      def language
-        @parent.language
-      end
-      
-      def background_steps
-        @parent.background_steps
-      end
-      
-      def scenario_outline
-        @parent
+        "#{@keyword}: #{@description}"
       end
       
       def scenarios
         scenarios = []
         @table.hashes.each_with_index do |row, idx|
-          scenario = Scenario.new("Scenario", row.values.join(" | "), @table.line + idx, self)
+          scenario = Scenario.new("Scenario", row.values.join(" | "), @table.line + idx, @parent)
           scenario.steps = @steps.collect { |step| step.interpolate(row) }
           scenarios << scenario
         end

@@ -25,11 +25,27 @@ module Cucumber
       end
       
       def after_step(result)
-        @io.puts indent(4, colorize(result.step.name, result.status))
+        step_name = @io.tty? ? self.__send__(result.status, result.step.to_s) : result.step.to_s
+        @io.puts indent(4, step_name)
+        result.step.visit_argument(self)
       end
       
       def after_scenario(scenario)
         @io.puts
+      end
+      
+      def visit_py_string(py_string)
+        @io.puts indent(6, %{"""})
+        @io.puts indent(6, py_string.to_s)
+        @io.puts indent(6, %{"""})
+      end
+      
+      def visit_step_table(table)
+        rows = table.raw
+        max_lengths =  rows.transpose.map { |col| col.map { |cell| cell.unpack("U*").length }.max }.flatten
+        rows.each do |table_line|
+          @io.puts '      | ' + table_line.zip(max_lengths).map { |cell, max_length| cell + ' ' * (max_length-cell.unpack("U*").length) }.join(' | ') + ' |'
+        end
       end
       
       private
@@ -59,22 +75,7 @@ module Cucumber
       end
       
       def heading(element)
-        "#{element.kw}: #{element.title}"
-      end
-      
-      def colorize(string, status)
-        case status
-        when :passed
-          green(string)
-        when :pending || :undefined
-          yellow(string)
-        when :skipped
-          cyan(string)
-        when :failed
-          red(string)
-        else
-          grey(string)
-        end
+        "#{element.keyword}: #{element.title}"
       end
     end
   end

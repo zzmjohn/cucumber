@@ -16,8 +16,17 @@ Feature: Feature Description
   Some preamble
 
   Scenario: Scenario Description
+    Given there is a step
+      """
+      with
+        pystrings
+      """
+    And there is another step
+      | æ | o |
+      | a | ø |
+    Then we will see steps
           FEATURES
-          
+
           features = load_features(feature_content)
           step_mother = StepMother.new
           features.execute(step_mother, [formatter])

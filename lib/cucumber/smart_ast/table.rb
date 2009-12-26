@@ -7,7 +7,11 @@ module Cucumber
       def initialize(rows, line)
         @raw, @line = rows, line
       end
-      
+
+      def accept(visitor)
+        visitor.visit_step_table(self)
+      end
+
       def to_execution_format
         self
       end

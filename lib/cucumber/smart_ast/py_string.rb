@@ -12,10 +12,9 @@ module Cucumber
         "string"
       end
 
-      # def initialize(start_line, end_line, string, quotes_indent)
-      #   @start_line, @end_line = start_line, end_line
-      #   @string, @quotes_indent = string.gsub(/\\"/, '"'), quotes_indent
-      # end
+      def accept(visitor)
+        visitor.visit_py_string(self)
+      end
 
       def to_s
         @content.gsub(/\\"/, '"')

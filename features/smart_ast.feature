@@ -39,7 +39,8 @@ Feature: Executing features with the Smart AST
         @furtwangler.should_not == "vicious"
       end
       """
-    When I run cucumber --gherkin --plugin cucumber/parsers/gherkin.rb --format pretty
+    When I run cucumber --gherkin --plugin cucumber/parsers/gherkin.rb --format Cucumber::SmartAst::SimpleFormatter
+    Then STDERR should be empty
     Then the output should contain
       """
       Parsing features/test_gherkin.feature with Gherkin
@@ -62,7 +63,7 @@ Feature: Executing features with the Smart AST
       Given "it should explode and spare us the whining" do
       end
       """
-    When I run cucumber --gherkin --format pretty
+    When I run cucumber --gherkin --format Cucumber::SmartAst::SimpleFormatter
     Then the output should contain
       """
       Parsing features/test_gherkin.feature with Gherkin
@@ -83,7 +84,7 @@ Feature: Executing features with the Smart AST
         puts "After hook!"
       end
       """
-    When I run cucumber --gherkin --format pretty
+    When I run cucumber --gherkin --format Cucumber::SmartAst::SimpleFormatter
     Then the output should contain
       """
       Before hook!
@@ -100,7 +101,7 @@ Feature: Executing features with the Smart AST
         puts "Tagged before hook!"
       end
       """
-    When I run cucumber --gherkin --format pretty
+    When I run cucumber --gherkin --format Cucumber::SmartAst::SimpleFormatter
     Then the output should not contain
       """
       Tagged before hook!
@@ -113,7 +114,7 @@ Feature: Executing features with the Smart AST
         puts "I have been tagged!"
       end
       """
-    When I run cucumber --gherkin --format pretty
+    When I run cucumber --gherkin --format Cucumber::SmartAst::SimpleFormatter
     Then the output should contain
       """
       I have been tagged!
