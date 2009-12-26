@@ -20,7 +20,7 @@ module Cucumber
         
         @examples = Examples.new("Examples", "Cucumber actions", 4, nil)
         @examples.steps = @steps
-        @examples.table(Table.new(@table, 5))
+        @examples.table = Table.new(@table, 5)
       end
       
       it "should have one scenario for each table row" do

@@ -29,22 +29,22 @@ module Cucumber
         @steps.each { |step| yield step }
       end
       
-      def outline?
+      def from_outline?
         !@parent.is_a?(Cucumber::SmartAst::Feature)
       end
       
       def feature
-        return @parent unless outline?
+        return @parent unless from_outline?
         examples.feature
       end
       
       def outline
-        return nil unless outline?
+        return nil unless from_outline?
         examples.scenario_outline
       end
       
       def examples
-        return nil unless outline?
+        return nil unless from_outline?
         @parent
       end
       

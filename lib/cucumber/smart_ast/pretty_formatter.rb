@@ -86,7 +86,7 @@ module Cucumber
           @printer.feature(feature)
         end
         
-        if @scenario.outline?
+        if @scenario.from_outline?
           if @scenario_outline != @scenario.outline
             @scenario_outline = @scenario.outline
             @printer.scenario_outline(@scenario_outline)
@@ -102,7 +102,7 @@ module Cucumber
       end
       
       def after_step(result)
-        return if @scenario.outline?
+        return if @scenario.from_outline?
         @printer.step_result(result)
       end
       

@@ -19,15 +19,14 @@ module Cucumber
       it "should include the table argument to a step" do
         rows = [%w(a b), %w(c d)]
         @step_container.steps << Step.new("Given", "a table", 2)
-        @step_container.table(Table.new(rows, 3))
+        @step_container.table = Table.new(rows, 3)
         @step_container.should have(1).steps
         @step_container.steps[0].argument.raw.should == rows
       end
-
       it "should include py_string argument to a step" do
         content = "Long string"
         @step_container.steps << Step.new("Given", "a py_string", 2)
-        @step_container.py_string(PyString.new(content, 3))
+        @step_container.py_string = PyString.new(content, 3)
         @step_container.steps[0].argument.to_s.should == content
       end
 
@@ -37,9 +36,9 @@ module Cucumber
 
         @step_container.steps << Step.new("Given", "a normal step", 2)
         @step_container.steps << Step.new("When", "a table", 3)
-        @step_container.table(Table.new(rows, 4))
+        @step_container.table = Table.new(rows, 4)
         @step_container.steps << Step.new("Then", "a py_string", 5)
-        @step_container.py_string(PyString.new(content, 6))
+        @step_container.py_string = PyString.new(content, 6)
         @step_container.steps << Step.new("And", "another normal step", 7)
 
         @step_container.should have(4).steps
