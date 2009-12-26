@@ -25,12 +25,8 @@ module Cucumber
         steps.last.argument = py_string
       end         
 
-      def feature
-        @parent
-      end
-
       def language
-        feature.language
+        parent.language
       end
     end
   end

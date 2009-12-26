@@ -22,6 +22,14 @@ module Cucumber
         end
         scenarios
       end
+      
+      def background_steps
+        parent.background_steps
+      end
+      
+      def title
+        @description.split("\n").first
+      end
 
       def each(&block)
         @examples.each { |examples| yield examples }
