@@ -44,11 +44,9 @@ module Cucumber
       end
       
       def execute(ast)
-        @listeners.before_feature(ast)
         all_units(ast).each do |unit|
           unit.execute(@step_mother, @listeners)
         end
-        @listeners.after_feature(ast)
       end
       
       private

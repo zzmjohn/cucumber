@@ -15,6 +15,11 @@ module Cucumber
         !parent.is_a?(Cucumber::SmartAst::Feature)
       end
       
+      def feature
+        return parent unless outline?
+        examples.parent.parent
+      end
+      
       def outline
         return nil unless outline?
         examples.parent

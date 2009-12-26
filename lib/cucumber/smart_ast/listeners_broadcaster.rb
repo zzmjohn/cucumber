@@ -3,8 +3,6 @@ module Cucumber
     module ListenersBroadcaster
       
       [
-        :before_feature, 
-        :after_feature,
         :before_unit,
         :after_unit,
         :before_step,
