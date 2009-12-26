@@ -31,6 +31,10 @@ module Cucumber
         @parent
       end
       
+      def language
+        @parent.language
+      end
+      
       def title
         @description.split("\n").first
       end

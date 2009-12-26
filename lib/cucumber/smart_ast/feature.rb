@@ -1,9 +1,11 @@
 require 'cucumber/smart_ast/tags'
+require 'cucumber/smart_ast/description'
 
 module Cucumber
   module SmartAst
     class Feature
       include Tags
+      include Description
 
       attr_accessor :language, :features, :background, :keyword
       attr_reader :scenarios, :scenario_outlines
@@ -31,16 +33,6 @@ module Cucumber
         @scenario_outlines.last.examples(examples)
       end
       
-      def title
-        @description.split("\n").first
-      end
-      
-      def preamble
-        description_lines = @description.split("\n")
-        description_lines.shift
-        description_lines.join("\n")
-      end
-
       def adverbs
         @language.adverbs
       end

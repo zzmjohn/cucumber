@@ -52,10 +52,30 @@ Feature: Feature Description
           FEATURES
         end
         
-        it "should print the same scenario" do
+        it "should print output identical to the gherkin input" do
           execute_features(@feature_content).should == @feature_content
         end
+      end
+      
+      describe "a single feature with a scenario outline" do
+        before(:each) do
+          @feature_content = <<-FEATURES
+Feature: Feature Description
+  Some preamble
 
+  Scenario Outline: Scenario Ouline Description
+    Given there is a <something>
+
+    Examples: Examples Description
+      | something |
+      | step      |
+          FEATURES
+        end
+        
+        it "should print output identical to the gherkin input" do
+          execute_features(@feature_content).should == @feature_content
+        end
+        
       end
     end
   end

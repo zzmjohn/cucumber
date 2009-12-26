@@ -50,7 +50,7 @@ module Cucumber
       end
 
       def table(rows, line)
-        @current.table(Table.new(rows, line))
+        @current.table = Table.new(rows, line)
       end
 
       def py_string(content, line)
