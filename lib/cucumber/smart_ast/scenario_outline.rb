@@ -24,7 +24,11 @@ module Cucumber
       end
       
       def background_steps
-        parent.background_steps
+        @parent.background_steps
+      end
+      
+      def feature
+        @parent
       end
       
       def title

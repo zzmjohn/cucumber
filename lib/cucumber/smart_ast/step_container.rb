@@ -6,7 +6,7 @@ module Cucumber
   module SmartAst
     class StepContainer
       attr_accessor :steps
-      attr_reader :kw, :description, :line, :parent
+      attr_reader :kw, :description, :line
 
       def initialize(kw, description, line, parent)
         @kw, @description, @line, @parent = kw, description, line, parent
@@ -26,7 +26,7 @@ module Cucumber
       end         
 
       def language
-        parent.language
+        @parent.language
       end
     end
   end

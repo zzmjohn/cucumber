@@ -10,9 +10,10 @@ module Cucumber
       describe "when the features contain just a single empty scenario" do
         it "should print the same scenario" do
           io = StringIO.new
-          formatter = PrettyFormatter.new(io)
+          formatter = PrettyFormatter.new(nil, io, nil)
           feature_content = <<-FEATURES
 Feature: Feature Description
+  Some preamble
 
   Scenario: Scenario Description
           FEATURES
