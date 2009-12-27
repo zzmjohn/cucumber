@@ -6,6 +6,7 @@ module Cucumber
     class Examples 
       include Tags
       include Description
+      extend Forwardable
       
       attr_reader :keyword
       attr_writer :steps
@@ -14,19 +15,12 @@ module Cucumber
       def initialize(keyword, description, line, parent)
         @keyword, @description, @line, @parent = keyword, description, line, parent
       end
-
-      def language
-        scenario_outline.language
-      end
       
-      def feature
-        scenario_outline.feature
-      end
+      def_delegators :scenario_outline, 
+        :language, 
+        :feature, 
+        :background_steps
 
-      def background_steps
-        scenario_outline.background_steps
-      end
-      
       def scenario_outline
         @parent
       end
