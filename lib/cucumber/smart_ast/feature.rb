@@ -1,5 +1,6 @@
 require 'cucumber/smart_ast/tags'
 require 'cucumber/smart_ast/description'
+require 'cucumber/smart_ast/unit'
 
 module Cucumber
   module SmartAst
@@ -36,7 +37,17 @@ module Cucumber
       def adverbs
         @language.adverbs
       end
+      
+      def units
+        all_scenarios.map{ |scenario| Unit.new(scenario) }
+      end
 
+      def background_steps
+        background ? background.steps : []
+      end
+      
+      private
+      
       def all_scenarios
         return @all_scenarios if @all_scenarios
         @all_scenarios = scenarios 
@@ -44,9 +55,6 @@ module Cucumber
         @all_scenarios = @all_scenarios.flatten
       end
 
-      def background_steps
-        background ? background.steps : []
-      end
     end
   end
 end

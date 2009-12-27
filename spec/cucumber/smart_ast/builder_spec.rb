@@ -48,7 +48,7 @@ module Cucumber
               | pay the bills |
         FEATURE
         
-        it { @feature.all_scenarios.length.should == 2 }
+        it { @feature.units.length.should == 2 }
       end
     end
   end

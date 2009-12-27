@@ -7,6 +7,7 @@ require 'cucumber/formatter/color_io'
 require 'cucumber/cli/configuration'
 require 'cucumber/cli/drb_client'
 require 'cucumber/ast/tags'
+require 'cucumber/smart_ast/features'
 
 module Cucumber
   module Cli
@@ -54,7 +55,11 @@ module Cucumber
       
         step_mother.load_code_files(configuration.support_to_load)
         step_mother.after_configuration(configuration)
-        features = feature_loader.load_features(configuration.feature_files)
+        features = if(step_mother.options[:parser] == :gherkin)
+          feature_loader.load_features(configuration.feature_files, Cucumber::SmartAst::Features.new)
+        else
+          feature_loader.load_features(configuration.feature_files)
+        end
         step_mother.register_adverbs(features.adverbs)
         step_mother.load_code_files(configuration.step_defs_to_load)
 
@@ -123,9 +128,7 @@ module Cucumber
       end
 
       def execute_ast(features, step_mother)
-        require 'cucumber/smart_ast/executor'
-        executor = SmartAst::Executor.new(step_mother, configuration.formatters(step_mother), configuration.options, @out_stream)
-        features.each { |feature| executor.execute(feature) }
+        features.execute(step_mother, configuration.formatters(step_mother))
       end
 
       def trap_interrupt
