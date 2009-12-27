@@ -40,7 +40,8 @@ module Cucumber
         def examples_table(examples)
           @io.puts
           @io.puts indent(4, heading(examples))
-          step_table examples.table # hack - just print header
+          array examples.table.raw # hack - just print header
+          # array [examples.table.raw[0]]
         end
         
         def py_string(py_string)
@@ -51,13 +52,30 @@ module Cucumber
 
         def step_table(table)
           rows = table.raw
-          max_lengths =  rows.transpose.map { |col| col.map { |cell| cell.unpack("U*").length }.max }.flatten
-          rows.each do |table_line|
-            @io.puts '      | ' + table_line.zip(max_lengths).map { |cell, max_length| cell + ' ' * (max_length-cell.unpack("U*").length) }.join(' | ') + ' |'
-          end
+          array(rows)
         end
 
         private
+        
+        def array(rows)
+          rows.each do |row|
+            row_string = row.zip(col_widths(rows)).map do |cell, col_width|
+              padding = ' ' * (col_width - true_length(cell))
+              cell + padding
+            end.join(' | ')
+            @io.puts indent(6, "| #{row_string} |")
+          end
+        end
+        
+        def col_widths(array)
+          array.transpose.map do |col| 
+            col.map{ |cell| true_length(cell) }.max
+          end.flatten
+        end
+        
+        def true_length(string)
+          string.unpack("U*").length
+        end
         
         def indent(count, string)
           padding = " " * count
@@ -87,14 +105,12 @@ module Cucumber
         end
         
         if @scenario.from_outline?
-          if @scenario_outline != @scenario.outline
-            @scenario_outline = @scenario.outline
-            @printer.scenario_outline(@scenario_outline)
+          on_new_scenario_outline do |scenario_outline|
+            @printer.scenario_outline(scenario_outline)
           end
           
-          if @examples != @scenario.examples
-            @examples = @scenario.examples
-            @printer.examples_table(@examples)
+          on_new_examples_table do |examples_table|
+            @printer.examples_table(examples_table)
           end
         else
           @printer.scenario(@scenario)
@@ -112,6 +128,20 @@ module Cucumber
         if @feature != @scenario.feature
           @feature = @scenario.feature
           yield @feature
+        end
+      end
+      
+      def on_new_scenario_outline
+        if @scenario_outline != @scenario.outline
+          @scenario_outline = @scenario.outline
+          yield @scenario_outline
+        end
+      end
+      
+      def on_new_examples_table
+        if @examples_table != @scenario.examples
+          @examples_table = @scenario.examples
+          yield @examples_table
         end
       end
 
