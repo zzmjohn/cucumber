@@ -58,12 +58,18 @@ module Cucumber
         private
         
         def array(rows)
-          rows.each do |row|
-            row_string = row.zip(col_widths(rows)).map do |cell, col_width|
+          pad(rows).each do |row|
+            row_string = ([''] + row + ['']).join(' | ').strip
+            @io.puts indent(6, row_string)
+          end
+        end
+        
+        def pad(array)
+          array.map do |row|
+            row.zip(col_widths(array)).map do |cell, col_width|
               padding = ' ' * (col_width - true_length(cell))
               cell + padding
-            end.join(' | ')
-            @io.puts indent(6, "| #{row_string} |")
+            end
           end
         end
         
