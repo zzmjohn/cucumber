@@ -18,7 +18,24 @@ module Cucumber
           @io.puts indent(2, feature.preamble)
         end
         
-        def step_result(result)
+        def examples_table_step_result(result)
+          # TODO: table should be passed into this method, rather than held in state
+          cells = pad([result.step.interpolated_arguments], @examples.table.raw) do |cell|
+            colorize(cell, result.status)
+          end.flatten
+
+          @io.print " | #{cells.join(' | ')}"
+        end
+        
+        def begin_examples_table_row
+          @io.print indent(5)
+        end
+        
+        def end_examples_table_row
+          @io.puts " |"
+        end
+        
+        def scenario_step_result(result)
           @io.puts indent(4, colorize(result.step.to_s, result.status))
           result.step.accept_for_argument(self)
         end
@@ -38,10 +55,12 @@ module Cucumber
         end
         
         def examples_table(examples)
+          @examples = examples
           @io.puts
           @io.puts indent(4, heading(examples))
-          array examples.table.raw # hack - just print header
-          # array [examples.table.raw[0]]
+          array([examples.table.raw[0]]) do |cell|
+            colorize(cell, :skipped)
+          end # TODO: this won't work if the rows contain wider cols than the headers
         end
         
         def py_string(py_string)
@@ -51,23 +70,24 @@ module Cucumber
         end
 
         def step_table(table)
-          rows = table.raw
-          array(rows)
+          array(table.raw)
         end
 
         private
         
-        def array(rows)
-          pad(rows).each do |row|
+        def array(rows, &block)
+          pad(rows, &block).each do |row|
             row_string = ([''] + row + ['']).join(' | ').strip
             @io.puts indent(6, row_string)
           end
         end
         
-        def pad(array)
-          array.map do |row|
-            row.zip(col_widths(array)).map do |cell, col_width|
+        def pad(cells, whole_array = nil)
+          whole_array ||= cells
+          cells.map do |row|
+            row.zip(col_widths(whole_array)).map do |cell, col_width|
               padding = ' ' * (col_width - true_length(cell))
+              cell = yield(cell) if block_given?
               cell + padding
             end
           end
@@ -83,8 +103,9 @@ module Cucumber
           string.unpack("U*").length
         end
         
-        def indent(count, string)
+        def indent(count, string = '')
           padding = " " * count
+          return padding if string.empty?
           string.split("\n").map{ |line| "#{padding}#{line}" }.join("\n")
         end
 
@@ -118,14 +139,19 @@ module Cucumber
           on_new_examples_table do |examples_table|
             @printer.examples_table(examples_table)
           end
+          
+          @printer.begin_examples_table_row
         else
           @printer.scenario(@scenario)
         end
       end
       
       def after_step(result)
-        return if @scenario.from_outline?
-        @printer.step_result(result)
+        result.accept(@printer)
+      end
+      
+      def after_unit(result)
+        @printer.end_examples_table_row if @scenario.from_outline?
       end
       
       private

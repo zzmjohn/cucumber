@@ -64,11 +64,12 @@ Feature: Feature Description
   Some preamble
 
   Scenario Outline: Scenario Ouline Description
-    Given there is a <something>
+    Given there is a <foo>
+    And <bar> <baz>
 
     Examples: Examples Description
-      | something |
-      | step      |
+      | foo  | bar | baz       |
+      | step | I   | am hungry |
           FEATURES
         end
         

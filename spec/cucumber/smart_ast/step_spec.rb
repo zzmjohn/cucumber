@@ -8,11 +8,15 @@ module Cucumber
     describe Step do
       before do
         @step = Step.new("Given", "<num> Cucumbers in my <object>", 1)
-        @args = { "num" => "5", "object" => "bucket" }        
+        @args = { "num" => "5", "object" => "bucket", "foo" => "bar" }
       end
       
       it "should interpolate variable arguments" do
         @step.interpolate(@args).should == Step.new("Given", "5 Cucumbers in my bucket", 1)
+      end
+      
+      it "should store the inerpolated arguments" do
+        @step.interpolate(@args).interpolated_arguments.should == ["5", "bucket"]
       end
       
       it "should return a new object when interpolating to preserve its status as a Value" do

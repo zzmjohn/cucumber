@@ -1,5 +1,5 @@
 require 'cucumber/ast/tags'
-require 'cucumber/smart_ast/result'
+require 'cucumber/smart_ast/step_result'
 require 'cucumber/smart_ast/listeners_broadcaster'
 
 module Cucumber
@@ -18,7 +18,7 @@ module Cucumber
       def accept_hook?(hook)
         Cucumber::Ast::Tags.matches?(@tags, hook.tag_name_lists)
       end
-
+      
       def status
         @statuses.last # Not really right, but good enough for now
       end
@@ -53,8 +53,8 @@ module Cucumber
       end
 
       def execute_step(step, step_mother)
-        return Result.new(:skipped, step) if @skip
-        step_mother.execute(step)
+        return StepResult.new(:skipped, step, self) if @skip
+        step_mother.execute(step, self)
       end
     end
   end
