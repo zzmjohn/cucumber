@@ -17,14 +17,6 @@ module Cucumber
         super
       end
       
-      def initialize(keyword, description, line, parent)
-        valid_parents = [Cucumber::SmartAst::Feature, Cucumber::SmartAst::Examples]
-        unless valid_parents.include?(parent.class)
-          raise(ArgumentError, "parent must be a Feature or Examples but was #{parent.class}") 
-        end
-        super
-      end
-      
       def each(&block)
         @steps.each { |step| yield step }
       end
