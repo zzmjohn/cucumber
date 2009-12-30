@@ -16,7 +16,7 @@ module Cucumber
       end
       
       it "should store the inerpolated arguments" do
-        @step.interpolate(@args).interpolated_arguments.should == ["5", "bucket"]
+        @step.interpolate(@args).interpolated_args.should == ["5", "bucket"]
       end
       
       it "should return a new object when interpolating to preserve its status as a Value" do

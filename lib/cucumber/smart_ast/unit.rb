@@ -1,5 +1,6 @@
 require 'cucumber/ast/tags'
 require 'cucumber/smart_ast/step_result'
+require 'cucumber/smart_ast/unit_result'
 require 'cucumber/smart_ast/listeners_broadcaster'
 
 module Cucumber
@@ -12,7 +13,7 @@ module Cucumber
         @language = scenario.language
         @steps    = scenario.all_steps
         @tags     = scenario.all_tags.map { |tag| "@#{tag.name}" }
-        @statuses = []
+        @statuses = {}
       end
       
       def accept_hook?(hook)
@@ -20,7 +21,7 @@ module Cucumber
       end
       
       def status
-        @statuses.last # Not really right, but good enough for now
+        @statuses.values.last # Not really right, but good enough for now
       end
       
       def fail!(exception)
@@ -35,15 +36,17 @@ module Cucumber
             listeners.before_step(step)
             
             result = execute_step(step, step_mother)
-            @statuses << result.status
+            @statuses[step] = result.status
             
             skip_step_execution! if result.failure?
             
             listeners.after_step(result)
           end
         end
+        
+        unit_result = UnitResult.new(self, @statuses)
 
-        listeners.after_unit(self)
+        listeners.after_unit(unit_result)
       end
       
       private
