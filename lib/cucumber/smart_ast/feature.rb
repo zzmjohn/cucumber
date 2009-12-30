@@ -11,25 +11,22 @@ module Cucumber
       attr_accessor :language, :features, :background, :keyword
       attr_reader :scenarios, :scenario_outlines
 
-      def initialize
-        @scenarios = []
-        @scenario_outlines = []
-      end
-
-      def feature(keyword, description, line)
+      def initialize(keyword, description, line)
         @keyword, @description, @line = keyword, description, line
       end
-
-      def scenario(scenario)
-        @scenarios << scenario
-        scenario
+      
+      def create_background(keyword, description, line)
+        StepContainer.new(keyword, description, line, self)
       end
-
-      def scenario_outline(scenario_outline)
-        @scenario_outlines << scenario_outline
-        scenario_outline
+      
+      def create_scenario(keyword, description, line, tags)
+        Scenario.new(keyword, description, line, tags, self)
       end
-
+      
+      def create_scenario_outline(keyword, description, line, tags)
+        ScenarioOutline.new(keyword, description, line, tags, self)
+      end
+      
       def examples(examples)
         @scenario_outlines.last.examples(examples)
       end

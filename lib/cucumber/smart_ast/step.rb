@@ -4,8 +4,8 @@ module Cucumber
       attr_accessor :argument
       attr_reader :adverb, :name, :line, :interpolated_args
       
-      def initialize(adverb, name, line, interpolated_args = [])
-        @adverb, @name, @line, @interpolated_args = adverb, name, line, interpolated_args
+      def initialize(adverb, name, line, container, interpolated_args = [])
+        @adverb, @name, @line, @container, @interpolated_args = adverb, name, line, container, interpolated_args
       end
       
       def interpolate(args, headers)

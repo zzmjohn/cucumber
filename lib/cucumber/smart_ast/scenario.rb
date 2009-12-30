@@ -9,12 +9,9 @@ module Cucumber
       include Tags
       include Description
       
-      def initialize(keyword, description, line, parent)
-        valid_parents = [Cucumber::SmartAst::Feature, Cucumber::SmartAst::Examples]
-        unless valid_parents.include?(parent.class)
-          raise(ArgumentError, "parent must be a Feature or Examples but was #{parent.class}") 
-        end
-        super
+      def initialize(keyword, description, line, tags, feature)
+        super(keyword, description, line, feature)
+        @tags = tags
       end
       
       def each(&block)

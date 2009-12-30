@@ -12,6 +12,10 @@ module Cucumber
         @keyword, @description, @line, @parent = keyword, description, line, parent
         @steps = []
       end
+      
+      def create_step(keyword, name, line)
+        Step.new(keyword, name, line, self)
+      end
 
       def steps
         @steps ||= []
