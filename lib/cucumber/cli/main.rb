@@ -6,13 +6,10 @@ require 'cucumber/parser'
 require 'cucumber/formatter/color_io'
 require 'cucumber/cli/configuration'
 require 'cucumber/cli/drb_client'
-require 'cucumber/ast/tags'
 
 module Cucumber
   module Cli
     class Main
-      FAILURE = 1
-
       class << self
         def step_mother
           @step_mother ||= StepMother.new
@@ -59,7 +56,9 @@ module Cucumber
         step_mother.load_code_files(configuration.step_defs_to_load)
 
         enable_diffing
-        
+        tag_excess = tag_excess(features)
+        configuration.options[:tag_excess] = tag_excess # Hack to make it available in console.rb - later: stick on Run instance.
+
         if(step_mother.options[:parser] == :gherkin)
           execute_ast(features, step_mother)
         else
@@ -68,32 +67,28 @@ module Cucumber
           runner.visit_features(features)
         end
 
-        failure = if exceeded_tag_limts?(features)
-            FAILURE
-          elsif configuration.wip?
-            step_mother.scenarios(:passed).any?
-          else
-            step_mother.scenarios(:failed).any? ||
-            (configuration.strict? && (step_mother.steps(:undefined).any? || step_mother.steps(:pending).any?))
-          end
+        failure = if tag_excess.any?
+          true
+        elsif configuration.wip?
+          step_mother.scenarios(:passed).any?
+        else
+          step_mother.scenarios(:failed).any? ||
+          (configuration.strict? && (step_mother.steps(:undefined).any? || step_mother.steps(:pending).any?))
+        end
       rescue ProfilesNotDefinedError, YmlLoadError, ProfileNotFound => e
         @error_stream.puts e.message
         true
       end
 
-      def exceeded_tag_limts?(features)
-        exceeded = false
-        configuration.options[:tag_names].each do |tag_list|
-          tag_list.each do |tag_name, limit|
-            if !Ast::Tags.exclude_tag?(tag_name) && limit
-              tag_count = features.tag_count(tag_name)
-              if tag_count > limit.to_i
-                exceeded = true
-              end
-            end
+      def tag_excess(features)
+        configuration.options[:tag_expression].limits.map do |tag_name, tag_limit|
+          tag_locations = features.tag_locations(tag_name)
+          if tag_limit && (tag_locations.length > tag_limit)
+            [tag_name, tag_limit, tag_locations]
+          else
+            nil
           end
-        end
-        exceeded
+        end.compact
       end
 
       def configuration

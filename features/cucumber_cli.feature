@@ -556,6 +556,7 @@ Feature: Cucumber command line
 
    Scenario: Run with limited tag count, blowing it via feature inheritance
      When I run cucumber -q features/tags_sample.feature --no-source --dry-run --tags @sample_one:1
+     Then STDERR should be empty
      Then it should fail with
      """
      @sample_one
@@ -617,10 +618,12 @@ Feature: Cucumber command line
 
       """
 
+  # Fails on 1.9 because of encoding issues.
+  @fails_on_1_9
   Scenario: Generate PDF with pdf formatter
-	When I run cucumber --format pdf --out tmp/sample.pdf --dry-run features/sample.feature
-	Then STDERR should be empty
-	Then "examples/self_test/tmp/sample.pdf" should match "Pages 2"
+    When I run cucumber --format pdf --out tmp/sample.pdf --dry-run features/sample.feature
+    Then STDERR should be empty
+    Then "examples/self_test/tmp/sample.pdf" should match "Pages 2"
 
   Scenario: Run feature elements which match a name using -n
     When I run cucumber -n Pisang -q features/
