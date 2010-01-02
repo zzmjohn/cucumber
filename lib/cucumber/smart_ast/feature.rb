@@ -11,8 +11,9 @@ module Cucumber
       attr_accessor :language, :features, :background, :keyword
       attr_reader :scenarios, :scenario_outlines
 
-      def initialize(keyword, description, line)
+      def initialize(keyword, description, line, tags)
         @keyword, @description, @line = keyword, description, line
+        @tags = tags
       end
       
       def create_background(keyword, description, line)
@@ -27,16 +28,12 @@ module Cucumber
         ScenarioOutline.new(keyword, description, line, tags, self)
       end
       
-      def examples(examples)
-        @scenario_outlines.last.examples(examples)
-      end
-      
       def adverbs
         @language.adverbs
       end
       
       def units
-        all_scenarios.map{ |scenario| Unit.new(scenario) }
+        all_scenarios
       end
 
       def background_steps

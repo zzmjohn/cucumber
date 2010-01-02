@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 require 'gherkin'
 require 'gherkin/i18n'
-require 'cucumber/smart_ast/builder'
+require 'cucumber/smart_ast/feature_builder'
 
 module Cucumber
   module SmartAst
@@ -13,7 +13,7 @@ module Cucumber
       end
       
       def builder
-        @builder ||= Builder.new
+        @builder ||= FeatureBuilder.new
       end
     end
     

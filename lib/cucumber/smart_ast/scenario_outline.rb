@@ -1,10 +1,24 @@
 require 'cucumber/smart_ast/step_container'
+require 'cucumber/smart_ast/step_template'
 
 module Cucumber
   module SmartAst
     class ScenarioOutline < StepContainer
       include Enumerable
       include Tags
+      
+      def initialize(keyword, description, line, tags, feature)
+        super(keyword, description, line, feature)
+        @tags = tags
+      end
+      
+      def create_examples(keyword, description, line, tags)
+        Examples.new(keyword, description, line, self)
+      end
+      
+      def create_step(keyword, name, line)
+        StepTemplate.new(keyword, name, line, self)
+      end
       
       def examples(examples)
         @examples ||= []

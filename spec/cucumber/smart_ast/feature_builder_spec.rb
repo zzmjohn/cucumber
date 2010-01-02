@@ -2,13 +2,14 @@ require File.dirname(__FILE__) + '/builder_spec_helper'
 
 module Cucumber
   module SmartAst
-    describe Builder do
+    describe FeatureBuilder do
       include SpecHelper
       extend SpecHelperDsl
       
       before(:each) do
         build_defined_feature
-        @feature = builder.ast 
+        @feature = builder.result[0]
+        @units = builder.result[1]
       end
     
       describe "for a Feature with a single scenario" do
@@ -22,10 +23,10 @@ module Cucumber
         
         it { @feature.should_not be_nil }
         it { @feature.should be_instance_of(Cucumber::SmartAst::Feature) }
-        it { @feature.scenarios.length.should == 1 }
+        it { @units.length.should == 1 }
         
         describe "the scenario" do
-          before(:each) { @scenario = @feature.scenarios.first }
+          before(:each) { @scenario = @units.first }
           
           it { @scenario.description.should == "Do some stuff" }
           it "should have 3 steps" do
@@ -48,7 +49,7 @@ module Cucumber
               | pay the bills |
         FEATURE
         
-        it { @feature.units.length.should == 2 }
+        it { @units.length.should == 2 }
       end
     end
   end

@@ -3,28 +3,33 @@ require 'cucumber/smart_ast/description'
 
 module Cucumber
   module SmartAst
-    class Examples 
+    class Examples < StepContainer
       include Tags
       include Description
       extend Forwardable
       
-      attr_reader :keyword
+      attr_reader :keyword, :scenario_outline
       attr_writer :steps
       attr_accessor :table
 
-      def initialize(keyword, description, line, parent)
-        @keyword, @description, @line, @parent = keyword, description, line, parent
-      end
-      
       def_delegators :scenario_outline, 
         :language, 
         :feature, 
         :background_steps
 
-      def scenario_outline
-        @parent
+      def create_step(keyword, name, line)
+        step = Step.new(adverb, keyword, line)
+        @steps << steps
+        step
       end
       
+      def create_table(rows, line)
+        table = Table.new(rows, line)
+        table.rows.each do |row|
+          p row
+        end
+      end
+
       def scenarios
         scenarios = []
         @table.hashes.each_with_index do |row, idx|

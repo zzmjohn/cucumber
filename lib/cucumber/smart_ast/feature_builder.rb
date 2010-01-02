@@ -1,28 +1,27 @@
-require 'cucumber/smart_feature/feature'
-require 'cucumber/smart_feature/step_container'
-require 'cucumber/smart_feature/scenario'
-require 'cucumber/smart_feature/scenario_outline'
-require 'cucumber/smart_feature/examples'
-require 'cucumber/smart_feature/step'
-require 'cucumber/smart_feature/py_string'
-require 'cucumber/smart_feature/table'
-require 'cucumber/smart_feature/tag'
-require 'cucumber/smart_feature/comment'
+require 'cucumber/smart_ast/feature'
+require 'cucumber/smart_ast/step_container'
+require 'cucumber/smart_ast/scenario'
+require 'cucumber/smart_ast/scenario_outline'
+require 'cucumber/smart_ast/examples'
+require 'cucumber/smart_ast/step'
+require 'cucumber/smart_ast/py_string'
+require 'cucumber/smart_ast/table'
+require 'cucumber/smart_ast/tag'
+require 'cucumber/smart_ast/comment'
 
 module Cucumber
   module SmartAst
     class FeatureBuilder
-      attr_reader :feature
 
       def initialize
         @tags = []
+        @units = []
       end
       
-      def ast
-        #TODO: fix things that call this
-        @feature
+      def result
+        [@feature, @units]
       end
-
+      
       def feature(keyword, description, line)
         @current = @feature = Feature.new(keyword, description, line, grab_tags!)
       end
@@ -42,19 +41,20 @@ module Cucumber
 
       def examples(keyword, description, line)
         @current = @current.create_examples(keyword, description, line, grab_tags!)
+        @units << @current
       end
 
       def step(keyword, name, line)
-        @current = @current.create_step(keyword, name, line)
-        @current.steps << Step.new(adverb, keyword, line)
+        @current.create_step(keyword, name, line)
       end
 
       def table(rows, line)
-        @current.table = Table.new(rows, line)
-        if last was examples
-          rows.each create example
-        else
-        end
+        @current.create_table(rows, line)
+        # @current.table = Table.new(rows, line)
+        # if @current.is_a?(Examples)
+        #   rows.each create example
+        # else
+        # end
       end
 
       def py_string(content, line)
