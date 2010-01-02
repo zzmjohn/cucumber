@@ -13,12 +13,8 @@ module Cucumber
         @steps = []
       end
       
-      def create_step(keyword, name, line)
-        Step.new(keyword, name, line, self)
-      end
-
-      def steps
-        @steps ||= []
+      def add_step!(keyword, name, line)
+        @steps << Step.new(keyword, name, line, self)
       end
 
       def table=(table)

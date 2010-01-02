@@ -6,20 +6,12 @@ require 'cucumber/smart_ast/feature_builder'
 module Cucumber
   module SmartAst
     module SpecHelper
-      def build_defined_feature
+      def load_units(content = feature_content)
+        builder = FeatureBuilder.new
         parser = ::Gherkin::Parser.new(builder, true, "root")
         lexer = ::Gherkin::I18nLexer.new(parser)
-        lexer.scan(feature_content)
-      end
-      
-      def builder
-        @builder ||= FeatureBuilder.new
-      end
-    end
-    
-    module SpecHelperDsl
-      def define_feature(content)
-        self.class_eval(%{def feature_content;"#{content}";end})
+        lexer.scan(content)
+        builder.units
       end
     end
   end

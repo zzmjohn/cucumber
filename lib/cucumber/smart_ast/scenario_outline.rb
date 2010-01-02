@@ -16,8 +16,8 @@ module Cucumber
         Examples.new(keyword, description, line, self)
       end
       
-      def create_step(keyword, name, line)
-        StepTemplate.new(keyword, name, line, self)
+      def add_step!(keyword, name, line)
+        @steps << StepTemplate.new(keyword, name, line, self)
       end
       
       def examples(examples)

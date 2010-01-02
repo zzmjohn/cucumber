@@ -4,52 +4,124 @@ module Cucumber
   module SmartAst
     describe FeatureBuilder do
       include SpecHelper
-      extend SpecHelperDsl
       
       before(:each) do
-        build_defined_feature
-        @feature = builder.result[0]
-        @units = builder.result[1]
+        @units = load_units(feature_content)
       end
     
-      describe "for a Feature with a single scenario" do
-        define_feature <<-FEATURE
-          Feature: Getting things done
-            Scenario: Do some stuff
-              Given I am ready to do stuff
-              When I do some stuff
-              Then I should be in the pub celebrating
-        FEATURE
+      describe "for a Feature with a single Scenario" do
+        def feature_content
+          <<-FEATURE
+            @foo
+            Feature: Getting things done
+              A
+              B
+              C
+    
+              @bar
+              Scenario: Do some stuff
+                Given I am ready to do stuff
+                When I do some stuff
+                Then I should be in the pub celebrating
+          FEATURE
+        end
         
-        it { @feature.should_not be_nil }
-        it { @feature.should be_instance_of(Cucumber::SmartAst::Feature) }
         it { @units.length.should == 1 }
         
         describe "the scenario" do
           before(:each) { @scenario = @units.first }
           
           it { @scenario.description.should == "Do some stuff" }
+          
+          it "should get it's own tags" do
+            @scenario.tags.include?(Tag.new("bar")).should be_true
+          end
+          
+          it "should inherit tags from the parent" do
+            @scenario.tags.include?(Tag.new("foo")).should be_true
+          end
+          
           it "should have 3 steps" do
             @scenario.steps.length.should == 3
           end
+          
+          it "should create each step with the correct name" do
+            [
+              "I am ready to do stuff",
+              "I do some stuff",
+              "I should be in the pub celebrating"
+            ].each_with_index do |expected_name, index|
+              @scenario.steps[index].name.should == expected_name
+            end
+          end
+          
+          it "should create each step with the correct keyword" do
+            ["Given", "When", "Then"].each_with_index do |expected_keyword, index|
+              @scenario.steps[index].keyword.should == expected_keyword
+            end
+          end
+        end
+        
+        describe "the feature" do
+          before(:each) { @feature = @units.first.feature }
+          
+          it { @feature.title.should == "Getting things done"}
+          it { @feature.preamble.should == "A\nB\nC"}
+          it { @feature.tags.should == [Tag.new("foo", 1)]}
         end
       end
       
-      describe "a feature with a scenario outline" do
-        define_feature <<-FEATURE
-          Feature: Getting things done
-            Scenario Outline: Do some stuff
-              Given I am ready to do stuff
-              When I do <What I do>
-              Then I should be in the pub celebrating
-              
-              Examples:
-              | What I do     |
-              | open my post  |
-              | pay the bills |
-        FEATURE
+      describe "a Scenario with multiline arguments" do
+        def feature_content
+          <<-FEATURE
+            Feature: Foo
+              Scenario: Bar
+                Given there is a step
+                  """
+                  with
+                    pystrings
+                  """
+                And there is another step
+                  | æ | o |
+                  | a | ø |
+          FEATURE
+        end
         
-        it { @units.length.should == 2 }
+        it "should create a Unit for the scenario" do
+          @units.length.should == 1
+        end
+        
+        it "should append the multiline args correctly to the steps" do
+          @units.first.steps[0].argument.should be_instance_of(PyString)
+          @units.first.steps[1].argument.should be_instance_of(Table)
+        end
+      end
+      
+      describe "a Feature with a Scenario Outline" do
+        def feature_content
+          <<-FEATURES
+          Feature: Feature Description
+            Some preamble
+
+            Scenario Outline: Scenario Ouline Description
+              Given there is a <foo>
+              And <bar> <baz>
+
+              Examples: Examples Description
+                | foo        | bar | baz        |
+                | restaurant | I   | am hungry  |
+                | pub        | I   | am thirsty |
+          FEATURES
+        end
+        
+        it "should create a Unit for each Example" do
+          @units.length.should == 2
+        end
+        
+        it "should create steps on each example" do
+          @units.first.steps[0].name.should == "there is a restaurant"
+          @units.first.steps[1].name.should == "I am hungry"
+        end
       end
     end
   end

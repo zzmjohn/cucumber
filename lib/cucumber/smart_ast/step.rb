@@ -2,10 +2,10 @@ module Cucumber
   module SmartAst
     class Step
       attr_accessor :argument
-      attr_reader :adverb, :name, :line, :interpolated_args
+      attr_reader :keyword, :name, :line, :interpolated_args
       
-      def initialize(adverb, name, line, container, interpolated_args = [])
-        @adverb, @name, @line, @container, @interpolated_args = adverb, name, line, container, interpolated_args
+      def initialize(keyword, name, line, container, interpolated_args = [])
+        @keyword, @name, @line, @container, @interpolated_args = keyword, name, line, container, interpolated_args
       end
       
       def interpolate(args, headers)

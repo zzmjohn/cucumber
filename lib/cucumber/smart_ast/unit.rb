@@ -5,7 +5,7 @@ require 'cucumber/smart_ast/listeners_broadcaster'
 
 module Cucumber
   module SmartAst
-    class Unit 
+    module Unit 
       attr_reader :steps, :language, :scenario
 
       def initialize(scenario)
@@ -28,25 +28,23 @@ module Cucumber
         raise exception
       end
       
-      def execute(step_mother, listeners)
-        listeners.before_unit(self)
+      def execute(run)
+        run.before_unit(self)
 
-        step_mother.before_and_after(self) do
-          steps.each do |step|
-            listeners.before_step(step)
-            
-            result = execute_step(step, step_mother)
-            @statuses[step] = result.status
-            
-            skip_step_execution! if result.failure?
-            
-            listeners.after_step(result)
-          end
+        steps.each do |step|
+          run.before_step(step)
+          
+          result = execute_step(step, step_mother)
+          @statuses[step] = result.status
+          
+          skip_step_execution! if result.failure?
+          
+          run.after_step(result)
         end
         
         unit_result = UnitResult.new(self, @statuses)
 
-        listeners.after_unit(unit_result)
+        run.after_unit(unit_result)
       end
       
       private

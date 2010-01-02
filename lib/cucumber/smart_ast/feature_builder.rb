@@ -12,18 +12,16 @@ require 'cucumber/smart_ast/comment'
 module Cucumber
   module SmartAst
     class FeatureBuilder
-
+      
+      attr_reader :units
+      
       def initialize
         @tags = []
         @units = []
       end
       
-      def result
-        [@feature, @units]
-      end
-      
       def feature(keyword, description, line)
-        @current = @feature = Feature.new(keyword, description, line, grab_tags!)
+        @current = Feature.new(keyword, description, line, grab_tags!)
       end
 
       def background(keyword, description, line)
@@ -41,20 +39,16 @@ module Cucumber
 
       def examples(keyword, description, line)
         @current = @current.create_examples(keyword, description, line, grab_tags!)
-        @units << @current
       end
 
       def step(keyword, name, line)
-        @current.create_step(keyword, name, line)
+        @current.add_step!(keyword, name, line)
       end
 
       def table(rows, line)
-        @current.create_table(rows, line)
-        # @current.table = Table.new(rows, line)
-        # if @current.is_a?(Examples)
-        #   rows.each create example
-        # else
-        # end
+        @current.create_table(rows, line) do |unit|
+          @units << unit
+        end
       end
 
       def py_string(content, line)

@@ -1,7 +1,8 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 require 'cucumber/smart_ast/pretty_formatter'
-require 'cucumber/smart_ast/builder'
+require 'cucumber/smart_ast/feature_builder'
 require 'cucumber/smart_ast/features'
+require 'cucumber/smart_ast/run'
 require 'gherkin'
 
 module Cucumber
@@ -10,23 +11,23 @@ module Cucumber
       def execute_features(content)
         io = StringIO.new
         formatter = PrettyFormatter.new(nil, io, nil)
+        
+        units = load_units(@feature_content)
 
-        features = load_features(@feature_content)
-        step_mother = StepMother.new
-        features.execute(step_mother, [formatter])
+        run = Run.new([formatter])
+        run.execute(units)
+
         io.string
       end
       
       private
       
-      def load_features(content)
-        builder = Builder.new
+      def load_units(content)
+        builder = FeatureBuilder.new
         parser = ::Gherkin::Parser.new(builder, true, "root")
         lexer = ::Gherkin::I18nLexer.new(parser)
         lexer.scan(content)
-        features = Features.new
-        features << builder.ast
-        features
+        builder.units
       end
     end
     

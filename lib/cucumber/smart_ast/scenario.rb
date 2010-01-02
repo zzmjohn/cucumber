@@ -11,7 +11,11 @@ module Cucumber
       
       def initialize(keyword, description, line, tags, feature)
         super(keyword, description, line, feature)
-        @tags = tags
+        @tags = tags + feature.tags
+      end
+      
+      def create_table(rows, line)
+        @steps.last.argument = Table.new(rows, line)
       end
       
       def each(&block)
