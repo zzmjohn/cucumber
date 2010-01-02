@@ -21,7 +21,7 @@ module Cucumber
       end
       
       def feature(keyword, description, line)
-        @current = Feature.new(keyword, description, line, grab_tags!)
+        @current = @current_feature = Feature.new(keyword, description, line, grab_tags!)
       end
 
       def background(keyword, description, line)
@@ -29,12 +29,12 @@ module Cucumber
       end
 
       def scenario(keyword, description, line)
-        @current = @current.create_scenario(keyword, description, line, grab_tags!)
+        @current = @current_feature.create_scenario(keyword, description, line, grab_tags!)
         @units << @current
       end
 
       def scenario_outline(keyword, description, line)
-        @current = @current.create_scenario_outline(keyword, description, line, grab_tags!)
+        @current = @current_feature.create_scenario_outline(keyword, description, line, grab_tags!)
       end
 
       def examples(keyword, description, line)

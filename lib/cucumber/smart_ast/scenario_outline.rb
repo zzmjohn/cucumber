@@ -20,25 +20,15 @@ module Cucumber
         @steps << StepTemplate.new(keyword, name, line, self)
       end
       
-      def examples(examples)
-        @examples ||= []
-        examples.steps = @steps
-        @examples << examples
-        examples
-      end
-
-      def scenarios
-        scenarios = []
-        @examples.each do |example|
-          example.scenarios.each do |scenario|
-            scenarios << scenario
-          end
+      def generate_steps(table_row, headers)
+        generated_steps = @steps.map do |step|
+          step.interpolate(table_row, headers)
         end
-        scenarios
+        background_steps + generated_steps
       end
       
       def background_steps
-        @parent.background_steps
+        feature.background_steps
       end
       
       def feature

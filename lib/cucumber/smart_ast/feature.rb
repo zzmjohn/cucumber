@@ -17,7 +17,7 @@ module Cucumber
       end
       
       def create_background(keyword, description, line)
-        StepContainer.new(keyword, description, line, self)
+        @background = StepContainer.new(keyword, description, line, self)
       end
       
       def create_scenario(keyword, description, line, tags)

@@ -102,6 +102,9 @@ module Cucumber
           <<-FEATURES
           Feature: Feature Description
             Some preamble
+            
+            Background:
+              Given this has happened
 
             Scenario Outline: Scenario Ouline Description
               Given there is a <foo>
@@ -118,9 +121,14 @@ module Cucumber
           @units.length.should == 2
         end
         
-        it "should create steps on each example" do
-          @units.first.steps[0].name.should == "there is a restaurant"
-          @units.first.steps[1].name.should == "I am hungry"
+        it "should put the background steps onto each Example" do
+          @units.first.steps.length.should == 3
+          @units.first.steps[0].name.should == "this has happened"
+        end
+        
+        it "should generate steps for each Example" do
+          @units.first.steps[1].name.should == "there is a restaurant"
+          @units.first.steps[2].name.should == "I am hungry"
         end
       end
     end
