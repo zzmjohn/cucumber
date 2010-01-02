@@ -6,8 +6,11 @@ require 'cucumber/parser'
 require 'cucumber/formatter/color_io'
 require 'cucumber/cli/configuration'
 require 'cucumber/cli/drb_client'
+<<<<<<< HEAD:lib/cucumber/cli/main.rb
 require 'cucumber/ast/tags'
 require 'cucumber/smart_ast/features'
+=======
+>>>>>>> 9613305e381c891ffa5bdce7563198e4df85aa30:lib/cucumber/cli/main.rb
 
 module Cucumber
   module Cli
