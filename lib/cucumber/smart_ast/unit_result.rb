@@ -3,9 +3,9 @@ module Cucumber
     class UnitResult
       attr_reader :unit
       
-      def initialize(unit, statuses)
+      def initialize(unit, step_results)
         @unit = unit
-        @statuses = statuses
+        @step_results = step_results
       end
       
       def steps
@@ -13,7 +13,7 @@ module Cucumber
       end
       
       def step_result(step)
-        @statuses[step]
+        @step_results.find{ |r| r.step === step }
       end
     end
   end

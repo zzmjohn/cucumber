@@ -1,16 +1,20 @@
 module Cucumber
   module SmartAst
     class Run
-      attr_reader :step_mother
-      
       def initialize(listeners, step_mother = StepMother.new)
         @listeners = listeners.extend(ListenersBroadcaster)
         @step_mother = step_mother
       end
       
+      def execute_step(step, unit)
+        @step_mother.execute(step, unit)
+      end
+      
       def execute(units)
         units.each do |unit|
-          unit.execute(self)
+          before_unit(unit)
+          result = unit.execute(self)
+          after_unit(result)
         end
       end
       

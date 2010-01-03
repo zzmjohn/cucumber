@@ -6,6 +6,35 @@ require 'cucumber/smart_ast/listeners_broadcaster'
 module Cucumber
   module SmartAst
     module Unit
+      class StepsRunner
+        def initialize(run, unit, steps)
+          @run, @unit, @steps = run, unit, steps
+          @results = []
+        end
+        
+        def execute
+          @steps.each do |step|
+            @run.before_step(step)
+            result = execute_step(step)
+            @results << result
+            @run.after_step(result)
+          end
+
+          UnitResult.new(@unit, @results)
+        end
+        
+        private
+        
+        def failed?
+          @results.any?{ |r| r.failure? }
+        end
+        
+        def execute_step(step)
+          return StepResult.new(:skipped, step, @unit) if failed?
+          @run.execute_step(step, @unit)
+        end
+      end
+      
       def accept_hook?(hook)
         tags = @tags.map { |tag| "@#{tag.name}" }
         TagExpression.parse(hook.tag_expressions).eval(tags)
@@ -16,30 +45,7 @@ module Cucumber
       end
       
       def execute(run)
-        # TODO: move onto Run
-        
-        run.before_unit(self)
-        
-        results = {}
-        skip = false
-        
-        all_steps.each do |step|
-          run.before_step(step)
-        
-          result = if skip
-            StepResult.new(:skipped, step, self)
-          else
-            run.step_mother.execute(step, self)
-          end
-          skip = true if result.failure?
-          
-          results[step] = result
-          
-          run.after_step(result)
-        end
-        
-        unit_result = UnitResult.new(self, results)
-        run.after_unit(unit_result)
+        StepsRunner.new(run, self, all_steps).execute
       end
       
       private
