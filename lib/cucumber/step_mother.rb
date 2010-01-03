@@ -80,6 +80,14 @@ module Cucumber
       @language_map[ext] = programming_language
       programming_language
     end
+    
+    # Loads a natural language. This has the effect of aliasing 
+    # Step Definition keywords for all of the registered programming 
+    # languages (if they support aliasing). See #load_programming_language
+    #
+    def load_natural_language(lang)
+      Parser::NaturalLanguage.get(lang)
+    end
 
     # Returns the options passed on the command line.
     def options
