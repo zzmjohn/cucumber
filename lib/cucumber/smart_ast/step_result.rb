@@ -8,7 +8,7 @@ module Cucumber
       end
       
       def accept(visitor)
-        if @unit.scenario.from_outline?
+        if @unit.from_outline?
           visitor.example_step_result(self)
         else
           visitor.scenario_step_result(self)

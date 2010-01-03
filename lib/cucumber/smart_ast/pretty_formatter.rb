@@ -7,7 +7,7 @@ module Cucumber
       end
       
       def before_unit(unit)
-        @scenario = unit.scenario
+        @scenario = unit
         
         on_new_feature do |feature|
           @printer.feature(feature)
@@ -44,8 +44,8 @@ module Cucumber
       end
       
       def on_new_scenario_outline
-        if @scenario_outline != @scenario.outline
-          @scenario_outline = @scenario.outline
+        if @scenario_outline != @scenario.scenario_outline
+          @scenario_outline = @scenario.scenario_outline
           yield @scenario_outline
         end
       end

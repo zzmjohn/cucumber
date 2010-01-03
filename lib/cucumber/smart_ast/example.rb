@@ -1,10 +1,21 @@
+require 'cucumber/smart_ast/comments'
+require 'cucumber/smart_ast/tags'
+require 'cucumber/smart_ast/description'
+require 'cucumber/smart_ast/unit'
+
 module Cucumber
   module SmartAst
-    class Example < Scenario
-      def initialize(table_row, line, examples)
+    class Example < StepContainer
+      include Comments
+      include Tags
+      include Description
+      include Unit
+      
+      def initialize(table_row, line, steps, examples)
         description = table_row.values.join(" | ")
-        super("Example", description, line, examples.tags, examples.feature)
-        @steps = examples.scenario_outline.generate_steps(table_row, examples.headers)
+        super("Example", description, line, examples)
+        @tags = examples.tags
+        @steps = steps
       end
       
       def examples
@@ -16,7 +27,7 @@ module Cucumber
       end
       
       def feature
-        return examples.feature
+        examples.feature
       end
     
       def scenario_outline

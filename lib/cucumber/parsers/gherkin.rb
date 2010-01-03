@@ -1,6 +1,6 @@
 require 'cucumber/plugin'
 require 'cucumber/filter'
-require 'cucumber/smart_ast/builder'
+require 'cucumber/smart_ast/feature_builder'
 require 'gherkin'
 require 'gherkin/i18n'
 
@@ -24,13 +24,13 @@ module Cucumber
         # Leave filtering for when the new ast is stable
         # filter = Filter.new(lines, options) 
         
-        builder = SmartAst::Builder.new
+        builder = SmartAst::FeatureBuilder.new
         parser  = ::Gherkin::Parser.new(builder, true, "root")
         lexer   = ::Gherkin::I18nLexer.new(parser)
 
         lexer.scan(content)
         builder.language = lexer.language
-        builder.ast        
+        builder.units
       end
     end
   end

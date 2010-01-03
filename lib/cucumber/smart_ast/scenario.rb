@@ -1,21 +1,18 @@
 require 'cucumber/smart_ast/step_container'
 require 'cucumber/smart_ast/description'
+require 'cucumber/smart_ast/unit'
 
 module Cucumber
   module SmartAst
     class Scenario < StepContainer
-      include Enumerable
       include Comments
       include Tags
       include Description
+      include Unit
       
       def initialize(keyword, description, line, tags, feature)
         super(keyword, description, line, feature)
         @tags = tags + feature.tags
-      end
-      
-      def create_table(rows, line)
-        @steps.last.argument = Table.new(rows, line)
       end
       
       def from_outline?
@@ -23,14 +20,9 @@ module Cucumber
       end
       
       def feature
-        return @parent
+        @parent
       end
       
-      private
-      
-      def all_steps
-        @parent.background_steps + self.steps
-      end
     end
   end
 end

@@ -8,21 +8,6 @@ module Cucumber
         @keyword, @name, @line, @container, @interpolated_args = keyword, name, line, container, interpolated_args
       end
       
-      def interpolate(args, headers)
-        name = @name.dup
-        matched_args = []
-        headers.each do |key|
-          value = args[key]
-          if name =~ /<#{key}>/
-            name.gsub!(/<#{key}>/, value)
-            matched_args << value
-          end
-        end
-        step = self.class.new(@adverb, name, @line, matched_args)
-        step.argument = @argument if @argument
-        step
-      end
-      
       def accept_for_argument(visitor)
         argument.accept(visitor) if argument
       end
@@ -36,7 +21,7 @@ module Cucumber
       end
       
       def to_s
-        "#{@adverb} #{@name}"
+        "#{@keyword} #{@name}"
       end
     end
   end

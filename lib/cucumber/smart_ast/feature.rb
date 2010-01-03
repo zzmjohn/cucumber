@@ -8,8 +8,7 @@ module Cucumber
       include Tags
       include Description
 
-      attr_accessor :language, :features, :background, :keyword
-      attr_reader :scenarios, :scenario_outlines
+      attr_accessor :language, :background, :keyword
 
       def initialize(keyword, description, line, tags)
         @keyword, @description, @line = keyword, description, line

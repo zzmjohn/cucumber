@@ -8,10 +8,18 @@ require 'cucumber/smart_ast/py_string'
 require 'cucumber/smart_ast/table'
 require 'cucumber/smart_ast/tag'
 require 'cucumber/smart_ast/comment'
+require 'cucumber/smart_ast/node'
 
 module Cucumber
   module SmartAst
     class FeatureBuilder
+      class Node
+        attr_reader :keyword, :description, :line
+        
+        def initialize(keyword, description, line)
+          @keyword, @description, @line = keyword, description, line
+        end
+      end
       
       attr_reader :units
       
@@ -38,7 +46,7 @@ module Cucumber
       end
 
       def examples(keyword, description, line)
-        @current = @current.create_examples(keyword, description, line, grab_tags!)
+        @cached_examples_node = Node.new(keyword, description, line)
       end
 
       def step(keyword, name, line)
@@ -46,8 +54,14 @@ module Cucumber
       end
 
       def table(rows, line)
-        @current.create_table(rows, line) do |unit|
-          @units << unit
+        table = Table.new(rows, line)
+        if @cached_examples_node
+          create_examples(table) do |example|
+            @units << example
+          end
+          @cached_examples_node = nil
+        else
+          @current.table = table
         end
       end
 
@@ -67,6 +81,16 @@ module Cucumber
       end
 
       private
+      
+      def create_examples(table, &block)
+        @current.create_examples(
+          @cached_examples_node.keyword, 
+          @cached_examples_node.description, 
+          @cached_examples_node.line, 
+          grab_tags!,
+          table, 
+          &block)
+      end
       
       def grab_tags!
         result = @tags.dup
