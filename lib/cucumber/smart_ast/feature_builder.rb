@@ -77,7 +77,7 @@ module Cucumber
       end
       
       def language=(language)
-        @feature.language = language
+        @current_feature.language = language
       end
 
       private

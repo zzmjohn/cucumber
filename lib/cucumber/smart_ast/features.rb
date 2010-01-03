@@ -1,4 +1,5 @@
 require 'cucumber/smart_ast/listeners_broadcaster'
+require 'cucumber/smart_ast/run'
 
 module Cucumber
   module SmartAst
@@ -7,26 +8,23 @@ module Cucumber
       
       def initialize
         @adverbs = []
+        @units = []
       end
       
       def execute(step_mother, listeners)
         listeners.extend(ListenersBroadcaster)
+        run = Run.new(listeners, step_mother)
         
-        units.each do |unit|
-          unit.execute(step_mother, listeners)
+        @units.each do |unit|
+          unit.execute(run)
         end
       end
       
-      def add_feature(feature)
-        self.<<(feature)
+      def add_feature(units)
+        units.each do |unit|
+          @units << unit
+        end
       end
-      
-      private
-      
-      def units
-        map{ |feature| feature.units }.flatten
-      end
-      
     end
   end
 end
