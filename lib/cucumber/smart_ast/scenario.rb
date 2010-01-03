@@ -14,15 +14,6 @@ module Cucumber
         super(keyword, description, line, feature)
         @tags = tags + feature.tags
       end
-      
-      def from_outline?
-        false
-      end
-      
-      def feature
-        @parent
-      end
-      
     end
   end
 end

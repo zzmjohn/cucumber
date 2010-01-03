@@ -4,8 +4,13 @@ module Cucumber
       include Enumerable
       
       attr_reader :raw, :line
+
       def initialize(rows, line)
         @raw, @line = rows, line
+      end
+
+      def interpolate(hash)
+        self # TODO: actually do it
       end
 
       def accept(visitor)

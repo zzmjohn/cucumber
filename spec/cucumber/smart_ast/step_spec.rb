@@ -17,14 +17,14 @@ module Cucumber
         end
         
         it "should return a string for a py_string" do
-          @step.argument = PyString.new("Oh hai", 1)
+          @step.py_string!("Oh hai", 1)
           @step.to_execution_format.should == ["a step", "Oh hai"]
         end
         
         it "should return the table object for a table" do
-          table = Table.new([%w{ 1 2 3 }], 1)
-          @step.argument = table
-          @step.to_execution_format.should == ["a step", table]
+          @step.table!([%w{ 1 2 3 }], 1)
+          @step.to_execution_format[0].should == "a step"
+          @step.to_execution_format[1].raw.should == [%w{ 1 2 3 }]
         end
       end
     end

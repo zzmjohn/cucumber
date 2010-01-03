@@ -1,4 +1,6 @@
-require 'cucumber/smart_ast/tags'
+require 'cucumber/smart_ast/step_container'
+require 'cucumber/smart_ast/scenario'
+require 'cucumber/smart_ast/scenario_outline'
 require 'cucumber/smart_ast/description'
 require 'cucumber/smart_ast/unit'
 
@@ -8,7 +10,7 @@ module Cucumber
       include Tags
       include Description
 
-      attr_accessor :language, :background, :keyword
+      attr_accessor :language, :keyword
 
       def initialize(keyword, description, line, tags)
         @keyword, @description, @line = keyword, description, line
@@ -31,23 +33,9 @@ module Cucumber
         @language.adverbs
       end
       
-      def units
-        all_scenarios
-      end
-
       def background_steps
-        background ? background.steps : []
+        @background ? @background.steps : []
       end
-      
-      private
-      
-      def all_scenarios
-        return @all_scenarios if @all_scenarios
-        @all_scenarios = scenarios 
-        @all_scenarios += scenario_outlines.collect { |outline| outline.scenarios }
-        @all_scenarios = @all_scenarios.flatten
-      end
-
     end
   end
 end

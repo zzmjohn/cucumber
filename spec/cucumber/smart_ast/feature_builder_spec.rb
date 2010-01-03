@@ -99,7 +99,7 @@ module Cucumber
       
       describe "a Feature with a Scenario Outline" do
         def feature_content
-          <<-FEATURES
+          <<-FEATURE
           Feature: Feature Description
             Some preamble
             
@@ -108,13 +108,18 @@ module Cucumber
 
             Scenario Outline: Scenario Ouline Description
               Given there is a <foo>
+                """
+                with a
+                multiline <fruit>
+                """
               And <bar> <baz>
+                |with|<animal>|
 
               Examples: Examples Description
-                | foo        | bar | baz        |
-                | restaurant | I   | am hungry  |
-                | pub        | I   | am thirsty |
-          FEATURES
+                | foo        | bar | baz        | fruit  | animal |
+                | restaurant | I   | am hungry  | apple  | cow    |
+                | pub        | I   | am thirsty | orange | horse  |
+          FEATURE
         end
         
         it "should create a Unit for each Example" do
@@ -129,6 +134,10 @@ module Cucumber
         it "should generate steps for each Example" do
           @units.first.steps[1].name.should == "there is a restaurant"
           @units.first.steps[2].name.should == "I am hungry"
+        end
+
+        it "should replace values in pystring" do
+          @units.first.steps[1].argument.to_s.should == "with a\nmultiline apple"
         end
       end
     end

@@ -7,9 +7,7 @@ module Cucumber
       end
       
       def before_unit(unit)
-        @scenario = unit
-        
-        on_new_feature do |feature|
+        on_new_feature(unit) do |feature|
           @printer.feature(feature)
         end
         
@@ -36,9 +34,9 @@ module Cucumber
       
       private
 
-      def on_new_feature
-        if @feature != @scenario.feature
-          @feature = @scenario.feature
+      def on_new_feature(unit)
+        if @feature != unit.feature
+          @feature = unit.feature
           yield @feature
         end
       end

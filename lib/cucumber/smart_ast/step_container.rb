@@ -13,12 +13,10 @@ module Cucumber
         @steps = []
       end
       
-      def add_step!(keyword, name, line)
-        @steps << Step.new(keyword, name, line, self)
-      end
-
-      def language
-        @parent.language
+      def create_step(keyword, name, line)
+        step = Step.new(keyword, name, line, self)
+        @steps << step
+        step
       end
     end
   end

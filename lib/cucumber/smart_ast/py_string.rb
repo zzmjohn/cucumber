@@ -5,9 +5,6 @@ module Cucumber
         @content, @line = content, line
       end
       
-      # copied from ast/py_string and modified
-      attr_accessor :file
-
       def self.default_arg_name
         "string"
       end
@@ -24,13 +21,13 @@ module Cucumber
         to_s
       end
 
-      def arguments_replaced(arguments) #:nodoc:
+      def interpolate(hash) #:nodoc:
         string = @content
-        arguments.each do |name, value|
+        hash.each do |key, value|
           value ||= ''
-          string = string.gsub(name, value)
+          string = string.gsub(/<#{key}>/, value)
         end
-        self.class.new(string, @start_line)
+        self.class.new(string, @line)
       end
 
       def has_text?(text)

@@ -1,25 +1,28 @@
 require 'cucumber/smart_ast/tags'
 require 'cucumber/smart_ast/description'
-require 'cucumber/smart_ast/node'
 
 module Cucumber
   module SmartAst
-    class Examples < Node
+    class Examples
       include Tags
       include Description
-      extend Forwardable
       
-      attr_reader :scenario_outline, :table
+      attr_reader :keyword, :description, :line
       
-      def initialize(keyword, description, line, tags, table, scenario_outline)
-        super(keyword, description, line)
-        @tags, @table, @scenario_outline = tags, table, scenario_outline
+      def initialize(keyword, description, line, tags, scenario_outline)
+        @keyword, @description, @line, @tags, @scenario_outline = keyword, description, line, tags, scenario_outline
       end
-      
-      def_delegators :scenario_outline, 
-        :language,
-        :feature,
-        :background_steps
+
+      def table!(rows, line)
+        table = Table.new(rows, line)
+        table.hashes.each_with_index do |hash, row_index|
+          yield Example.new(hash, table.line + row_index, self)
+        end
+      end
+
+      def steps(hash)
+        @scenario_outline.steps(hash)
+      end
     end
   end
 end

@@ -5,33 +5,19 @@ require 'cucumber/smart_ast/unit'
 
 module Cucumber
   module SmartAst
-    class Example < StepContainer
+    class Example
       include Comments
       include Tags
       include Description
       include Unit
       
-      def initialize(table_row, line, steps, examples)
-        description = table_row.values.join(" | ")
-        super("Example", description, line, examples)
-        @tags = examples.tags
-        @steps = steps
+      def initialize(hash, line, examples)
+        @hash, @line, @examples = hash, line, examples
+        #description = hash.values.join(" | ")
       end
-      
-      def examples
-        @parent
-      end
-      
-      def from_outline?
-        true
-      end
-      
-      def feature
-        examples.feature
-      end
-    
-      def scenario_outline
-        examples.scenario_outline
+
+      def steps
+        @examples.steps(@hash)
       end
     end
   end

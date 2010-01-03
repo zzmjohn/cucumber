@@ -8,6 +8,7 @@ $:.unshift(File.dirname(__FILE__) + '/../lib')
 require 'cucumber'
 require 'cucumber/parser/natural_language'
 $:.unshift(File.dirname(__FILE__))
+require 'cucumber/smart_ast/attr_readers'
 
 Spec::Runner.configure do |config|
   config.before(:each) do
