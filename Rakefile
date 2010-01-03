@@ -4,6 +4,7 @@ require 'term/ansicolor'
 require 'rake'
 $:.unshift(File.dirname(__FILE__) + '/lib')
 require 'cucumber/formatter/ansicolor'
+require 'cucumber/platform'
 
 begin
   require 'jeweler'
@@ -26,7 +27,7 @@ begin
     gem.add_development_dependency 'nokogiri', '>= 1.4.1'
     gem.add_development_dependency 'prawn', '>= 0.6.3'
     gem.add_development_dependency 'rspec', '>= 1.2.9'
-    gem.add_development_dependency 'spork', '>= 0.7.5'
+    gem.add_development_dependency 'spork', '>= 0.7.5' unless Cucumber::JRUBY || Cucumber::WINDOWS
     gem.add_development_dependency 'sinatra', '>= 0.9.4'
 
     extend Cucumber::Formatter::ANSIColor
