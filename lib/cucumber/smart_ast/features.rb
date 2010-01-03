@@ -12,7 +12,6 @@ module Cucumber
       end
       
       def execute(step_mother, listeners)
-        listeners.extend(ListenersBroadcaster)
         Run.new(listeners, step_mother).execute(@units)
       end
       

@@ -13,14 +13,6 @@ require 'cucumber/smart_ast/node'
 module Cucumber
   module SmartAst
     class FeatureBuilder
-      class Node
-        attr_reader :keyword, :description, :line
-        
-        def initialize(keyword, description, line)
-          @keyword, @description, @line = keyword, description, line
-        end
-      end
-      
       attr_reader :units
       
       def initialize
@@ -29,20 +21,23 @@ module Cucumber
       end
       
       def feature(keyword, description, line)
-        @current = @current_feature = Feature.new(keyword, description, line, grab_tags!)
+        @current_feature = Feature.new(keyword, description, line, grab_tags!)
       end
 
       def background(keyword, description, line)
-        @current = @current.create_background(keyword, description, line)
+        background = @current_feature.create_background(keyword, description, line)
+        @current_step_container = background
       end
 
       def scenario(keyword, description, line)
-        @current = @current_feature.create_scenario(keyword, description, line, grab_tags!)
-        @units << @current
+        scenario = @current_feature.create_scenario(keyword, description, line, grab_tags!)
+        @current_step_container = scenario
+        @units << scenario
       end
 
       def scenario_outline(keyword, description, line)
-        @current = @current_feature.create_scenario_outline(keyword, description, line, grab_tags!)
+        scenario_outline = @current_feature.create_scenario_outline(keyword, description, line, grab_tags!)
+        @current_scenario_outline = @current_step_container = scenario_outline
       end
 
       def examples(keyword, description, line)
@@ -50,7 +45,7 @@ module Cucumber
       end
 
       def step(keyword, name, line)
-        @current.add_step!(keyword, name, line)
+        @current_step_container.add_step!(keyword, name, line)
       end
 
       def table(rows, line)
@@ -61,12 +56,12 @@ module Cucumber
           end
           @cached_examples_node = nil
         else
-          @current.table = table
+          @current_step_container.steps.last.argument = table
         end
       end
 
       def py_string(content, line)
-        @current.py_string = PyString.new(content, line)
+        @current_step_container.steps.last.argument = PyString.new(content, line)
       end
 
       def tag(tag, line)
@@ -83,7 +78,7 @@ module Cucumber
       private
       
       def create_examples(table, &block)
-        @current.create_examples(
+        @current_scenario_outline.create_examples(
           @cached_examples_node.keyword, 
           @cached_examples_node.description, 
           @cached_examples_node.line, 

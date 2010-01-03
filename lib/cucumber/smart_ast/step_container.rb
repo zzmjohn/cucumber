@@ -17,14 +17,6 @@ module Cucumber
         @steps << Step.new(keyword, name, line, self)
       end
 
-      def table=(table)
-        @steps.last.argument = table
-      end
-
-      def py_string=(py_string)
-        @steps.last.argument = py_string
-      end         
-
       def language
         @parent.language
       end
