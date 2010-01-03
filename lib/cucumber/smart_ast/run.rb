@@ -8,18 +8,14 @@ module Cucumber
         @step_mother = step_mother
       end
       
-      def execute(units)
-        units.each do |unit|
-          unit.execute(self)
-        end
+      def before_unit(unit)
+        @step_mother.before(unit)
+        @listeners.before_unit(unit)
       end
       
       def after_unit(unit_result)
         @listeners.after_unit(unit_result)
-      end
-      
-      def before_unit(unit)
-        @listeners.before_unit(unit)
+        @step_mother.after(unit_result.unit)
       end
       
       def before_step(step)

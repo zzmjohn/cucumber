@@ -1,6 +1,8 @@
 module Cucumber
   module SmartAst
     class UnitResult
+      attr_reader :unit
+      
       def initialize(unit, statuses)
         @unit = unit
         @statuses = statuses

@@ -5,10 +5,10 @@ require 'cucumber/smart_ast/listeners_broadcaster'
 
 module Cucumber
   module SmartAst
-    module Unit 
+    module Unit
       def accept_hook?(hook)
-        tags = tags.map { |tag| "@#{tag.name}" }
-        Cucumber::Ast::Tags.matches?(tags, hook.tag_name_lists)
+        tags = @tags.map { |tag| "@#{tag.name}" }
+        TagExpression.parse(hook.tag_expressions).eval(tags)
       end
       
       def fail!(exception)

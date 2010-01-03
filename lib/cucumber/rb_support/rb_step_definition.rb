@@ -52,6 +52,7 @@ module Cucumber
         args = args.map{|arg| Ast::PyString === arg ? arg.to_s : arg}
         begin
           args = @rb_language.execute_transforms(args)
+          raise "eek" unless @rb_language.current_world
           @rb_language.current_world.cucumber_instance_exec(true, regexp_source, *args, &@proc)
         rescue Cucumber::ArityMismatchError => e
           e.backtrace.unshift(self.backtrace_line)
