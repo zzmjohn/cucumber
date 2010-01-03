@@ -3,7 +3,7 @@ require 'cucumber/smart_ast/run'
 
 module Cucumber
   module SmartAst
-    class Features < Array
+    class Features
       attr_accessor :adverbs
       
       def initialize
@@ -13,11 +13,7 @@ module Cucumber
       
       def execute(step_mother, listeners)
         listeners.extend(ListenersBroadcaster)
-        run = Run.new(listeners, step_mother)
-        
-        @units.each do |unit|
-          unit.execute(run)
-        end
+        Run.new(listeners, step_mother).execute(@units)
       end
       
       def add_feature(units)
