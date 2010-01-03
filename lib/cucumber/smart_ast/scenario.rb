@@ -1,46 +1,28 @@
 require 'cucumber/smart_ast/step_container'
+require 'cucumber/smart_ast/description'
+require 'cucumber/smart_ast/unit'
 
 module Cucumber
   module SmartAst
     class Scenario < StepContainer
-      include Enumerable
       include Comments
       include Tags
+      include Description
+      include Unit
       
-      def each(&block)
-        @steps.each { |step| yield step }
+      def initialize(keyword, description, line, tags, feature)
+        super(keyword, description, line, feature)
+        @tags = tags + feature.tags
       end
       
-      def outline?
-        !@parent.is_a?(Cucumber::SmartAst::Feature)
+      def from_outline?
+        false
       end
       
       def feature
-        return @parent unless outline?
-        examples.feature
-      end
-      
-      def outline
-        return nil unless outline?
-        examples.scenario_outline
-      end
-      
-      def examples
-        return nil unless outline?
         @parent
       end
       
-      def title
-        @description.split("\n").first
-      end
-      
-      def all_steps
-        @parent.background_steps + self.steps
-      end
-      
-      def all_tags
-        (@parent.tags + self.tags).uniq
-      end
     end
   end
 end

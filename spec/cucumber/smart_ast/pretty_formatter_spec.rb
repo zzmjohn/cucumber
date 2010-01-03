@@ -1,17 +1,42 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 require 'cucumber/smart_ast/pretty_formatter'
-require 'cucumber/smart_ast/builder'
+require 'cucumber/smart_ast/feature_builder'
 require 'cucumber/smart_ast/features'
+require 'cucumber/smart_ast/run'
 require 'gherkin'
 
 module Cucumber
   module SmartAst
+    module FormatterSpecHelper
+      def execute_features(content)
+        io = StringIO.new
+        formatter = PrettyFormatter.new(nil, io, nil)
+        
+        units = load_units(@feature_content)
+
+        run = Run.new([formatter])
+        run.execute(units)
+
+        io.string
+      end
+      
+      private
+      
+      def load_units(content)
+        builder = FeatureBuilder.new
+        parser = ::Gherkin::Parser.new(builder, true, "root")
+        lexer = ::Gherkin::I18nLexer.new(parser)
+        lexer.scan(content)
+        builder.units
+      end
+    end
+    
     describe PrettyFormatter do
-      describe "when the features contain just a single empty scenario" do
-        it "should print the same scenario" do
-          io = StringIO.new
-          formatter = PrettyFormatter.new(nil, io, nil)
-          feature_content = <<-FEATURES
+      include FormatterSpecHelper
+
+      describe "a single feature with a single scenario" do
+        before(:each) do
+          @feature_content = <<-FEATURES
 Feature: Feature Description
   Some preamble
 
@@ -26,23 +51,33 @@ Feature: Feature Description
       | a | ø |
     Then we will see steps
           FEATURES
-
-          features = load_features(feature_content)
-          step_mother = StepMother.new
-          features.execute(step_mother, [formatter])
-          
-          io.string.should == feature_content
         end
         
-        def load_features(content)
-          builder = Builder.new
-          parser = ::Gherkin::Parser.new(builder, true, "root")
-          lexer = ::Gherkin::I18nLexer.new(parser)
-          lexer.scan(content)
-          features = Features.new
-          features << builder.ast
-          features
+        it "should print output identical to the gherkin input" do
+          execute_features(@feature_content).should == @feature_content
         end
+      end
+      
+      describe "a single feature with a scenario outline" do
+        before(:each) do
+          @feature_content = <<-FEATURES
+Feature: Feature Description
+  Some preamble
+
+  Scenario Outline: Scenario Ouline Description
+    Given there is a <foo>
+    And <bar> <baz>
+
+    Examples: Examples Description
+      | foo  | bar | baz       |
+      | step | I   | am hungry |
+          FEATURES
+        end
+        
+        it "should print output identical to the gherkin input" do
+          execute_features(@feature_content).should == @feature_content
+        end
+        
       end
     end
   end

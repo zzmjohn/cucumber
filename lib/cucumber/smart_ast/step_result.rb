@@ -1,10 +1,18 @@
 module Cucumber
   module SmartAst
-    class Result
+    class StepResult
       attr_reader :status, :step
 
-      def initialize(status, step, exception=nil)
-        @status, @step, @exception = status, step, exception
+      def initialize(status, step, unit, exception=nil)
+        @status, @step, @unit, @exception = status, step, unit, exception
+      end
+      
+      def accept(visitor)
+        if @unit.from_outline?
+          visitor.example_step_result(self)
+        else
+          visitor.scenario_step_result(self)
+        end
       end
 
       def to_s

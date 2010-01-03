@@ -27,8 +27,7 @@ module Cucumber
     attr_writer :options, :log
     include Formatter::Duration
     
-    def load_features(uris)
-      feature_suite = Ast::Features.new
+    def load_features(uris, feature_suite = Ast::Features.new)
 
       lists, uris = uris.partition { |uri| uri =~ /^@/ }
       lists.map! { |list| list.gsub(/^@/, '') }
