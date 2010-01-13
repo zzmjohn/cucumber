@@ -144,21 +144,6 @@ module Cucumber
       end
     end
 
-    def execute(step, unit) # TODO: combine execute and invoke when Treetop is removed, or have them both return Results
-      status =
-        begin
-          invoke(*step.to_execution_format)
-          :passed
-        rescue Undefined
-          :undefined
-        rescue Pending
-          :pending
-        rescue Exception => e
-          :failed
-        end
-      res = SmartAst::StepResult.new(status, step, unit, e ? e : nil)
-    end
-    
     # Invokes a series of steps +steps_text+. Example:
     #
     #   invoke(%Q{

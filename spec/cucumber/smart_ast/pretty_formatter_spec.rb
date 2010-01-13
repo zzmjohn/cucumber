@@ -75,7 +75,9 @@ Feature: Feature Description
         end
         
         it "should print output identical to the gherkin input" do
-          execute_features(@feature_content).should == @feature_content
+          io = execute_features(@feature_content)
+          puts io
+          io.should == @feature_content
         end
         
       end

@@ -1,6 +1,5 @@
 require 'cucumber/smart_ast/step_container'
 require 'cucumber/smart_ast/description'
-require 'cucumber/smart_ast/unit'
 
 module Cucumber
   module SmartAst
@@ -8,11 +7,34 @@ module Cucumber
       include Comments
       include Tags
       include Description
-      include Unit
       
       def initialize(keyword, description, line, tags, feature)
         super(keyword, description, line, feature)
-        @tags = tags + feature.tags
+        @feature = feature
+        @tags = tags
+      end
+
+      def execute(step_mother, listener)
+        step_mother.before(self)
+        listener.before_unit(self)
+
+        all_steps.each do |step|
+          step.execute(step_mother, listener)
+        end
+
+        listener.after_unit(self)
+        step_mother.after(self)
+      end
+
+      def report_to(gherkin_listener)
+        @feature.report_to(gherkin_listener)
+        gherkin_listener.scenario(@keyword, @description, @line)
+      end
+
+      private
+      
+      def all_steps
+        feature.background_steps + @steps
       end
     end
   end

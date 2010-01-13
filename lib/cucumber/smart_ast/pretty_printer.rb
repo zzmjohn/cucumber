@@ -1,7 +1,7 @@
 module Cucumber
   module SmartAst
     class PrettyPrinter
-      module Printer
+      module PrinterXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
         include Formatter::ANSIColor
 
         def indent(count, string = '')

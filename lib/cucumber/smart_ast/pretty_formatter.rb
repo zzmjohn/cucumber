@@ -1,37 +1,23 @@
-require 'cucumber/smart_ast/pretty_printer'
+require 'gherkin/tools/pretty_listener'
+
 module Cucumber
   module SmartAst
     class PrettyFormatter
       def initialize(_,io,__)
-        @printer = PrettyPrinter.new(io)
+        @listener = Gherkin::Tools::PrettyListener.new(io)
       end
-      
+
       def before_unit(unit)
-        on_new_feature(unit) do |feature|
-          @printer.feature(feature)
-        end
-        
-        if @scenario.from_outline?
-          on_new_scenario_outline do |scenario_outline|
-            @printer.scenario_outline(scenario_outline)
-          end
-          
-          on_new_examples_table do |examples_table|
-            @printer.examples_table(examples_table)
-          end
-        else
-          @printer.scenario(@scenario)
-        end
+        unit.report_to(@listener)
       end
-      
+
       def after_step(step_result)
-        step_result.accept(@printer)
+        step_result.report_to(@listener)
       end
       
-      def after_unit(unit_result)
-        @printer.after_example(unit_result) if @scenario.from_outline?
+      def after_unit(unit)
       end
-      
+
       private
 
       def on_new_feature(unit)

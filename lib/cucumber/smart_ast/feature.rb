@@ -36,6 +36,10 @@ module Cucumber
       def background_steps
         @background ? @background.steps : []
       end
+
+      def report_to(gherkin_listener)
+        gherkin_listener.feature(@keyword, @description, @line)
+      end
     end
   end
 end

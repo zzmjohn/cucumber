@@ -23,6 +23,10 @@ module Cucumber
       def steps(hash)
         @scenario_outline.steps(hash)
       end
+
+      def report_to(gherkin_listener)
+        @scenario_outline.report_to(gherkin_listener)
+      end
     end
   end
 end

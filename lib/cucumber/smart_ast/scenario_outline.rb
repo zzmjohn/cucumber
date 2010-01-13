@@ -5,6 +5,7 @@ require 'cucumber/smart_ast/example'
 module Cucumber
   module SmartAst
     class ScenarioOutline
+      include Comments
       include Tags
       include Description
       
@@ -18,13 +19,18 @@ module Cucumber
       end
       
       def create_step(keyword, name, line)
-        step_template = StepTemplate.new(keyword, name, line, self)
+        step_template = StepTemplate.new(keyword, name, line, self, nil)
         @step_templates << step_template
         step_template
       end
       
       def steps(hash)
         @feature.background_steps + @step_templates.map { |step_template| step_template.interpolate(hash) }
+      end
+
+      def report_to(gherkin_listener)
+        @feature.report_to(gherkin_listener)
+        gherkin_listener.scenario(@keyword, @description, @line)
       end
     end
   end

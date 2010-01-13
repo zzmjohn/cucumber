@@ -17,6 +17,10 @@ module Cucumber
         visitor.step_table(self)
       end
 
+      def report_to(listener)
+        listener.table(@raw, @line)
+      end
+
       def to_execution_format
         self
       end

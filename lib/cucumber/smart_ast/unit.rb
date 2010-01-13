@@ -1,11 +1,10 @@
 require 'cucumber/ast/tags'
 require 'cucumber/smart_ast/step_result'
 require 'cucumber/smart_ast/unit_result'
-require 'cucumber/smart_ast/listeners_broadcaster'
 
 module Cucumber
   module SmartAst
-    module Unit
+    module UnitXXXX
       class StepsRunner
         def initialize(run, unit, steps)
           @run, @unit, @steps = run, unit, steps
@@ -30,7 +29,7 @@ module Cucumber
         end
         
         def execute_step(step)
-          return StepResult.new(:skipped, step, @unit) if failed?
+          return StepResult.new(:skipped, step) if failed?
           @run.execute_step(step, @unit)
         end
       end
@@ -44,8 +43,11 @@ module Cucumber
         raise exception
       end
       
-      def execute(run)
-        StepsRunner.new(run, self, all_steps).execute
+      def executeOLD(run)
+        #StepsRunner.new(run, self, all_steps).execute
+        all_steps.each do |step|
+          step.execute(run)
+        end
       end
       
       private

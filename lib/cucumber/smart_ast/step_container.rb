@@ -14,7 +14,7 @@ module Cucumber
       end
       
       def create_step(keyword, name, line)
-        step = Step.new(keyword, name, line, self)
+        step = Step.new(keyword, name, line, nil)
         @steps << step
         step
       end

@@ -1,7 +1,6 @@
 require 'cucumber/smart_ast/comments'
 require 'cucumber/smart_ast/tags'
 require 'cucumber/smart_ast/description'
-require 'cucumber/smart_ast/unit'
 
 module Cucumber
   module SmartAst
@@ -9,14 +8,31 @@ module Cucumber
       include Comments
       include Tags
       include Description
-      include Unit
       
       def initialize(hash, line, examples)
         @hash, @line, @examples = hash, line, examples
         #description = hash.values.join(" | ")
       end
 
-      def steps
+      def execute(step_mother, listener)
+        step_mother.before(self)
+        listener.before_unit(self)
+
+        all_steps.each do |step|
+          step.execute(step_mother, listener)
+        end
+
+        listener.after_unit(self)
+        step_mother.after(self)
+      end
+
+      def report_to(gherkin_listener)
+        @examples.report_to(gherkin_listener)
+      end
+
+      private
+
+      def all_steps
         @examples.steps(@hash)
       end
     end
