@@ -282,6 +282,10 @@ module Cucumber
         self
       end
 
+      def custom_profiles
+        @profiles - [@default_profile]
+      end
+
     protected
 
       attr_reader :options, :profiles, :expanded_args
