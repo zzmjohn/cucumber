@@ -15,6 +15,7 @@ module Cucumber
       end
 
       def execute(step_mother, listener)
+        # TODO: Very similar to what's in Example. Refactor.
         step_mother.before(self)
         listener.before_unit(self)
 
@@ -26,8 +27,12 @@ module Cucumber
         step_mother.after(self)
       end
 
+      def accept(visitor)
+        visitor.visit_feature(@feature)
+        visitor.visit_scenario(self)
+      end
+
       def report_to(gherkin_listener)
-        @feature.report_to(gherkin_listener)
         gherkin_listener.scenario(@keyword, @description, @line)
       end
 

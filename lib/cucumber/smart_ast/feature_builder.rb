@@ -54,6 +54,7 @@ module Cucumber
       end
 
       def comment(comment, line)
+        # TODO: store comment - and implement grab_comments!
       end
       
       def language=(language)

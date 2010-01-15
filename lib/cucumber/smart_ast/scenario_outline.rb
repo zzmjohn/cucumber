@@ -24,13 +24,20 @@ module Cucumber
         step_template
       end
       
-      def steps(hash)
-        @feature.background_steps + @step_templates.map { |step_template| step_template.interpolate(hash) }
+      def example_steps(example, hash)
+        @feature.background_steps + @step_templates.map { |step_template| step_template.example_step(example, hash) }
+      end
+
+      def accept(visitor)
+        @feature.accept(visitor)
+        visitor.visit_scenario_outline(self)
       end
 
       def report_to(gherkin_listener)
-        @feature.report_to(gherkin_listener)
         gherkin_listener.scenario(@keyword, @description, @line)
+        @step_templates.each do |step_template|
+          step_template.report_to(gherkin_listener)
+        end
       end
     end
   end

@@ -144,6 +144,25 @@ module Cucumber
       end
     end
 
+    # Used by SmartAst only. TODO: Find a better name later when we clean up.
+    def invoke2(step_name, multiline_argument)
+      multiline_argument = multiline_argument.to_execution_format unless multiline_argument.nil?
+      e = nil
+      status =
+        begin
+          invoke(step_name, multiline_argument)
+          :passed
+        rescue Undefined
+          :undefined
+        rescue Pending
+          :pending
+        rescue Exception => ex
+          e = ex
+          :failed
+        end
+      [e, status]
+    end
+    
     # Invokes a series of steps +steps_text+. Example:
     #
     #   invoke(%Q{

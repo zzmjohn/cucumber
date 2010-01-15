@@ -1,13 +1,14 @@
-require 'cucumber/smart_ast/step'
+require 'cucumber/smart_ast/example_step'
 
 module Cucumber
   module SmartAst
+    # Children of ScenarioOutline.
     class StepTemplate
       def initialize(keyword, name, line, scenario_outline, argument)
         @keyword, @name, @line, @scenario_outline, @argument = keyword, name, line, scenario_outline, argument
       end
       
-      def interpolate(hash)
+      def example_step(example, hash)
         name = @name.dup
         matched_args = []
         hash.each do |key, value|
@@ -17,11 +18,11 @@ module Cucumber
           end
         end
         argument = @argument ? @argument.interpolate(hash) : nil
-        Step.new(@keyword, name, @line, argument, self)
+        ExampleStep.new(example, name, argument)
       end
 
-      def report_to(gherkin_listener, status, exception)
-        gherkin_listener.step(@keyword, @name, @line) # TODO: The extra info so listener can colorize and print comment
+      def report_to(gherkin_listener)
+        gherkin_listener.step(@keyword, @name, @line)
         @argument.report_to(gherkin_listener) if @argument
       end
 

@@ -69,14 +69,15 @@ Feature: Feature Description
     And <bar> <baz>
 
     Examples: Examples Description
-      | foo  | bar | baz       |
-      | step | I   | am hungry |
+      | foo    | bar  | baz         |
+      | Banana | I    | am hungry   |
+      | Beer   | You  | are thirsty |
+      | Bed    | They | are tired   |
           FEATURES
         end
         
         it "should print output identical to the gherkin input" do
           io = execute_features(@feature_content)
-          puts io
           io.should == @feature_content
         end
         

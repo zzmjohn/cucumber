@@ -2,7 +2,6 @@ require 'cucumber/smart_ast/step_container'
 require 'cucumber/smart_ast/scenario'
 require 'cucumber/smart_ast/scenario_outline'
 require 'cucumber/smart_ast/description'
-require 'cucumber/smart_ast/unit'
 
 module Cucumber
   module SmartAst
@@ -30,11 +29,16 @@ module Cucumber
       end
       
       def adverbs
+        # TODO: is this used??
         @language.adverbs
       end
       
       def background_steps
         @background ? @background.steps : []
+      end
+
+      def accept(visitor)
+        visitor.visit_feature(self)
       end
 
       def report_to(gherkin_listener)

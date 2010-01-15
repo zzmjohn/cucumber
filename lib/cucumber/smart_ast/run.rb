@@ -10,6 +10,8 @@ module Cucumber
       
       def execute(units)
         units.each do |unit|
+          # TODO - pass self so we can store results (they have to be stored
+          # in addition to being caught by listeners)
           unit.execute(@step_mother, @listeners)
         end
       end

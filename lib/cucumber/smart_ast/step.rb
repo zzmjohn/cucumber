@@ -6,8 +6,8 @@ module Cucumber
     class Step
       attr_reader :keyword, :name, :line, :argument
       
-      def initialize(keyword, name, line, argument, step_template=nil)
-        @keyword, @name, @line, @argument, @step_template = keyword, name, line, argument, step_template
+      def initialize(keyword, name, line, argument)
+        @keyword, @name, @line, @argument = keyword, name, line, argument
       end
 
       def table!(rows, line)
@@ -24,44 +24,21 @@ module Cucumber
       
       def execute(step_mother, listener)
         listener.before_step(self)
-
-        e = nil
-        status =
-          begin
-            step_mother.invoke(*to_execution_format)
-            :passed
-          rescue Undefined
-            :undefined
-          rescue Pending
-            :pending
-          rescue Exception => ex
-            e = ex
-            :failed
-          end
+        e, status = step_mother.invoke2(@name, @argument)
         result = StepResult.new(status, self, e)
         listener.after_step(result)
         step_mother.after_step # TODO: Feels weird to not pass self.
       end
 
-      def report_to(gherkin_listener, status, exception)
-        if(@step_template)
-          @step_template.report_to(gherkin_listener, status, exception)
-        else
-          gherkin_listener.step(@keyword, @name, @line) # TODO: The extra info so listener can colorize and print comment
-          @argument.report_to(gherkin_listener) if @argument
-        end
+      def report_result(gherkin_listener, status, exception)
+        gherkin_listener.step(@keyword, @name, @line) # TODO: The extra info so listener can colorize and print comment
+        @argument.report_to(gherkin_listener) if @argument
       end
       
       def ==(obj)
+        raise "WHERE IS THIS USED??"
         @name == obj.name
       end
-
-      private
-
-      def to_execution_format
-        [@name, @argument ? @argument.to_execution_format : nil]
-      end
-
     end
   end
 end
