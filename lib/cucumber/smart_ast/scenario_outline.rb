@@ -19,13 +19,13 @@ module Cucumber
       end
       
       def create_step(keyword, name, line)
-        step_template = StepTemplate.new(keyword, name, line, self, nil)
+        step_template = StepTemplate.new(keyword, name, line)
         @step_templates << step_template
         step_template
       end
       
-      def example_steps(example, hash)
-        @feature.background_steps + @step_templates.map { |step_template| step_template.example_step(example, hash) }
+      def example_steps(example_cells)
+        @feature.background_steps + @step_templates.map { |step_template| step_template.example_step(example_cells) }
       end
 
       def accept(visitor)

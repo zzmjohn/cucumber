@@ -2,8 +2,9 @@ module Cucumber
   module SmartAst
     # Step generated from StepTemplate
     class ExampleStep
-      def initialize(example, name, argument)
-        @example, @name, @argument = example, name, argument
+      # TODO: Better if this has ref to StepTemplate!!
+      def initialize(step_template, example_cells)
+        @step_template, @example_cells = example, example_cells
       end
 
       def execute(step_mother, listener)

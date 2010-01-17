@@ -4,21 +4,24 @@ module Cucumber
   module SmartAst
     # Children of ScenarioOutline.
     class StepTemplate
-      def initialize(keyword, name, line, scenario_outline, argument)
-        @keyword, @name, @line, @scenario_outline, @argument = keyword, name, line, scenario_outline, argument
+      def initialize(keyword, name, line)
+        @keyword, @name, @line = keyword, name, line
       end
       
-      def example_step(example, hash)
-        name = @name.dup
-        matched_args = []
-        hash.each do |key, value|
-          if name =~ /<#{key}>/
-            name.gsub!(/<#{key}>/, value)
-            matched_args << value
-          end
-        end
-        argument = @argument ? @argument.interpolate(hash) : nil
-        ExampleStep.new(example, name, argument)
+      def example_step(example_cells)
+        #raise "continue here"
+        # name = @name.dup
+        # matched_args = []
+        # hash.each do |key, value|
+        #   if name =~ /<#{key}>/
+        #     name.gsub!(/<#{key}>/, value)
+        #     matched_args << value
+        #   end
+        # end
+        # argument = @argument ? @argument.interpolate(hash) : nil
+        
+        # TODO: pass self? We usually do...
+        ExampleStep.new(self, example_cells)
       end
 
       def report_to(gherkin_listener)

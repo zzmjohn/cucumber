@@ -22,7 +22,7 @@ module Cucumber
         step_mother.before(self)
         listener.before_unit(self)
 
-        @examples.execute_example(self, step_mother, listener)
+        @examples.execute_example(self, @row, step_mother, listener)
 
         listener.after_unit(self)
         step_mother.after(self)

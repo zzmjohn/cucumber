@@ -1,5 +1,6 @@
 require 'cucumber/smart_ast/tags'
 require 'cucumber/smart_ast/description'
+require 'cucumber/smart_ast/result_cell'
 
 module Cucumber
   module SmartAst
@@ -19,14 +20,17 @@ module Cucumber
         end
       end
 
-      def execute_example(example, step_mother, listener)
-        hash = Hash[[@rows[0], example.row].transpose]
-        @scenario_outline.example_steps(example, hash).each do |example_step|
+      def execute_example(example, row, step_mother, listener)
+        n = -1
+        example_cells = row.map{|value| ResultCell.new(example, @rows[n+=1], value)}
+        
+        #hash = Hash[[@rows[0], example.row].transpose]
+        @scenario_outline.example_steps(example_cells).each do |example_step|
           example_step.execute(step_mother, listener)
         end
       end
 
-      def example_steps(example, hash)
+      def XXexample_steps(example, hash)
         @scenario_outline.example_steps(example, hash)
       end
 
