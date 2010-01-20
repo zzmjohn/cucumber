@@ -13,8 +13,8 @@ module Cucumber
 
       attr_reader :row, :row_index
 
-      def initialize(examples, row, row_index)
-        @examples, @row, @row_index = examples, row, row_index
+      def initialize(examples, row)
+        @examples, @row = examples, row
       end
 
       def execute(step_mother, listener)
@@ -22,7 +22,7 @@ module Cucumber
         step_mother.before(self)
         listener.before_unit(self)
 
-        @examples.execute_example(self, @row, step_mother, listener)
+        @examples.execute(@row, step_mother, listener)
 
         listener.after_unit(self)
         step_mother.after(self)

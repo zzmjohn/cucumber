@@ -15,23 +15,9 @@ module Cucumber
       def table!(rows, line)
         @rows = rows
         @table_line = line
-        rows[1..-1].each_with_index do |row, row_index|
-          yield Example.new(self, row, row_index+1)
+        @rows[1..-1].each do |row|
+          yield Example.new(self, row)
         end
-      end
-
-      def execute_example(example, row, step_mother, listener)
-        n = -1
-        example_cells = row.map{|value| ResultCell.new(example, @rows[n+=1], value)}
-        
-        #hash = Hash[[@rows[0], example.row].transpose]
-        @scenario_outline.example_steps(example_cells).each do |example_step|
-          example_step.execute(step_mother, listener)
-        end
-      end
-
-      def XXexample_steps(example, hash)
-        @scenario_outline.example_steps(example, hash)
       end
 
       def accept(visitor)
@@ -44,6 +30,10 @@ module Cucumber
         gherkin_listener.table(@rows, @table_line, [@rows[0]], 0)
       end
 
+      def execute(row, step_mother, listener)
+        @scenario_outline.execute(@rows[0], row, step_mother, listener)
+      end
+
       def report_result(gherkin_listener, example, status, exception)
         # TODO: Accumulate results, and only invoke table when we have
         # received the same number of calls as outline has step_templates
@@ -53,6 +43,8 @@ module Cucumber
         # so ANSI colouring should maybe go to gherkin pretty formatter.
         
         # We're passing 0 as line. If we need it, each example should store it as a field
+        
+        # TODO: Pass row and row_index directly so we don't need accessors
         gherkin_listener.table(@rows, 0, [example.row], example.row_index)
       end
     end

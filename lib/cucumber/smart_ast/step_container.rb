@@ -1,6 +1,6 @@
 require 'cucumber/smart_ast/comments'
 require 'cucumber/smart_ast/tags'
-require 'cucumber/smart_ast/step'
+require 'cucumber/smart_ast/scenario_step'
 
 module Cucumber
   module SmartAst
@@ -14,7 +14,7 @@ module Cucumber
       end
       
       def create_step(keyword, name, line)
-        step = Step.new(keyword, name, line, nil)
+        step = ScenarioStep.new(keyword, name, line, nil)
         @steps << step
         step
       end

@@ -3,7 +3,7 @@ require 'cucumber/smart_ast/py_string'
 
 module Cucumber
   module SmartAst
-    class Step
+    class ScenarioStep
       attr_reader :keyword, :name, :line, :argument
       
       def initialize(keyword, name, line, argument)

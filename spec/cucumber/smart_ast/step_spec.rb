@@ -1,15 +1,15 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
-require 'cucumber/smart_ast/step'
+require 'cucumber/smart_ast/scenario_step'
 require 'cucumber/smart_ast/step_template'
 require 'cucumber/smart_ast/py_string'
 require 'cucumber/smart_ast/table'
 
 module Cucumber
   module SmartAst
-    describe Step do
+    describe ScenarioStep do
       context "formatting for execution" do
         before do
-          @step = Step.new("Given", "a step", 1, nil)
+          @step = ScenarioStep.new("Given", "a step", 1, nil)
         end
         
         it "should include nil when there is no multiline argument" do
