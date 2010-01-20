@@ -1,5 +1,5 @@
 # encoding: utf-8
-require File.dirname(__FILE__) + '/builder_spec_helper'
+require File.expand_path(File.dirname(__FILE__) + '/builder_spec_helper')
 
 module Cucumber
   module SmartAst

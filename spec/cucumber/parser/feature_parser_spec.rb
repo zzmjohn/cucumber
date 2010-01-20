@@ -1,15 +1,15 @@
-require File.dirname(__FILE__) + '/../../spec_helper'
+require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 require 'cucumber/parser/natural_language'
 
 module Cucumber
   module Parser
     describe Feature do
       before do
-        @feature_loader = FeatureLoader.new
+        @feature_loader = Cucumber::FeatureLoader.new
         # Load the plugins
         require 'cucumber/inputs/file' 
         require 'cucumber/parsers/treetop'
-        @parser = NaturalLanguage.get('en').parser
+        @parser = Cucumber::Parser::NaturalLanguage.get('en').parser
       end
 
       after do
