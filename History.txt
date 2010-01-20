@@ -1,6 +1,16 @@
 == In Git
 
 === Bugfixes
+* The rerun formatter outputs failed, pending and undefined scenarios (before: only failing) (Aslak Hellesøy)
+
+=== New features
+* Add diff! message to wire protocol to allow for immediate diff response to invokes (Matt Wynne)
+
+== 0.6.2 2010-01-18
+
+=== Bugfixes
+* Update --help for --tags which was out of date. (Aslak Hellesøy)
+* Explicitly use Prawn 0.6.3 for pdf formatter since 0.7.1 is broken (Aslak Hellesøy)
 * PDF formatter renders tables incorrectly (#553 Andy Waite)
 * Better colouring in HTML report (Rob Aldred)
 * Detect output encoding properly on JRuby+Windows (Aslak Hellesøy)
@@ -9,6 +19,9 @@
 
 === New features
 * Show profiles in error scenario summary. (#550 Joseph Wilk)
+
+=== Removed features
+* element_at and table_at have been removed. Use tableish in cucumber-rails instead. (Aslak Hellesœy)
 
 == 0.6.1 2010-01-03
 
