@@ -1,3 +1,4 @@
+# encoding: utf-8
 require File.dirname(__FILE__) + '/builder_spec_helper'
 
 module Cucumber
