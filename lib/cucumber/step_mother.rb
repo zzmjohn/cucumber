@@ -2,6 +2,7 @@ require 'cucumber/constantize'
 require 'cucumber/core_ext/instance_exec'
 require 'cucumber/language_support/language_methods'
 require 'cucumber/smart_ast/step_result'
+require 'cucumber/smart_ast/unit_result'
 
 module Cucumber
   # Raised when there is no matching StepDefinition for a step.
@@ -142,6 +143,24 @@ module Cucumber
         e.nested! if Undefined === e
         raise e
       end
+    end
+
+    def execute_unit(unit, steps, listener)
+      before(unit)
+      listener.before_unit(unit)
+
+      unit_result = SmartAst::UnitResult.new(unit)
+
+      steps.each do |step|
+        listener.before_step(step)
+        e, status = invoke2(step.name, step.argument)
+        step_result = unit_result.step_result!(step, status, e)
+        listener.after_step(step_result)
+        after_step
+      end
+
+      listener.after_unit(unit_result)
+      after(unit_result)
     end
 
     # Used by SmartAst only. TODO: Find a better name later when we clean up.

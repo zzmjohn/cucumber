@@ -17,7 +17,8 @@ module Cucumber
         step_result.accept(self)
       end
       
-      def after_unit(unit)
+      def after_unit(unit_result)
+        unit_result.accept(self)
       end
 
       # AST Visitor API. TODO: Split this class in 2:
@@ -52,6 +53,10 @@ module Cucumber
 
       def visit_example(example)
         example.report_to(@listener)
+      end
+
+      def visit_unit_result(unit_result)
+        unit_result.report_to(@listener)
       end
 
       def visit_step_result(step_result)

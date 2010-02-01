@@ -10,7 +10,6 @@ module Cucumber
       #TODO: add report_to method
 
       def ==(other)
-        raise "WHERE IS THIS USED??"
         other.name == @name
       end
     end

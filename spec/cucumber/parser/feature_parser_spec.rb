@@ -6,9 +6,6 @@ module Cucumber
     describe Feature do
       before do
         @feature_loader = Cucumber::FeatureLoader.new
-        # Load the plugins
-        require 'cucumber/inputs/file' 
-        require 'cucumber/parsers/treetop'
         @parser = Cucumber::Parser::NaturalLanguage.get('en').parser
       end
 

@@ -82,7 +82,35 @@ Feature: Feature Description
           io = execute_features(@feature_content)
           io.should == @feature_content
         end
-        
+      end
+
+      describe "a single feature with a scenario outline with strings and tables" do
+        before(:each) do
+          @feature_content = <<-FEATURES
+Feature: Feature Description
+  Some preamble
+
+  Scenario Outline: Scenario Ouline Description
+    Given there is a
+      """
+      string with <foo>
+      """
+    And a table with
+      | <bar> |
+      | <baz> |
+
+    Examples: Examples Description
+      | foo    | bar  | baz         |
+      | Banana | I    | am hungry   |
+      | Beer   | You  | are thirsty |
+      | Bed    | They | are tired   |
+          FEATURES
+        end
+
+        it "should print output identical to the gherkin input" do
+          io = execute_features(@feature_content)
+          io.should == @feature_content
+        end
       end
     end
   end

@@ -1,4 +1,3 @@
-require 'cucumber/smart_ast/step_container'
 require 'cucumber/smart_ast/scenario'
 require 'cucumber/smart_ast/scenario_outline'
 require 'cucumber/smart_ast/description'
@@ -17,7 +16,8 @@ module Cucumber
       end
       
       def create_background(keyword, description, line)
-        @background = StepContainer.new(keyword, description, line, self)
+        # TODO: May need a Background class here for proper reporting.
+        @background = Scenario.new(keyword, description, line, [], self)
       end
       
       def create_scenario(keyword, description, line, tags)

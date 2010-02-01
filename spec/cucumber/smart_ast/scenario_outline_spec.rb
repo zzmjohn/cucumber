@@ -28,7 +28,7 @@ module Cucumber
           @scenario_outline.create_examples("Examples", "description", 4, []).should be_kind_of(Examples)
         end
         
-        it "should yield an Example object for each data row in the table" do
+        xit "should yield an Example object for each data row in the table" do
           units = []
           examples = @scenario_outline.create_examples("Examples", "", 4, [])
           examples.table!(@table, 99) do |unit|

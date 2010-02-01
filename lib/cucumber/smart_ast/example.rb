@@ -11,21 +11,12 @@ module Cucumber
       include Tags
       include Description
 
-      attr_reader :row, :row_index
-
-      def initialize(examples, row)
-        @examples, @row = examples, row
+      def initialize(example_steps, row_index, examples)
+        @example_steps, @row_index, @examples = example_steps, row_index, examples
       end
 
       def execute(step_mother, listener)
-        # TODO: step_mother.execute_unit(listener, all_steps)
-        step_mother.before(self)
-        listener.before_unit(self)
-
-        @examples.execute(@row, step_mother, listener)
-
-        listener.after_unit(self)
-        step_mother.after(self)
+        step_mother.execute_unit(self, @example_steps, listener)
       end
 
       def accept(visitor)
@@ -33,12 +24,12 @@ module Cucumber
         visitor.visit_example(self)
       end
 
-      def report_result(gherkin_listener, status, exception)
-        @examples.report_result(gherkin_listener, self, status, exception)
-      end
-
       def report_to(gherkin_listener)
         # NO-OP
+      end
+
+      def report_result(gherkin_listener)
+        @examples.report_result(gherkin_listener, @row_index)
       end
     end
   end

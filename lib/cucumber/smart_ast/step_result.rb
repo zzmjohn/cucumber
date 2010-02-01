@@ -1,8 +1,8 @@
 module Cucumber
   module SmartAst
     class StepResult
-      def initialize(status, step, exception=nil)
-        @status, @step, @exception = status, step, exception
+      def initialize(step, status, exception)
+        @step, @status, @exception = step, status, exception
       end
 
       def accept(visitor)
@@ -11,10 +11,6 @@ module Cucumber
 
       def report_to(gherkin_listener)
         @step.report_result(gherkin_listener, @status, @exception)
-      end
-
-      def failure?
-        [:undefined, :pending, :failed].include?(@status)
       end
     end
   end

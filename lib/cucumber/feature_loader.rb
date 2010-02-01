@@ -18,7 +18,11 @@ module Cucumber
   class FeatureLoader
     class << self
       def registry
-        @@registry ||= { :inputs => [], :parsers => [], :format_rules => {} }
+        @registry ||= { :inputs => [], :parsers => [], :format_rules => {} }
+      end
+
+      def clear_registry
+        @registry = nil
       end
     end
 
@@ -92,7 +96,7 @@ module Cucumber
     end
     
     def format_rules
-      @format_rules ||= @@registry[:format_rules]
+      @format_rules ||= self.class.registry[:format_rules]
     end
     
     def protocols
@@ -114,7 +118,7 @@ module Cucumber
     private
     
     def load(plugin_type)
-      @@registry[plugin_type].inject({}) do |collection, plugin_class|
+      self.class.registry[plugin_type].inject({}) do |collection, plugin_class|
         plugin = plugin_class.new
         yield collection, plugin
         collection

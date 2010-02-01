@@ -15,23 +15,18 @@ module Cucumber
       end
       
       def create_examples(keyword, description, line, tags)
-        examples = Examples.new(keyword, description, line, tags, self)
+        Examples.new(keyword, description, line, tags, self)
       end
 
-      def create_example(row, row_index)
-        examples = Example.new(self, row, row_index)
+      def create_example(keys, values, line, row_index, examples)
+        example_steps = @step_templates.map{|step_template| step_template.create_example_step(keys, values, line)}
+        Example.new(example_steps, row_index, examples)
       end
-      
+
       def create_step(keyword, name, line)
         step_template = StepTemplate.new(keyword, name, line)
         @step_templates << step_template
         step_template
-      end
-
-      def execute(header, row, step_mother, listener)
-        @step_templates.each do |step_template|
-          step_template.execute(header, row, step_mother, listener)
-        end
       end
 
       def accept(visitor)
