@@ -1,9 +1,11 @@
+require 'gherkin/format/argument'
 require 'cucumber/smart_ast/example_step'
 
 module Cucumber
   module SmartAst
     # Children of ScenarioOutline.
     class StepTemplate
+
       def initialize(keyword, name, line)
         @keyword, @name, @line = keyword, name, line
       end
@@ -31,8 +33,7 @@ module Cucumber
       end
 
       def report_to(gherkin_listener)
-        # TODO: pass extra position arguments so we can highlight the arguments
-        gherkin_listener.step(@keyword, @name, @line)
+        gherkin_listener.step(@keyword, @name, @line, :skipped, arguments)
         @argument.report_to(gherkin_listener) if @argument
       end
 
@@ -43,6 +44,18 @@ module Cucumber
           name.gsub!(/<#{key}>/, value)
           true
         end
+      end
+
+      PARAM_PATTERN = /<[^>]*>/m
+
+      def arguments
+        args = []
+        byte_offset = -1
+        @name.scan(PARAM_PATTERN) do |val|
+          byte_offset = @name.index(val, byte_offset+1)
+          args << Gherkin::Format::Argument.new(byte_offset, val)
+        end
+        args
       end
     end
   end
