@@ -4,23 +4,29 @@ require 'cucumber/smart_ast/py_string'
 module Cucumber
   module SmartAst
     class ScenarioStep
-      attr_reader :name, :argument
-      
       def initialize(keyword, name, line)
         @keyword, @name, @line = keyword, name, line
+        @multiline_argument = nil
       end
 
       def table!(rows, line)
-        @argument = Table.new(rows, line)
+        @multiline_argument = Table.new(rows, line)
       end
 
       def py_string!(content, line)
-        @argument = PyString.new(content, line)
+        @multiline_argument = PyString.new(content, line)
       end
 
-      def report_result(gherkin_listener, status, exception)
-        gherkin_listener.step(@keyword, @name, @line) # TODO: The extra info so listener can colorize and print comment
-        @argument.report_to(gherkin_listener) if @argument
+      def execute(unit_result, step_mother)
+        step_result = StepResult.new(unit_result, self)
+        step_result.execute(step_mother, @name, @multiline_argument)
+        step_result
+      end
+
+      def report_result(gherkin_listener, status, arguments, exception)
+        gherkin_listener.step(@keyword, @name, @line, status, arguments)
+        @multiline_argument.report_to(gherkin_listener) if @multiline_argument
+        gherkin_listener.exception(exception) if exception
       end
     end
   end

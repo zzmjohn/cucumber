@@ -12,7 +12,7 @@ module Cucumber
     module FormatterSpecHelper
       def execute_features(content)
         io = StringIO.new
-        formatter = PrettyFormatter.new(nil, io, nil)
+        formatter = PrettyFormatter.new(nil, io, nil, true)
         
         units = load_units(@feature_content)
 

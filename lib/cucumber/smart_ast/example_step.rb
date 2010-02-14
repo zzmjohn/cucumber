@@ -1,14 +1,17 @@
 module Cucumber
   module SmartAst
     class ExampleStep
-      attr_reader :name, :argument
-      
-      # TODO: pass argument to ctor.
-      def initialize(keyword, name, line, columns, argument)
-        @keyword, @name, @line, @columns, @argument = keyword, name, line, columns, argument
+      def initialize(keyword, name, line, columns, multiline_argument)
+        @keyword, @name, @line, @columns, @multiline_argument = keyword, name, line, columns, multiline_argument
       end
 
-      def report_result(gherkin_listener, status, exception)
+      def execute(unit_result, step_mother)
+        step_result = StepResult.new(unit_result, self)
+        step_result.execute(step_mother, @name, @multiline_argument)
+        step_result
+      end
+
+      def report_result(gherkin_listener, status, arguments, exception)
         # NO-OP
       end
     end

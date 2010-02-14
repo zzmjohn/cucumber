@@ -6,10 +6,13 @@ require 'cucumber/smart_ast/scenario_step'
 module Cucumber
   module SmartAst
     class Scenario
+      # TODO: Remove this. We shouldn't need to carry it around
+      attr_accessor :language
+
       include Comments
       include Tags
       include Description
-      
+
       def initialize(keyword, description, line, tags, feature)
         @keyword, @description, @line, @tags, @feature = keyword, description, line, tags, feature
         @steps = []
@@ -21,6 +24,11 @@ module Cucumber
         step
       end
 
+      # TODO: Rename to matches_tag_expression?(tag_expression)
+      def accept_hook?(hook)
+        TagExpression.parse(hook.tag_expressions).eval(tags)
+      end
+
       def execute(step_mother, listener)
         step_mother.execute_unit(self, all_steps, listener)
       end
@@ -30,7 +38,7 @@ module Cucumber
         visitor.visit_scenario(self)
       end
 
-      def report_result(gherkin_listener)
+      def after(gherkin_listener, unit_result)
         # NO-OP
       end
 

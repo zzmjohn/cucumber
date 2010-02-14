@@ -55,6 +55,7 @@ module Cucumber
       @step_definition.regexp_source.jlength
     end
 
+    # TODO: Remove. Now lives in Gherkin::Argument
     def replace_arguments(string, step_arguments, format, &proc)
       s = string.dup
       offset = 0

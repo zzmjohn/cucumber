@@ -12,7 +12,7 @@ module Cucumber
       
       it "should interpolate variable arguments" do
         example_step = @step_template.create_example_step(%w{num object}, %w{5 belly}, 0)
-        example_step.name.should == "5 Cucumbers in my belly"
+        example_step.instance_variable_get('@name').should == "5 Cucumbers in my belly"
       end
     end
   end

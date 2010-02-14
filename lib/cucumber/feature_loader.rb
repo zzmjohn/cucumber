@@ -77,7 +77,7 @@ module Cucumber
       end
     end
     
-    def parser(name)      
+    def parser(name)
       matches = format_rules.select { |rule, _| rule.match(name) }
       if matches.empty?
         format = name.split('.').last.to_sym
@@ -85,7 +85,8 @@ module Cucumber
       elsif matches.length > 1
         raise AmbiguousFormatRules.new(name, matches)
       else
-        parsers[matches[0].last]
+#        parsers[matches[0].last]
+        parsers[:gherkin]
       end
     end
 

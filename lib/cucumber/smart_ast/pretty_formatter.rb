@@ -5,8 +5,8 @@ module Cucumber
     # TODO: Rename to StructureFormatter - or maybe StructureReporter,
     # this class can delegate to several formatters, including Pretty, HTML and PDF.
     class PrettyFormatter
-      def initialize(_,io,__)
-        @listener = Gherkin::Tools::PrettyListener.new(io)
+      def initialize(_,io,__,monochrome=false)
+        @listener = Gherkin::Tools::PrettyListener.new(io, monochrome)
       end
 
       def before_unit(unit)

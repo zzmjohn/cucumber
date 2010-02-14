@@ -153,8 +153,7 @@ module Cucumber
 
       steps.each do |step|
         listener.before_step(step)
-        e, status = invoke2(step.name, step.argument)
-        step_result = unit_result.step_result!(step, status, e)
+        step_result = step.execute(unit_result, self)
         listener.after_step(step_result)
         after_step
       end
@@ -164,9 +163,9 @@ module Cucumber
     end
 
     # Used by SmartAst only. TODO: Find a better name later when we clean up.
-    def invoke2(step_name, multiline_argument)
+    def invoke_step(step_result, step_name, multiline_argument)
       multiline_argument = multiline_argument.to_execution_format unless multiline_argument.nil?
-      e = nil
+      exception = nil
       status =
         begin
           invoke(step_name, multiline_argument)
@@ -176,10 +175,10 @@ module Cucumber
         rescue Pending
           :pending
         rescue Exception => ex
-          e = ex
+          exception = ex
           :failed
         end
-      [e, status]
+      [status, status, exception]
     end
     
     # Invokes a series of steps +steps_text+. Example:

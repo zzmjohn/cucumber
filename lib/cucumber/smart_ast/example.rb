@@ -7,12 +7,20 @@ module Cucumber
     # An Example instance is created for each non-header row in an Examples
     # table
     class Example
+      # TODO: Remove this. We shouldn't need to carry it around
+      attr_accessor :language
+      
       include Comments
       include Tags
       include Description
 
       def initialize(example_steps, row_index, examples)
         @example_steps, @row_index, @examples = example_steps, row_index, examples
+      end
+
+      # TODO: Rename to matches_tag_expression?(tag_expression)
+      def accept_hook?(hook)
+        TagExpression.parse(hook.tag_expressions).eval(tags)
       end
 
       def execute(step_mother, listener)
@@ -28,8 +36,8 @@ module Cucumber
         # NO-OP
       end
 
-      def report_result(gherkin_listener)
-        @examples.report_result(gherkin_listener, @row_index)
+      def after(gherkin_listener, unit_result)
+        @examples.report_result(gherkin_listener, unit_result, @row_index)
       end
     end
   end

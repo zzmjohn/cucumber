@@ -26,27 +26,17 @@ module Cucumber
 
       def report_to(gherkin_listener)
         gherkin_listener.examples(@keyword, @description, @line)
-        gherkin_listener.table(@rows, @table_line, [@rows[0]], 0)
+        # TODO: Use :outline_param and fix the color bug in Gherkin::Tools::Color
+        gherkin_listener.table(@rows, @table_line, [@rows[0]], 0, Array.new(@rows[0].length) {:outline})
       end
 
       def execute(row, step_mother, listener)
         @scenario_outline.execute(@rows[0], row, step_mother, listener)
       end
 
-      def report_result(gherkin_listener, row_index)
-        # TODO: Accumulate results, and only invoke table when we have
-        # received the same number of calls as outline has step_templates
-        # Maybe we need to delegate to scenario_outline as it has the best
-        # knowledge of that count. Also need to colour rows properly.
-        # Colouring is output specific (pretty, html and pdf do it differently),
-        # so ANSI colouring should maybe go to gherkin pretty formatter.
-        
-        # We're passing 0 as line. If we need it, each example should store it as a field
-        
-        # TODO: Pass row and row_index directly so we don't need accessors
+      def report_result(gherkin_listener, unit_result, row_index)
         row = @rows[row_index]
-
-        gherkin_listener.table(@rows, @table_line+row_index, [row], row_index)
+        unit_result.report_as_row(gherkin_listener, @rows, @table_line+row_index, row, row_index)
       end
     end
   end
