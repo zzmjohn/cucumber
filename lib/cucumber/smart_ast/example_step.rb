@@ -5,9 +5,9 @@ module Cucumber
         @step_template, @keyword, @name, @line, @columns, @multiline_argument = step_template, keyword, name, line, columns, multiline_argument
       end
 
-      def execute(unit_result, step_mother)
+      def execute(unit_result, step_mother, skip)
         step_result = StepResult.new(unit_result, self)
-        step_result.execute(step_mother, @name, @multiline_argument)
+        step_result.execute(step_mother, @name, @multiline_argument, skip)
         step_result
       end
 

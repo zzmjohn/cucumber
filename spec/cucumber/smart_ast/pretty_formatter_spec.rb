@@ -42,6 +42,9 @@ module Cucumber
 Feature: Feature Description
   Some preamble
 
+  Scenario: The first one
+    Given something
+
   Scenario: Scenario Description
     Given there is a step
       """

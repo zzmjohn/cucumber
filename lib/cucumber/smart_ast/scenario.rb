@@ -9,6 +9,8 @@ module Cucumber
       # TODO: Remove this. We shouldn't need to carry it around
       attr_accessor :language
 
+      attr_reader :steps
+
       include Comments
       include Tags
       include Description
@@ -34,7 +36,7 @@ module Cucumber
       end
 
       def accept(visitor)
-        visitor.visit_feature(@feature)
+        @feature.accept(visitor)
         visitor.visit_scenario(self)
       end
 

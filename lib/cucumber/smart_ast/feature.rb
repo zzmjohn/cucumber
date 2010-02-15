@@ -43,6 +43,7 @@ module Cucumber
 
       def report_to(gherkin_listener)
         gherkin_listener.feature(@keyword, @description, @line)
+        @background.report_to(gherkin_listener) if @background
       end
 
       def location(line)

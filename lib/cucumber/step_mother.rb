@@ -151,10 +151,12 @@ module Cucumber
 
       unit_result = SmartAst::UnitResult.new(unit)
 
+      last_step_result = nil
       steps.each do |step|
         listener.before_step(step)
-        step_result = step.execute(unit_result, self)
-        listener.after_step(step_result)
+        skip = last_step_result && last_step_result.skip_next?
+        last_step_result = step.execute(unit_result, self, skip)
+        listener.after_step(last_step_result)
         after_step
       end
 
