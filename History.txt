@@ -1,9 +1,13 @@
 == In Git
 
 === Bugfixes
+* HTML Formatter is broken in cucumber 0.6.2 and cuke4duke 0.2.3 (#567 Dan Fitch)
+* Ensure consistent load order of support files (#564 Mike Sassak)
+* Fix various places in PDF formatter where HTML entities could break prawn (Matt Wynne)
 * The rerun formatter outputs failed, pending and undefined scenarios (before: only failing) (Aslak Hellesøy)
 
 === New features
+* Links to step definitions are now clickable in TextMate's HTML report (Rob Aldred)
 * Add diff! message to wire protocol to allow for immediate diff response to invokes (Matt Wynne)
 
 == 0.6.2 2010-01-18
