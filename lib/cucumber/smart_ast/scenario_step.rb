@@ -4,8 +4,10 @@ require 'cucumber/smart_ast/py_string'
 module Cucumber
   module SmartAst
     class ScenarioStep
-      def initialize(keyword, name, line)
-        @keyword, @name, @line = keyword, name, line
+      attr_reader :keyword, :name
+
+      def initialize(scenario, keyword, name, line)
+        @scenario, @keyword, @name, @line = scenario, keyword, name, line
         @multiline_argument = nil
       end
 
@@ -23,8 +25,12 @@ module Cucumber
         step_result
       end
 
-      def report_result(gherkin_listener, status, arguments, exception)
-        gherkin_listener.step(@keyword, @name, @line, status, arguments)
+      def file_colon_line
+        @scenario.location(@line)
+      end
+
+      def report_result(gherkin_listener, status, arguments, location, exception)
+        gherkin_listener.step(@keyword, @name, @line, status, arguments, location)
         @multiline_argument.report_to(gherkin_listener) if @multiline_argument
         gherkin_listener.exception(exception) if exception
       end

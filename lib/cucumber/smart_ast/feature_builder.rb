@@ -7,13 +7,14 @@ module Cucumber
     class FeatureBuilder
       attr_reader :units
       
-      def initialize
+      def initialize(location)
+        @location = location
         @tags = []
         @units = []
       end
       
       def feature(keyword, description, line)
-        @current_feature = Feature.new(keyword, description, line, grab_tags!)
+        @current_feature = Feature.new(self, keyword, description, line, grab_tags!)
       end
 
       def background(keyword, description, line)
@@ -59,6 +60,10 @@ module Cucumber
       
       def language=(language)
         @current_feature.language = language
+      end
+
+      def location(line)
+        @location.nil? ? nil : "#{@location}:#{line}"
       end
 
       private

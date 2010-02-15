@@ -7,7 +7,7 @@ module Cucumber
     describe ScenarioOutline do
       describe "#create_examples" do
         before(:each) do
-          feature = Feature.new('Feature', 'description', 1, [])
+          feature = Feature.new(nil, 'Feature', 'description', 1, [])
           @scenario_outline = ScenarioOutline.new("ScenarioOutline", "Eat things", 1, [], feature)
           [
             ["Given", "I have <start> Cucumbers in my <object>", 1],

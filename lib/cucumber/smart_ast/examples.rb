@@ -26,8 +26,7 @@ module Cucumber
 
       def report_to(gherkin_listener)
         gherkin_listener.examples(@keyword, @description, @line)
-        # TODO: Use :outline_param and fix the color bug in Gherkin::Tools::Color
-        gherkin_listener.table(@rows, @table_line, [@rows[0]], 0, Array.new(@rows[0].length) {:outline})
+        gherkin_listener.table(@rows, @table_line, [@rows[0]], 0, Array.new(@rows[0].length) {:outline_param})
       end
 
       def execute(row, step_mother, listener)

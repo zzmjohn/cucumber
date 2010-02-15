@@ -10,8 +10,8 @@ module Cucumber
 
       attr_accessor :language, :keyword
 
-      def initialize(keyword, description, line, tags)
-        @keyword, @description, @line = keyword, description, line
+      def initialize(feature_builder, keyword, description, line, tags)
+        @feature_builder, @keyword, @description, @line = feature_builder, keyword, description, line
         @tags = tags
       end
       
@@ -43,6 +43,10 @@ module Cucumber
 
       def report_to(gherkin_listener)
         gherkin_listener.feature(@keyword, @description, @line)
+      end
+
+      def location(line)
+        @feature_builder.location(line)
       end
     end
   end

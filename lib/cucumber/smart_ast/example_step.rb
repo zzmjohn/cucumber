@@ -1,8 +1,8 @@
 module Cucumber
   module SmartAst
     class ExampleStep
-      def initialize(keyword, name, line, columns, multiline_argument)
-        @keyword, @name, @line, @columns, @multiline_argument = keyword, name, line, columns, multiline_argument
+      def initialize(step_template, keyword, name, line, columns, multiline_argument)
+        @step_template, @keyword, @name, @line, @columns, @multiline_argument = step_template, keyword, name, line, columns, multiline_argument
       end
 
       def execute(unit_result, step_mother)
@@ -11,7 +11,11 @@ module Cucumber
         step_result
       end
 
-      def report_result(gherkin_listener, status, arguments, exception)
+      def file_colon_line
+        @step_template.location(@line)
+      end
+
+      def report_result(gherkin_listener, status, arguments, location, exception)
         # NO-OP
       end
     end

@@ -25,7 +25,7 @@ module Cucumber
       private
       
       def load_units(content)
-        builder = FeatureBuilder.new
+        builder = FeatureBuilder.new(nil)
         parser = ::Gherkin::Parser.new(builder, true, "root")
         lexer = ::Gherkin::I18nLexer.new(parser)
         lexer.scan(content)

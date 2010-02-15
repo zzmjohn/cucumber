@@ -19,7 +19,7 @@ module Cucumber
       end
 
       def create_step(keyword, name, line)
-        step = ScenarioStep.new(keyword, name, line)
+        step = ScenarioStep.new(self, keyword, name, line)
         @steps << step
         step
       end
@@ -43,7 +43,12 @@ module Cucumber
       end
 
       def report_to(gherkin_listener)
-        gherkin_listener.scenario(@keyword, @description, @line)
+        gherkin_listener.steps(@steps.map{|step| [step.keyword, step.name]})
+        gherkin_listener.scenario(@keyword, @description, @line, location(@line))
+      end
+
+      def location(line)
+        @feature.location(line)
       end
 
       private

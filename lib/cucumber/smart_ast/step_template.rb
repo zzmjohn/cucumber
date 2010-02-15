@@ -29,12 +29,16 @@ module Cucumber
           end
         end
 
-        ExampleStep.new(@keyword, name, line, columns, @argument)
+        ExampleStep.new(self, @keyword, name, line, columns, @argument)
       end
 
       def report_to(gherkin_listener)
         gherkin_listener.step(@keyword, @name, @line, :skipped, arguments)
         @argument.report_to(gherkin_listener) if @argument
+      end
+
+      def location(line)
+        nil
       end
 
     private

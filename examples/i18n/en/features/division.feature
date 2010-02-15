@@ -5,6 +5,6 @@ Feature: Division
 
   Scenario: Regular numbers
     * I have entered 5 into the calculator
-    * I have entered 2 into the calculator
+    * I have entered 2 into the calculatoar
     * I press divide
     * the result should be 1.5 on the screen
