@@ -12,7 +12,7 @@ module Cucumber
         @rb = @step_mother.load_programming_language('rb')
         @dsl = Object.new 
         @dsl.extend Cucumber::RbSupport::RbDsl
-        @step_mother.before(mock('scenario', :null_object => true))
+        @step_mother.before(mock('scenario').as_null_object)
 
         $inside = nil
       end
@@ -87,44 +87,6 @@ module Cucumber
         end
 
        @step_mother.step_match('capture this: this').invoke(nil)
-      end
-      
-    
-      def unindented(s)
-        s.split("\n")[1..-2].join("\n").indent(-10)
-      end
-    
-      it "should recognise quotes in name and make according regexp" do
-        @rb.snippet_text('Given', 'A "first" arg', nil).should == unindented(%{
-          Given /^A "([^"]*)" arg$/ do |arg1|
-            pending # express the regexp above with the code you wish you had
-          end
-        })
-      end
-
-      it "should recognise several quoted words in name and make according regexp and args" do
-        @rb.snippet_text('Given', 'A "first" and "second" arg', nil).should == unindented(%{
-          Given /^A "([^"]*)" and "([^"]*)" arg$/ do |arg1, arg2|
-            pending # express the regexp above with the code you wish you had
-          end
-        })
-      end
-      
-      it "should not use quote group when there are no quotes" do
-        @rb.snippet_text('Given', 'A first arg', nil).should == unindented(%{
-          Given /^A first arg$/ do
-            pending # express the regexp above with the code you wish you had
-          end
-        })
-      end
-
-      it "should be helpful with tables" do
-        @rb.snippet_text('Given', 'A "first" arg', Cucumber::Ast::Table).should == unindented(%{
-          Given /^A "([^"]*)" arg$/ do |arg1, table|
-            # table is a Cucumber::Ast::Table
-            pending # express the regexp above with the code you wish you had
-          end
-        })
       end
     end
   end

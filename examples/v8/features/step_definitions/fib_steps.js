@@ -2,7 +2,7 @@ Before(function(){
   fibResult = 0;
 });
 
-Before(['@another-do-fibonnacci-in-before-hook,@do-fibonnacci-in-before-hook'], function(){
+Before(['@do-fibonnacci-in-before-hook', '@reviewed'], function(){
   fibResult = fibonacciSeries(3);
 });
 
@@ -15,7 +15,7 @@ Transform(/^(\d+)$/, function(n){
 });
 
 When(/^I ask Javascript to calculate fibonacci up to (\d+)$/, function(n){
-  assertEqual(0, fibResult)
+  assertEqual(fibResult, 0);
   fibResult = fibonacciSeries(n);
 });
 
@@ -33,7 +33,7 @@ Then(/^it should give me:$/, function(string){
 });
 
 Then(/^it should contain:$/, function(table){
-  var hashes = table.hashes();
+  var hashes = table.hashes;
   assertMatches(hashes[0]['cell 1'], fibResult);
   assertMatches(hashes[0]['cell 2'], fibResult);
 });
@@ -43,3 +43,7 @@ Then(/^it should give me (\[.*\]) via calling another step definition$/, functio
   assertEqual(expectedResult, fibResult);
 });
 
+Then(/^it should calculate fibonacci up to (\d+) giving me (\[.*\])/, function(n, expectedResult){
+  steps("Given I ask Javascript to calculate fibonacci up to "+ n + "\n" +
+        "Then it should give me "+ expectedResult);
+});

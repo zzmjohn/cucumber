@@ -32,15 +32,12 @@ Feature: Fibonacci
     | cell 1 | cell 2 |
     |   1    |   1    |
 
-
-  @do-fibonnacci-in-before-hook
+  @do-fibonnacci-in-before-hook @reviewed
   Scenario: Single series with Before hook with a tag label
     Then it should give me [1, 1, 2]
-
-  @another-do-fibonnacci-in-before-hook
-  Scenario: Single series with Before hook with a tag label
-    Then it should give me [1, 1, 2]
-
 
   Scenario: Single series by calling a step from within a step
     Then it should give me [1, 1] via calling another step definition
+
+  Scenario: Single series by calling multiple steps from within a step
+    Then it should calculate fibonacci up to 2 giving me [1, 1]

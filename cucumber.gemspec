@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{cucumber}
-  s.version = "0.7.3"
+  s.version = "0.8.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Aslak Helles\303\270y"]
-  s.date = %q{2010-05-18}
+  s.date = %q{2010-06-08}
   s.default_executable = %q{cucumber}
   s.description = %q{Behaviour Driven Development with elegance and joy}
   s.email = %q{cukes@googlegroups.com}
@@ -106,8 +106,8 @@ Gem::Specification.new do |s|
      "examples/i18n/he/lib/calculator.rb",
      "examples/i18n/hu/.gitignore",
      "examples/i18n/hu/Rakefile",
-     "examples/i18n/hu/features/addition.feature",
-     "examples/i18n/hu/features/division.feature",
+     "examples/i18n/hu/features/osszeadas.feature",
+     "examples/i18n/hu/features/osztas.feature",
      "examples/i18n/hu/features/step_definitons/calculator_steps.rb",
      "examples/i18n/hu/lib/calculator.rb",
      "examples/i18n/id/.gitignore",
@@ -224,11 +224,11 @@ Gem::Specification.new do |s|
      "examples/i18n/zh-TW/features/division.feature",
      "examples/i18n/zh-TW/features/step_definitons/calculator_steps.rb",
      "examples/i18n/zh-TW/lib/calculator.rb",
-     "examples/javascript/Rakefile",
-     "examples/javascript/features/fibonacci.feature",
-     "examples/javascript/features/lib/fibonacci.js",
-     "examples/javascript/features/step_definitions/fib_steps.js",
-     "examples/javascript/features/support/env.js",
+     "examples/json/features/background.feature",
+     "examples/json/features/one_passing_one_failing.feature",
+     "examples/json/features/pystring.feature",
+     "examples/json/features/step_definitions/steps.rb",
+     "examples/json/features/tables.feature",
      "examples/junit/features/one_passing_one_failing.feature",
      "examples/junit/features/pending.feature",
      "examples/junit/features/step_definitions/steps.rb",
@@ -318,17 +318,24 @@ Gem::Specification.new do |s|
      "examples/tickets/features/301/filter_background_tagged_hooks.feature",
      "examples/tickets/features/301/filter_background_tagged_hooks_steps.rb",
      "examples/tickets/features/306/only_background.feature",
+     "examples/tickets/features/around_timeout.feature",
      "examples/tickets/features/half_manual.feature",
      "examples/tickets/features/lib/eatting_machine.rb",
      "examples/tickets/features/lib/pantry.rb",
      "examples/tickets/features/scenario_outline.feature",
      "examples/tickets/features/step_definitons/246_steps.rb",
      "examples/tickets/features/step_definitons/248_steps.rb",
+     "examples/tickets/features/step_definitons/around_timeout_steps.rb",
      "examples/tickets/features/step_definitons/half_manual_steps.rb",
      "examples/tickets/features/step_definitons/scenario_outline_steps.rb",
      "examples/tickets/features/step_definitons/tickets_steps.rb",
      "examples/tickets/features/table_diffing.feature",
      "examples/tickets/features/tickets.feature",
+     "examples/v8/Rakefile",
+     "examples/v8/features/fibonacci.feature",
+     "examples/v8/features/step_definitions/fib_steps.js",
+     "examples/v8/features/support/env.js",
+     "examples/v8/lib/fibonacci.js",
      "examples/watir/.gitignore",
      "examples/watir/README.textile",
      "examples/watir/Rakefile",
@@ -363,6 +370,7 @@ Gem::Specification.new do |s|
      "features/expand.feature",
      "features/html_formatter.feature",
      "features/html_formatter/a.html",
+     "features/json_formatter.feature",
      "features/junit_formatter.feature",
      "features/language_from_header.feature",
      "features/language_help.feature",
@@ -452,6 +460,8 @@ Gem::Specification.new do |s|
      "lib/cucumber/formatter/duration.rb",
      "lib/cucumber/formatter/html.rb",
      "lib/cucumber/formatter/io.rb",
+     "lib/cucumber/formatter/json.rb",
+     "lib/cucumber/formatter/json_pretty.rb",
      "lib/cucumber/formatter/junit.rb",
      "lib/cucumber/formatter/ordered_xml_markup.rb",
      "lib/cucumber/formatter/pdf.rb",
@@ -483,7 +493,6 @@ Gem::Specification.new do |s|
      "lib/cucumber/rb_support/rb_transform.rb",
      "lib/cucumber/rb_support/rb_world.rb",
      "lib/cucumber/rb_support/regexp_argument_matcher.rb",
-     "lib/cucumber/rspec/diffing.rb",
      "lib/cucumber/rspec/disable_option_parser.rb",
      "lib/cucumber/step_argument.rb",
      "lib/cucumber/step_definition_light.rb",
@@ -522,6 +531,7 @@ Gem::Specification.new do |s|
      "spec/cucumber/formatter/junit_spec.rb",
      "spec/cucumber/formatter/progress_spec.rb",
      "spec/cucumber/formatter/spec_helper.rb",
+     "spec/cucumber/rb_support/rb_language_spec.rb",
      "spec/cucumber/rb_support/rb_step_definition_spec.rb",
      "spec/cucumber/rb_support/regexp_argument_matcher_spec.rb",
      "spec/cucumber/sell_cucumbers.feature",
@@ -542,7 +552,7 @@ Gem::Specification.new do |s|
 
                      (::)   U P G R A D I N G    (::)
 
-Thank you for installing cucumber-0.7.3.
+Thank you for installing cucumber-0.8.0.
 Please be sure to read http://wiki.github.com/aslakhellesoy/cucumber/upgrading
 for important information about this release. Happy cuking!
 
@@ -551,7 +561,7 @@ for important information about this release. Happy cuking!
 }
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.3.6}
+  s.rubygems_version = %q{1.3.7}
   s.summary = %q{Behaviour Driven Development with elegance and joy}
   s.test_files = [
     "spec/cucumber/ast/background_spec.rb",
@@ -578,6 +588,7 @@ for important information about this release. Happy cuking!
      "spec/cucumber/formatter/junit_spec.rb",
      "spec/cucumber/formatter/progress_spec.rb",
      "spec/cucumber/formatter/spec_helper.rb",
+     "spec/cucumber/rb_support/rb_language_spec.rb",
      "spec/cucumber/rb_support/rb_step_definition_spec.rb",
      "spec/cucumber/rb_support/regexp_argument_matcher_spec.rb",
      "spec/cucumber/step_match_spec.rb",
@@ -674,6 +685,7 @@ for important information about this release. Happy cuking!
      "examples/i18n/zh-CN/lib/calculator.rb",
      "examples/i18n/zh-TW/features/step_definitons/calculator_steps.rb",
      "examples/i18n/zh-TW/lib/calculator.rb",
+     "examples/json/features/step_definitions/steps.rb",
      "examples/junit/features/step_definitions/steps.rb",
      "examples/ramaze/app.rb",
      "examples/ramaze/features/step_definitions/add_steps.rb",
@@ -682,7 +694,6 @@ for important information about this release. Happy cuking!
      "examples/ruby2python/features/support/env.rb",
      "examples/self_test/features/step_definitions/sample_steps.rb",
      "examples/self_test/features/support/env.rb",
-     "examples/self_test/tmp/features/step_definitions/steps.rb",
      "examples/sinatra/app.rb",
      "examples/sinatra/features/step_definitions/add_steps.rb",
      "examples/sinatra/features/support/env.rb",
@@ -700,6 +711,7 @@ for important information about this release. Happy cuking!
      "examples/tickets/features/lib/pantry.rb",
      "examples/tickets/features/step_definitons/246_steps.rb",
      "examples/tickets/features/step_definitons/248_steps.rb",
+     "examples/tickets/features/step_definitons/around_timeout_steps.rb",
      "examples/tickets/features/step_definitons/half_manual_steps.rb",
      "examples/tickets/features/step_definitons/scenario_outline_steps.rb",
      "examples/tickets/features/step_definitons/tickets_steps.rb",
@@ -714,44 +726,41 @@ for important information about this release. Happy cuking!
     current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
     s.specification_version = 3
 
-    if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<gherkin>, [">= 1.0.27"])
+    if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
+      s.add_runtime_dependency(%q<gherkin>, [">= 1.0.30"])
       s.add_runtime_dependency(%q<term-ansicolor>, [">= 1.0.4"])
       s.add_runtime_dependency(%q<builder>, [">= 2.1.2"])
       s.add_runtime_dependency(%q<diff-lcs>, [">= 1.1.2"])
-      s.add_runtime_dependency(%q<json_pure>, [">= 1.2.4"])
-      s.add_development_dependency(%q<nokogiri>, [">= 1.4.1"])
-      s.add_development_dependency(%q<prawn>, ["= 0.6.3"])
-      s.add_development_dependency(%q<prawn-format>, ["= 0.2.3"])
-      s.add_development_dependency(%q<htmlentities>, [">= 4.2.1"])
-      s.add_development_dependency(%q<rspec>, [">= 1.3.0"])
+      s.add_runtime_dependency(%q<json_pure>, [">= 1.4.3"])
+      s.add_development_dependency(%q<nokogiri>, [">= 1.4.2"])
+      s.add_development_dependency(%q<prawn>, ["= 0.8.4"])
+      s.add_development_dependency(%q<prawn-layout>, ["= 0.8.4"])
+      s.add_development_dependency(%q<rspec>, [">= 2.0.0.beta.11"])
       s.add_development_dependency(%q<syntax>, [">= 1.0.0"])
       s.add_development_dependency(%q<spork>, [">= 0.8.3"])
     else
-      s.add_dependency(%q<gherkin>, [">= 1.0.27"])
+      s.add_dependency(%q<gherkin>, [">= 1.0.30"])
       s.add_dependency(%q<term-ansicolor>, [">= 1.0.4"])
       s.add_dependency(%q<builder>, [">= 2.1.2"])
       s.add_dependency(%q<diff-lcs>, [">= 1.1.2"])
-      s.add_dependency(%q<json_pure>, [">= 1.2.4"])
-      s.add_dependency(%q<nokogiri>, [">= 1.4.1"])
-      s.add_dependency(%q<prawn>, ["= 0.6.3"])
-      s.add_dependency(%q<prawn-format>, ["= 0.2.3"])
-      s.add_dependency(%q<htmlentities>, [">= 4.2.1"])
-      s.add_dependency(%q<rspec>, [">= 1.3.0"])
+      s.add_dependency(%q<json_pure>, [">= 1.4.3"])
+      s.add_dependency(%q<nokogiri>, [">= 1.4.2"])
+      s.add_dependency(%q<prawn>, ["= 0.8.4"])
+      s.add_dependency(%q<prawn-layout>, ["= 0.8.4"])
+      s.add_dependency(%q<rspec>, [">= 2.0.0.beta.11"])
       s.add_dependency(%q<syntax>, [">= 1.0.0"])
       s.add_dependency(%q<spork>, [">= 0.8.3"])
     end
   else
-    s.add_dependency(%q<gherkin>, [">= 1.0.27"])
+    s.add_dependency(%q<gherkin>, [">= 1.0.30"])
     s.add_dependency(%q<term-ansicolor>, [">= 1.0.4"])
     s.add_dependency(%q<builder>, [">= 2.1.2"])
     s.add_dependency(%q<diff-lcs>, [">= 1.1.2"])
-    s.add_dependency(%q<json_pure>, [">= 1.2.4"])
-    s.add_dependency(%q<nokogiri>, [">= 1.4.1"])
-    s.add_dependency(%q<prawn>, ["= 0.6.3"])
-    s.add_dependency(%q<prawn-format>, ["= 0.2.3"])
-    s.add_dependency(%q<htmlentities>, [">= 4.2.1"])
-    s.add_dependency(%q<rspec>, [">= 1.3.0"])
+    s.add_dependency(%q<json_pure>, [">= 1.4.3"])
+    s.add_dependency(%q<nokogiri>, [">= 1.4.2"])
+    s.add_dependency(%q<prawn>, ["= 0.8.4"])
+    s.add_dependency(%q<prawn-layout>, ["= 0.8.4"])
+    s.add_dependency(%q<rspec>, [">= 2.0.0.beta.11"])
     s.add_dependency(%q<syntax>, [">= 1.0.0"])
     s.add_dependency(%q<spork>, [">= 0.8.3"])
   end

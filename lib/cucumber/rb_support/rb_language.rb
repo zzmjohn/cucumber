@@ -41,6 +41,26 @@ module Cucumber
         @step_definitions = []
         RbDsl.rb_language = self
         @world_proc = @world_modules = nil
+        enable_rspec_expectations_if_available
+      end
+
+      def enable_rspec_expectations_if_available
+        begin
+          # RSpec >=2.0
+          require 'rspec/expectations'
+          @rspec_matchers = ::RSpec::Matchers
+        rescue LoadError => try_rspec_1_2_4_or_higher
+          begin
+            require 'spec/expectations'
+            require 'spec/runner/differs/default'
+            require 'ostruct'
+            options = OpenStruct.new(:diff_format => :unified, :context_lines => 3)
+            Spec::Expectations.differ = Spec::Expectations::Differs::Default.new(options)
+            @rspec_matchers = ::Spec::Matchers
+          rescue LoadError => give_up
+            @rspec_matchers = Module.new{}
+          end
+        end
       end
 
       # Gets called for each file under features (or whatever is overridden
@@ -67,15 +87,17 @@ module Cucumber
         end.compact
       end
 
-      def snippet_text(step_keyword, step_name, multiline_arg_class)
-        escaped = Regexp.escape(step_name).gsub('\ ', ' ').gsub('/', '\/')
-        escaped = escaped.gsub(PARAM_PATTERN, ESCAPED_PARAM_PATTERN)
+      ARGUMENT_PATTERNS = ['"([^"]*)"', '(\d+)']
 
-        n = 0
-        block_args = escaped.scan(ESCAPED_PARAM_PATTERN).map do |a|
-          n += 1
-          "arg#{n}"
+      def snippet_text(step_keyword, step_name, multiline_arg_class)
+        snippet_pattern = Regexp.escape(step_name).gsub('\ ', ' ').gsub('/', '\/')
+        arg_count = 0
+        ARGUMENT_PATTERNS.each do |pattern|
+          snippet_pattern = snippet_pattern.gsub(Regexp.new(pattern), pattern)
+          arg_count += snippet_pattern.scan(pattern).length
         end
+
+        block_args = (0...arg_count).map {|n| "arg#{n+1}"}
         block_args << multiline_arg_class.default_arg_name unless multiline_arg_class.nil?
         block_arg_string = block_args.empty? ? "" : " |#{block_args.join(", ")}|"
         multiline_class_comment = ""
@@ -83,7 +105,7 @@ module Cucumber
           multiline_class_comment = "# #{multiline_arg_class.default_arg_name} is a #{multiline_arg_class.to_s}\n  "
         end
 
-        "#{Gherkin::I18n.code_keyword_for(step_keyword)} /^#{escaped}$/ do#{block_arg_string}\n  #{multiline_class_comment}pending # express the regexp above with the code you wish you had\nend"
+        "#{Gherkin::I18n.code_keyword_for(step_keyword)} /^#{snippet_pattern}$/ do#{block_arg_string}\n  #{multiline_class_comment}pending # express the regexp above with the code you wish you had\nend"
       end
 
       def begin_rb_scenario(scenario)
@@ -131,9 +153,6 @@ module Cucumber
 
       private
 
-      PARAM_PATTERN = /"([^"]*)"/
-      ESCAPED_PARAM_PATTERN = '"([^"]*)"'
-
       def create_world
         if(@world_proc)
           @current_world = @world_proc.call
@@ -145,8 +164,7 @@ module Cucumber
 
       def extend_world
         @current_world.extend(RbWorld)
-        @current_world.extend(::Spec::Matchers) if defined?(::Spec::Matchers)   # RSpec 1.x
-        @current_world.extend(::Rspec::Matchers) if defined?(::Rspec::Matchers) # RSpec 2.x
+        @current_world.extend(@rspec_matchers)
         (@world_modules || []).each do |mod|
           @current_world.extend(mod)
         end

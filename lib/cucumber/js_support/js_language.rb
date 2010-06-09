@@ -1,3 +1,4 @@
+gem 'therubyracer', '>=0.7.1'
 require 'v8'
 
 require 'cucumber/js_support/js_snippets'
@@ -7,7 +8,7 @@ module Cucumber
 
     def self.argument_safe_string(string)
       arg_string = string.to_s.gsub(/[']/, '\\\\\'')
-      "'#{arg_string.gsub("\n", '\n')}'"
+      arg_string.gsub("\n", '\n')
     end
 
     class JsWorld
@@ -16,15 +17,7 @@ module Cucumber
       end
 
       def execute(js_function, args=[])
-        js_args = args.map do |arg|
-          if arg.is_a?(Ast::Table)
-            "new CucumberJsDsl.Table(#{arg.raw.inspect})"
-          else
-            JsSupport.argument_safe_string(arg)
-          end
-        end
-
-        @world.eval("(#{js_function.ToString})(#{js_args.join(',')});")
+        js_function.call(*args)
       end
 
       def method_missing(method_name, *args)
@@ -34,7 +27,7 @@ module Cucumber
 
     class JsStepDefinition
       def initialize(js_language, regexp, js_function)
-        @js_language, @regexp, @js_function = js_language, regexp.ToString, js_function
+        @js_language, @regexp, @js_function = js_language, regexp.to_s, js_function
       end
 
       def invoke(args)
@@ -45,7 +38,7 @@ module Cucumber
       def arguments_from(step_name)
         matches = eval_js "#{@regexp}.exec('#{step_name}')"
         if matches
-          matches[1..-1].map do |match|
+          matches.to_a[1..-1].map do |match|
             JsArg.new(match)
           end
         end
@@ -73,17 +66,17 @@ module Cucumber
 
     class JsTransform
       def initialize(js_language, regexp, js_function)
-        @js_language, @regexp, @js_function = js_language, regexp.ToString, js_function
+        @js_language, @regexp, @js_function = js_language, regexp.to_s, js_function
       end
 
       def match(arg)
         arg = JsSupport.argument_safe_string(arg)
-        matches = eval_js "#{@regexp}.exec(#{arg});"
-        matches ? matches[1..-1] : nil
+        matches = (eval_js "#{@regexp}.exec('#{arg}');").to_a
+        matches.empty? ? nil : matches[1..-1]
       end
 
       def invoke(arg)
-        @js_language.current_world.execute(@js_function, [arg])
+        @js_function.call([arg])
       end
     end
 
@@ -117,10 +110,17 @@ module Cucumber
         @world.load(js_file)
       end
 
+      def world(js_files)
+        js_files.each do |js_file|
+          load_code_file("#{path_to_load_js_from}#{js_file}")
+        end
+      end
+
       def alias_adverbs(adverbs)
       end
 
       def begin_scenario(scenario)
+        @language = scenario.language
       end
 
       def end_scenario
@@ -155,6 +155,21 @@ module Cucumber
 
       def current_world
         @world
+      end
+
+      def steps(steps_text)
+        @step_mother.invoke_steps(steps_text, @language)
+      end
+
+      private
+      def path_to_load_js_from
+        paths = @step_mother.options[:paths]
+        if paths.empty?
+          '' # Using rake
+        else
+          path = paths[0][/(^.*\/?features)/, 0]
+          path ? "#{path}/../" : '../'
+        end
       end
 
     end

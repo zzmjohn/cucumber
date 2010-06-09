@@ -11,7 +11,7 @@ module Cucumber
 
     class Configuration
       include Constantize
-      
+
       attr_reader :options, :out_stream
 
       def initialize(out_stream = STDOUT, error_stream = STDERR)
@@ -48,10 +48,6 @@ module Cucumber
         @options[:guess]
       end
 
-      def diff_enabled?
-        @options[:diff_enabled]
-      end
-
       def drb?
         @options[:drb]
       end
@@ -85,11 +81,11 @@ module Cucumber
         files.reject! {|f| f =~ /^http/}
         files.sort
       end
-      
+
       def step_defs_to_load
         all_files_to_load.reject {|f| f =~ %r{/support/} }
       end
-      
+
       def support_to_load
         support_files = all_files_to_load.select {|f| f =~ %r{/support/} }
         env_files = support_files.select {|f| f =~ %r{/support/env\..*} }
@@ -106,14 +102,14 @@ module Cucumber
           elsif path[0..0] == '@' and # @listfile.txt
               File.file?(path[1..-1]) # listfile.txt is a file
             IO.read(path[1..-1]).split
-          else 
+          else
             path
           end
         end.flatten.uniq
         remove_excluded_files_from(potential_feature_files)
-        potential_feature_files.sort
+        potential_feature_files
       end
-      
+
       def feature_dirs
         paths.map { |f| File.directory?(f) ? f : File.dirname(f) }.uniq
       end
@@ -127,7 +123,7 @@ module Cucumber
       end
 
     private
-    
+
       def formatters(step_mother)
         # TODO: We should remove the autoformat functionality. That
         # can be done with the gherkin CLI.
@@ -181,7 +177,7 @@ module Cucumber
       def require_dirs
         feature_dirs + Dir['vendor/{gems,plugins}/*/cucumber']
       end
-      
+
     end
 
   end
