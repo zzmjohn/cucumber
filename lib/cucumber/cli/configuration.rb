@@ -163,6 +163,9 @@ module Cucumber
 
       def arrange_formats
         @options[:formats] << ['pretty', @out_stream] if @options[:formats].empty?
+
+p @options[:formats]
+
         @options[:formats] = @options[:formats].sort_by{|f| f[1] == @out_stream ? -1 : 1}
         streams = @options[:formats].map { |(_, stream)| stream }
         if streams != streams.uniq

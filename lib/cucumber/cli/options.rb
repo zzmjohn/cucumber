@@ -396,7 +396,7 @@ module Cucumber
           :strict       => false,
           :require      => [],
           :dry_run      => false,
-          :formats      => [],
+          :formats      => (ENV['CUCUMBER_FORMAT'] ? [[ENV['CUCUMBER_FORMAT'], @out_stream]] : []),
           :excludes     => [],
           :tag_expressions  => [],
           :name_regexps => [],
