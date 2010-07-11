@@ -2,6 +2,7 @@
 
 === New features
 * Support for RSpec 2 doubles (mocks and stubs) (Aslak Hellesøy)
+* Support a Options hook in the Ruby adapter which can be called in your env.rb to configure Cucumber. The options supported are the same as those on the command line. This will be particular useful for plugin writers. (#640 Joseph Wilk)
 
 == 0.8.3 (2010-06-16)
 

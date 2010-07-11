@@ -287,6 +287,11 @@ module Cucumber
         @options.values_at(:name_regexps, :tag_expressions).select{|v| !v.empty?}.first || []
       end
 
+      def merge_options!(options_args)
+        options = Options.parse(options_args, @out_stream, @error_stream)
+        reverse_merge(options)
+      end
+
     protected
 
       attr_reader :options, :profiles, :expanded_args

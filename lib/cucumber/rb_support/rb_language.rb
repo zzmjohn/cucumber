@@ -3,6 +3,7 @@ require 'cucumber/rb_support/rb_world'
 require 'cucumber/rb_support/rb_step_definition'
 require 'cucumber/rb_support/rb_hook'
 require 'cucumber/rb_support/rb_transform'
+require 'cucumber/rb_support/rb_options'
 
 module Cucumber
   module RbSupport
@@ -139,6 +140,14 @@ module Cucumber
 
       def load_code_file(code_file)
         require File.expand_path(code_file) # This will cause self.add_step_definition, self.add_hook, and self.add_transform to be called from RbDsl
+      end
+
+      def update_options(options)
+        hooks[:update_options].each do |hook|
+          hook.invoke('Options', new_options = Options.new)
+          options.merge_options!(new_options.list)
+        end
+        options
       end
 
       protected

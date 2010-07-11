@@ -12,7 +12,8 @@ module Cucumber
     class Configuration
       include Constantize
 
-      attr_reader :options, :out_stream
+      attr_reader :out_stream
+      attr_accessor :options
 
       def initialize(out_stream = STDOUT, error_stream = STDERR)
         @out_stream   = out_stream

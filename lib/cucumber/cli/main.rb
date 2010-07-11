@@ -51,8 +51,13 @@ module Cucumber
         step_mother.log = configuration.log
 
         step_mother.load_code_files(configuration.support_to_load)
+        new_options = step_mother.update_options(configuration.options)
+        configuration.options = step_mother.options = new_options
+
         step_mother.after_configuration(configuration)
+
         features = step_mother.load_plain_text_features(configuration.feature_files)
+
         step_mother.load_code_files(configuration.step_defs_to_load)
 
         tag_excess = tag_excess(features)
