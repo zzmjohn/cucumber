@@ -1,7 +1,7 @@
 Feature: Options
   In order to make it easier for Cucumber plugins to run seamlessly
   As a Cuke developer
-  I want to configure Cucumber at runtime
+  I want to configure Cucumber from within a cucumber execution
 
   Background:
     Given a standard Cucumber project directory structure
@@ -43,18 +43,7 @@ Feature: Options
     """
 
   Scenario: Invalid options
-    Given a file named "features/philosophers.feature" with:
-    """
-    Feature: Drunken Philosophers
-      Scenario: I drink therefore I am
-        Given Immanuel Kant was a real pissant
-    """
-    And a file named "features/step_definitions/steps.rb" with:
-    """
-      Given /^Immanuel Kant was a real pissant$/ do
-      end
-    """
-    And a file named "features/support/env.rb" with:
+    Given a file named "features/support/env.rb" with:
     """
       Options do |o|
         o.heidegger = 'boozy'
