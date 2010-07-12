@@ -58,7 +58,7 @@ module Cucumber
         "table"
       end
 
-      def self.parse(text)
+      def self.parse(text, uri, offset)
         builder = Builder.new
         lexer = Gherkin::I18nLexer.new(builder)
         lexer.scan(text)

@@ -1,4 +1,5 @@
 require 'cucumber/ast'
+require 'gherkin/rubify'
 
 module Cucumber
   module Parser
@@ -6,38 +7,29 @@ module Cucumber
     # "legacy" AST. It will be replaced later when we have a new "clean"
     # AST.
     class GherkinBuilder
+      include Gherkin::Rubify
 
       def ast
         @feature || @multiline_arg
       end
 
-      def tag(name, line)
-        @tags ||= []
-        @tags << name
-      end
-
-      def comment(content, line)
-        @comments ||= []
-        @comments << content
-      end
-
-      def feature(keyword, name, line)
+      def feature(statement, uri)
         @feature = Ast::Feature.new(
           nil, 
-          Ast::Comment.new(grab_comments!('')), 
-          Ast::Tags.new(nil, grab_tags!('')),
-          keyword,
-          name,
+          Ast::Comment.new(statement.comments.map{|comment| comment.value}.join("\n")), 
+          Ast::Tags.new(nil, statement.tags.map{|tag| tag.name}),
+          statement.keyword,
+          legacy_name_for(statement.name, statement.description),
           []
         )
       end
 
-      def background(keyword, name, line)
+      def background(statement)
         @background = Ast::Background.new(
-          Ast::Comment.new(grab_comments!('')), 
-          line, 
-          keyword, 
-          name, 
+          Ast::Comment.new(statement.comments.map{|comment| comment.value}.join("\n")), 
+          statement.line, 
+          statement.keyword, 
+          legacy_name_for(statement.name, statement.description), 
           steps=[]
         )
         @feature.background = @background
@@ -45,15 +37,14 @@ module Cucumber
         @step_container = @background
       end
 
-      def scenario(keyword, name, line)
-        grab_table!
+      def scenario(statement)
         scenario = Ast::Scenario.new(
           @background, 
-          Ast::Comment.new(grab_comments!('')), 
-          Ast::Tags.new(nil, grab_tags!('')), 
-          line, 
-          keyword, 
-          name, 
+          Ast::Comment.new(statement.comments.map{|comment| comment.value}.join("\n")), 
+          Ast::Tags.new(nil, statement.tags.map{|tag| tag.name}), 
+          statement.line, 
+          statement.keyword, 
+          legacy_name_for(statement.name, statement.description), 
           steps=[]
         )
         @feature.add_feature_element(scenario)
@@ -61,15 +52,14 @@ module Cucumber
         @step_container = scenario
       end
 
-      def scenario_outline(keyword, name, line)
-        grab_table!
+      def scenario_outline(statement)
         scenario_outline = Ast::ScenarioOutline.new(
           @background, 
-          Ast::Comment.new(grab_comments!('')), 
-          Ast::Tags.new(nil, grab_tags!('')), 
-          line, 
-          keyword, 
-          name, 
+          Ast::Comment.new(statement.comments.map{|comment| comment.value}.join("\n")), 
+          Ast::Tags.new(nil, statement.tags.map{|tag| tag.name}), 
+          statement.line, 
+          statement.keyword, 
+          legacy_name_for(statement.name, statement.description), 
           steps=[],
           example_sections=[]
         )
@@ -81,64 +71,53 @@ module Cucumber
         @step_container = scenario_outline
       end
 
-      def examples(keyword, name, line)
-        grab_table!
-        @examples_fields = [Ast::Comment.new(grab_comments!('')), line, keyword, name]
+      def examples(statement, examples_rows)
+        examples_fields = [
+          Ast::Comment.new(statement.comments.map{|comment| comment.value}.join("\n")), 
+          statement.line, 
+          statement.keyword, 
+          legacy_name_for(statement.name, statement.description), 
+          matrix(examples_rows)
+        ]
+        @step_container.add_examples(examples_fields)
       end
 
-      def step(keyword, name, line)
-        grab_table!
-        @table_owner = Ast::Step.new(line, keyword, name)
+      def step(statement, multiline_arg, result)
+        @table_owner = Ast::Step.new(statement.line, statement.keyword, statement.name)
+        multiline_arg = rubify(multiline_arg)
+        case(multiline_arg)
+        when Gherkin::Formatter::Model::PyString
+          @table_owner.multiline_arg = Ast::PyString.new(multiline_arg.value)
+        when Array
+          @table_owner.multiline_arg = Ast::Table.new(matrix(multiline_arg))
+        end
         @step_container.add_step(@table_owner)
       end
 
-      def row(row, line)
-        @rows ||= []
-        @rows << row
-        class << row
-          attr_accessor :line
-        end
-        row.line = line
-      end
-
-      def py_string(string, line)
-        @multiline_arg = Ast::PyString.new(string)
-        @table_owner.multiline_arg = @multiline_arg if @table_owner
-      end
-
       def eof
-        grab_table!
       end
 
       def syntax_error(state, event, legal_events, line)
         # raise "SYNTAX ERROR"
       end
-
+      
     private
+    
+      def legacy_name_for(name, description)
+        s = name
+        s += "\n#{description}" if description != ""
+        s
+      end
 
-      def grab_table!
-        return if @rows.nil? 
-        if @examples_fields
-          @examples_fields << @rows
-          @step_container.add_examples(@examples_fields)
-          @examples_fields = nil
-        else
-          @multiline_arg = Ast::Table.new(@rows)
-          @table_owner.multiline_arg = @multiline_arg if @table_owner
+      def matrix(gherkin_table)
+        gherkin_table.map do |gherkin_row|
+          row = gherkin_row.cells
+          class << row
+            attr_accessor :line
+          end
+          row.line = gherkin_row.line
+          row
         end
-        @rows = nil
-      end
-
-      def grab_tags!(indent)
-        tags = @tags ? @tags : []
-        @tags = nil
-        tags
-      end
-
-      def grab_comments!(indent)
-        comments = @comments ? indent + @comments.join("\n#{indent}") : ''
-        @comments = nil
-        comments
       end
     end
   end

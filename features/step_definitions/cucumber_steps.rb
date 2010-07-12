@@ -2,7 +2,7 @@
 require 'tempfile'
 
 Given /^I am in (.*)$/ do |example_dir_relative_path|
-  @current_dir = examples_dir(example_dir_relative_path)
+  @current_dir = fixtures_dir(example_dir_relative_path)
 end
 
 Given /^a standard Cucumber project directory structure$/ do
@@ -68,7 +68,7 @@ Then /^it should (fail|pass)$/ do |success|
 end
 
 Then /^it should (fail|pass) with$/ do |success, output|
-  last_stdout.should == output
+  combined_output.should =~ Regexp.compile(Regexp.escape(output))
   Then("it should #{success}")
 end
 

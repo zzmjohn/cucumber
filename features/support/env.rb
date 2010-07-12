@@ -11,19 +11,19 @@ require 'cucumber/formatter/unicode'
 
 class CucumberWorld
   extend Forwardable
-  def_delegators CucumberWorld, :examples_dir, :self_test_dir, :working_dir, :cucumber_lib_dir
+  def_delegators CucumberWorld, :fixtures_dir, :self_test_dir, :working_dir, :cucumber_lib_dir
 
-  def self.examples_dir(subdir=nil)
-    @examples_dir ||= File.expand_path(File.join(File.dirname(__FILE__), '../../examples'))
-    subdir ? File.join(@examples_dir, subdir) : @examples_dir
+  def self.fixtures_dir(subdir=nil)
+    @fixtures_dir ||= File.expand_path(File.join(File.dirname(__FILE__), '../../fixtures'))
+    subdir ? File.join(@fixtures_dir, subdir) : @fixtures_dir
   end
 
   def self.self_test_dir
-    @self_test_dir ||= examples_dir('self_test')
+    @self_test_dir ||= fixtures_dir('self_test')
   end
 
   def self.working_dir
-    @working_dir ||= examples_dir('self_test/tmp')
+    @working_dir ||= fixtures_dir('self_test/tmp')
   end
 
   def cucumber_lib_dir
@@ -42,12 +42,16 @@ class CucumberWorld
     strip_1_9_paths(strip_duration(@last_stdout))
   end
 
+  def combined_output
+    last_stdout + "\n" + last_stderr
+  end
+
   def strip_duration(s)
     s.gsub(/^\d+m\d+\.\d+s\n/m, "")
   end
 
   def strip_1_9_paths(s)
-    s.gsub(/#{Dir.pwd}\/examples\/self_test\/tmp/m, ".").gsub(/#{Dir.pwd}\/examples\/self_test/m, ".")
+    s.gsub(/#{Dir.pwd}\/fixtures\/self_test\/tmp/m, ".").gsub(/#{Dir.pwd}\/fixtures\/self_test/m, ".")
   end
 
   def replace_duration(s, replacement)
@@ -138,6 +142,7 @@ Before do
 end
 
 After do
+  FileUtils.rm_rf CucumberWorld.working_dir unless ENV['KEEP_FILES']
   terminate_background_jobs
   restore_original_env_vars
 end
