@@ -11,5 +11,9 @@ require 'cucumber/broadcaster'
 module Cucumber
   class << self
     attr_accessor :wants_to_quit
+
+    def configure(&proc)
+      RbSupport::RbDsl.register_rb_hook('update_options', [], proc)
+    end
   end
 end

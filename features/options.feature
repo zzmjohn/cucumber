@@ -28,8 +28,8 @@ Feature: Options
     """
     And a file named "features/support/env.rb" with:
     """
-      Options do |o|
-        o.tags = '~@wip'
+      Cucumber.configure do |c|
+        c.tags = '~@wip'
       end
     """
     When I run cucumber features --format progress
@@ -45,8 +45,8 @@ Feature: Options
   Scenario: Invalid options
     Given a file named "features/support/env.rb" with:
     """
-      Options do |o|
-        o.heidegger = 'boozy'
+      Cucumber.configure do |c|
+        c.heidegger = 'boozy'
       end
     """
     When I run cucumber features
