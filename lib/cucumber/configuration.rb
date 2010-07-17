@@ -20,7 +20,9 @@ module Cucumber
     add_setting :strict, :default => false
     add_setting :dry_run, :default => false
     add_setting :diff_enabled, :default => true 
-    add_setting :tags
+    add_setting :tag_expressions
+    add_setting :tags, :alias => :tag_expressions
+    
     add_setting :multiline
     add_setting :'no-source'
     add_setting :quiet
@@ -32,6 +34,7 @@ module Cucumber
     add_setting :require, :default => []    
     add_setting :verbose
     add_setting :drb
+    add_setting :profiles, :default => []
     
     add_setting :disable_profile_loading
 
@@ -45,6 +48,14 @@ module Cucumber
 
     def []=(key, value)
       settings[key] = value
+    end
+    
+    def tag_expression
+      Gherkin::Parser::TagExpression.new(@settings[:tag_expressions])
+    end
+    
+    def custom_profiles
+      profiles - ['default']
     end
     
     def default_options
@@ -96,8 +107,13 @@ module Cucumber
 
       self
     end
+    require 'rubygems'
+    require 'ruby-debug'
     
     def filters
+      debugger
+
+      
       @settings.values_at(:name_regexps, :tag_expressions).select{|v| !v.empty?}.first || []
     end
     

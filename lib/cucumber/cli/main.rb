@@ -47,10 +47,12 @@ module Cucumber
             @error_stream.puts "WARNING: #{e.message} Running features locally:"
           end
         end
-        step_mother.options = configuration.config
+        step_mother.options = Cucumber.configuration
         step_mother.log = configuration.log
 
         step_mother.load_code_files(configuration.support_to_load)
+        step_mother.options = Cucumber.configuration
+        
         step_mother.after_configuration(configuration)
 
         features = step_mother.load_plain_text_features(configuration.feature_files)
@@ -79,7 +81,7 @@ module Cucumber
       end
 
       def tag_excess(features)
-        configuration.config[:tag_expression].limits.map do |tag_name, tag_limit|
+        configuration.config.tag_expression.limits.map do |tag_name, tag_limit|
           tag_locations = features.tag_locations(tag_name)
           if tag_limit && (tag_locations.length > tag_limit)
             [tag_name, tag_limit, tag_locations]

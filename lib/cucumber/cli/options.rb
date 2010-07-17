@@ -5,9 +5,7 @@ require 'gherkin/parser/tag_expression'
 module Cucumber
   module Cli
 
-    class Options
-      attr_reader :options
-      
+    class Options      
       INDENT = ' ' * 53
       BUILTIN_FORMATS = {
         'html'        => ['Cucumber::Formatter::Html',        'Generates a nice looking HTML report.'],
@@ -64,17 +62,16 @@ module Cucumber
         @skip_profile_information = options[:skip_profile_information]
         @profiles = []
         @overridden_paths = []
-        @options = Cucumber::Configuration.new
         
         @quiet = @disable_profile_loading = nil
       end
 
       # def [](key)
-      #   @options[key]
+      #   Cucumber.configuration[key]
       # end
       # 
       # def []=(key, value)
-      #   @options[key] = value
+      #   Cucumber.configuration[key] = value
       # end
 
       def expanded_args_without_drb
@@ -121,7 +118,7 @@ module Cucumber
             "Files under directories named \"support\" are always",
             "loaded first.",
             "This option can be specified multiple times.") do |v|
-            @options[:require] << v
+            Cucumber.configuration[:require] << v
             if(Cucumber::JRUBY && File.directory?(v))
               require 'java'
               $CLASSPATH << v
@@ -147,15 +144,15 @@ module Cucumber
           opts.on("-f FORMAT", "--format FORMAT",
             "How to format features (Default: pretty). Available formats:",
             *FORMAT_HELP) do |v|
-            @options[:formats] << [v, @out_stream]
+            Cucumber.configuration[:formats] << [v, @out_stream]
           end
           opts.on("-o", "--out [FILE|DIR]",
             "Write output to a file/directory instead of STDOUT. This option",
             "applies to the previously specified --format, or the",
             "default format if no format is specified. Check the specific",
             "formatter's docs to see whether to pass a file or a dir.") do |v|
-            @options[:formats] << ['pretty', nil] if @options[:formats].empty?
-            @options[:formats][-1][1] = v
+            Cucumber.configuration[:formats] << ['pretty', nil] if Cucumber.configuration[:formats].empty?
+            Cucumber.configuration[:formats][-1][1] = v
           end
           opts.on("-t TAG_EXPRESSION", "--tags TAG_EXPRESSION",
             "Only execute the features or scenarios with tags matching TAG_EXPRESSION.",
@@ -173,16 +170,16 @@ module Cucumber
             "Positive tags can be given a threshold to limit the number of occurrences.", 
             "Example: --tags @qa:3 will fail if there are more than 3 occurrences of the @qa tag.",
             "This can be practical if you are practicing Kanban or CONWIP.") do |v|
-            @options[:tag_expressions] << v
+            Cucumber.configuration[:tag_expressions] << v
           end
           opts.on("-n NAME", "--name NAME",
             "Only execute the feature elements which match part of the given name.",
             "If this option is given more than once, it will match against all the",
             "given names.") do |v|
-            @options[:name_regexps] << /#{v}/
+            Cucumber.configuration[:name_regexps] << /#{v}/
           end
           opts.on("-e", "--exclude PATTERN", "Don't run feature files or require ruby files matching PATTERN") do |v|
-            @options[:excludes] << Regexp.new(v)
+            Cucumber.configuration[:excludes] << Regexp.new(v)
           end
           opts.on(PROFILE_SHORT_FLAG, "#{PROFILE_LONG_FLAG} PROFILE",
               "Pull commandline arguments from cucumber.yml which can be defined as",
@@ -190,7 +187,7 @@ module Cucumber
               "is specified it is always used. (Unless disabled, see -P below.)",
               "When feature files are defined in a profile and on the command line",
               "then only the ones from the command line are used.") do |v|
-            @profiles << v
+            Cucumber.configuration[:profiles] << v
           end
           opts.on(NO_PROFILE_SHORT_FLAG, NO_PROFILE_LONG_FLAG,
             "Disables all profile loading to avoid using the 'default' profile.") do |v|
@@ -204,29 +201,29 @@ module Cucumber
           opts.on("-d", "--dry-run", "Invokes formatters without executing the steps.",
             "This also omits the loading of your support/env.rb file if it exists.",
             "Implies --no-snippets.") do
-            @options[:dry_run] = true
-            @options[:snippets] = false
+            Cucumber.configuration[:dry_run] = true
+            Cucumber.configuration[:snippets] = false
           end
           opts.on("-a", "--autoformat DIR",
             "Reformats (pretty prints) feature files and write them to DIRECTORY.",
             "Be careful if you choose to overwrite the originals.",
             "Implies --dry-run --formatter pretty.") do |directory|
-            @options[:autoformat] = directory
+            Cucumber.configuration[:autoformat] = directory
             Term::ANSIColor.coloring = false
-            @options[:dry_run] = true
+            Cucumber.configuration[:dry_run] = true
             @quiet = true
           end
 
           opts.on("-m", "--no-multiline",
             "Don't print multiline strings and tables under steps.") do
-            @options[:no_multiline] = true
+            Cucumber.configuration[:no_multiline] = true
           end
           opts.on("-s", "--no-source",
             "Don't print the file and line of the step definition with the steps.") do
-            @options[:source] = false
+            Cucumber.configuration[:source] = false
           end
           opts.on("-i", "--no-snippets", "Don't print snippets for pending steps.") do
-            @options[:snippets] = false
+            Cucumber.configuration[:snippets] = false
           end
           opts.on("-q", "--quiet", "Alias for --no-snippets --no-source.") do
             @quiet = true
@@ -235,25 +232,25 @@ module Cucumber
             Cucumber.use_full_backtrace = true
           end
           opts.on("-S", "--strict", "Fail if there are any undefined steps.") do
-            @options[:strict] = true
+            Cucumber.configuration[:strict] = true
           end
           opts.on("-w", "--wip", "Fail if there are any passing scenarios.") do
-            @options[:wip] = true
+            Cucumber.configuration[:wip] = true
           end
           opts.on("-v", "--verbose", "Show the files and features loaded.") do
-            @options[:verbose] = true
+            Cucumber.configuration[:verbose] = true
           end
           opts.on("-g", "--guess", "Guess best match for Ambiguous steps.") do
-            @options[:guess] = true
+            Cucumber.configuration[:guess] = true
           end
           opts.on("-x", "--expand", "Expand Scenario Outline Tables in output.") do
-            @options[:expand] = true
+            Cucumber.configuration[:expand] = true
           end
           opts.on(DRB_FLAG, "Run features against a DRb server. (i.e. with the spork gem)") do
-            @options[:drb] = true
+            Cucumber.configuration[:drb] = true
           end
           opts.on("--port PORT", "Specify DRb port.  Ignored without --drb") do |port|
-            @options[:drb_port] = port
+            Cucumber.configuration[:drb_port] = port
           end
           opts.on_tail("--version", "Show version.") do
             @out_stream.puts Cucumber::VERSION
@@ -266,23 +263,19 @@ module Cucumber
         end.parse!
 
         if @quiet
-          @options[:snippets] = @options[:source] = false
+          Cucumber.configuration[:snippets] = Cucumber.configuration[:source] = false
         else
-          @options[:snippets] = true if @options[:snippets].nil?
-          @options[:source]   = true if @options[:source].nil?
+          Cucumber.configuration[:snippets] = true if Cucumber.configuration[:snippets].nil?
+          Cucumber.configuration[:source]   = true if Cucumber.configuration[:source].nil?
         end
 
         extract_environment_variables
-        @options[:paths] = @args.dup #whatver is left over
+        Cucumber.configuration[:paths] = @args.dup #whatver is left over
 
         merge_profiles
         print_profile_information
 
-        @options
-      end
-
-      def custom_profiles
-        @profiles - [@default_profile]
+        Cucumber.configuration
       end
 
     protected
@@ -293,17 +286,17 @@ module Cucumber
     private
 
       def non_stdout_formats
-        @options[:formats].select {|format, output| output != @out_stream }
+        Cucumber.configuration[:formats].select {|format, output| output != @out_stream }
       end
 
       def stdout_formats
-        @options[:formats].select {|format, output| output == @out_stream }
+        Cucumber.configuration[:formats].select {|format, output| output == @out_stream }
       end
 
       def extract_environment_variables
         @args.delete_if do |arg|
           if arg =~ /^(\w+)=(.*)$/
-            @options[:env_vars][$1] = $2
+            Cucumber.configuration[:env_vars][$1] = $2
             true
           end
         end
@@ -323,7 +316,7 @@ module Cucumber
 
         @profiles.each do |profile|
           profile_args = profile_loader.args_from(profile)
-          @options.reverse_merge(
+          Cucumber.configuration.reverse_merge(
             Options.parse(profile_args, @out_stream, @error_stream, :skip_profile_information  => true)
           )
         end
