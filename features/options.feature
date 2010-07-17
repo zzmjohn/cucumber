@@ -41,16 +41,3 @@ Feature: Options
     1 step (1 passed)
 
     """
-
-  Scenario: Invalid options
-    Given a file named "features/support/env.rb" with:
-    """
-      Cucumber.configure do |c|
-        c.heidegger = 'boozy'
-      end
-    """
-    When I run cucumber features
-    Then STDERR should match
-    """
-    invalid option: --heidegger
-    """
