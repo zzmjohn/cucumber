@@ -147,7 +147,7 @@ module Cli
           options[:verbose].should be_true
         end
 
-        it "gives precendene to the origianl options' paths" do
+        it "gives precendene to the original options' paths" do
           given_cucumber_yml_defined_as('foo' => %w[features])
           options.parse!(%w[my.feature -p foo])
           options[:paths].should == %w[my.feature]
