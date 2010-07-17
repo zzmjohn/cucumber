@@ -32,26 +32,27 @@ module Cucumber
 
         set_environment_variables
       end
+      
 
-      def verbose?
-        @options[:verbose]
-      end
-
-      def strict?
-        @options[:strict]
-      end
-
-      def wip?
-        @options[:wip]
-      end
-
-      def guess?
-        @options[:guess]
-      end
-
-      def drb?
-        @options[:drb]
-      end
+      # def verbose?
+      #   @options[:verbose]
+      # end
+      # 
+      # def strict?
+      #   @options[:strict]
+      # end
+      # 
+      # def wip?
+      #   @options[:wip]
+      # end
+      # 
+      # def guess?
+      #   @options[:guess]
+      # end
+      # 
+      # def drb?
+      #   @options[:drb]
+      # end
 
       def drb_port
         @options[:drb_port].to_i if @options[:drb_port]

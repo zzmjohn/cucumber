@@ -62,18 +62,18 @@ module Cucumber
         @skip_profile_information = options[:skip_profile_information]
         @profiles = []
         @overridden_paths = []
-        @options = default_options
+        @options = Cucumber::Configuration.new
         
         @quiet = @disable_profile_loading = nil
       end
 
-      def [](key)
-        @options[key]
-      end
-
-      def []=(key, value)
-        @options[key] = value
-      end
+      # def [](key)
+      #   @options[key]
+      # end
+      # 
+      # def []=(key, value)
+      #   @options[key] = value
+      # end
 
       def expanded_args_without_drb
         return @expanded_args_without_drb  if @expanded_args_without_drb
@@ -287,10 +287,7 @@ module Cucumber
         @options.values_at(:name_regexps, :tag_expressions).select{|v| !v.empty?}.first || []
       end
 
-      def merge_options!(options_args)
-        options = Options.parse(options_args, @out_stream, @error_stream)
-        reverse_merge(options)
-      end
+
 
     protected
 
@@ -330,7 +327,7 @@ module Cucumber
 
         @profiles.each do |profile|
           profile_args = profile_loader.args_from(profile)
-          reverse_merge(
+          @options.reverse_merge(
             Options.parse(profile_args, @out_stream, @error_stream, :skip_profile_information  => true)
           )
         end
@@ -346,34 +343,7 @@ module Cucumber
         @profile_loader ||= ProfileLoader.new
       end
 
-      def reverse_merge(other_options)
-        @options = other_options.options.merge(@options)
-        @options[:require] += other_options[:require]
-        @options[:excludes] += other_options[:excludes]
-        @options[:name_regexps] += other_options[:name_regexps]
-        @options[:tag_expressions] += other_options[:tag_expressions]
-        @options[:env_vars] = other_options[:env_vars].merge(@options[:env_vars])
-        if @options[:paths].empty?
-          @options[:paths] = other_options[:paths]
-        else
-          @overridden_paths += (other_options[:paths] - @options[:paths])
-        end
-        @options[:source] &= other_options[:source]
-        @options[:snippets] &= other_options[:snippets]
-        @options[:strict] |= other_options[:strict]
 
-        @profiles += other_options.profiles
-        @expanded_args += other_options.expanded_args
-
-        if @options[:formats].empty?
-          @options[:formats] = other_options[:formats]
-        else
-          @options[:formats] += other_options[:formats]
-          @options[:formats] = stdout_formats[0..0] + non_stdout_formats
-        end
-
-        self
-      end
 
       def list_keywords_and_exit(lang)
         require 'gherkin/i18n'
@@ -396,19 +366,6 @@ module Cucumber
         @out_stream.puts "Using the #{profiles_sentence} profile#{'s' if @profiles.size> 1}..."
       end
 
-      def default_options
-        {
-          :strict       => false,
-          :require      => [],
-          :dry_run      => false,
-          :formats      => [],
-          :excludes     => [],
-          :tag_expressions  => [],
-          :name_regexps => [],
-          :env_vars     => {},
-          :diff_enabled => true
-        }
-      end
     end
 
   end

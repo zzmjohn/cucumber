@@ -142,14 +142,6 @@ module Cucumber
         require File.expand_path(code_file) # This will cause self.add_step_definition, self.add_hook, and self.add_transform to be called from RbDsl
       end
 
-      def update_options(options)
-        hooks[:update_options].each do |hook|
-          hook.invoke('Options', new_options = Options.new)
-          options.merge_options!(new_options.list)
-        end
-        options
-      end
-
       protected
 
       def begin_scenario(scenario)

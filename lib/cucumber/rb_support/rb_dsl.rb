@@ -92,9 +92,6 @@ module Cucumber
         RbDsl.register_rb_hook('after_configuration', [], proc)
       end
 
-      def Options(&proc)
-        RbDsl.register_rb_hook('update_options', [], proc)
-      end
 
       # Registers a new Ruby StepDefinition. This method is aliased
       # to <tt>Given</tt>, <tt>When</tt> and <tt>Then</tt>, and
