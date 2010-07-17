@@ -285,14 +285,6 @@ module Cucumber
 
     private
 
-      def non_stdout_formats
-        Cucumber.configuration[:formats].select {|format, output| output != @out_stream }
-      end
-
-      def stdout_formats
-        Cucumber.configuration[:formats].select {|format, output| output == @out_stream }
-      end
-
       def extract_environment_variables
         @args.delete_if do |arg|
           if arg =~ /^(\w+)=(.*)$/

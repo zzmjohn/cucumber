@@ -29,7 +29,7 @@ Feature: Options
     And a file named "features/support/env.rb" with:
     """
       Cucumber.configure do |c|
-        c.tags = '~@wip'
+        c.tags = ['~@wip']
       end
     """
     When I run cucumber features --format progress

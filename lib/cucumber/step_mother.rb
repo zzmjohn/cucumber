@@ -43,7 +43,7 @@ module Cucumber
   class StepMother
     include Constantize
     include Formatter::Duration
-    attr_writer :options, :visitor, :log
+    attr_writer :visitor, :log
 
     def initialize
       @unsupported_programming_languages = []
@@ -102,7 +102,7 @@ module Cucumber
 
     # Returns the options passed on the command line.
     def options
-      @options ||= Cli::Options.new
+      @options ||= Cucumber.configuration
     end
 
     def step_visited(step) #:nodoc:

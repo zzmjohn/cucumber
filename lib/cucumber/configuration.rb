@@ -58,6 +58,14 @@ module Cucumber
       profiles - ['default']
     end
     
+    def non_stdout_formats
+      Cucumber.configuration[:formats].select {|format, output| output != STDOUT }
+    end
+
+    def stdout_formats
+      Cucumber.configuration[:formats].select {|format, output| output == STDOUT }
+    end
+    
     def default_options
       {
         :strict       => false,
@@ -107,16 +115,10 @@ module Cucumber
 
       self
     end
-    require 'rubygems'
-    require 'ruby-debug'
     
     def filters
-      debugger
-
-      
       @settings.values_at(:name_regexps, :tag_expressions).select{|v| !v.empty?}.first || []
     end
-    
     
   end
   
