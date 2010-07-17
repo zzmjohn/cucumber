@@ -47,13 +47,10 @@ module Cucumber
             @error_stream.puts "WARNING: #{e.message} Running features locally:"
           end
         end
-        step_mother.options = configuration.options
+        step_mother.options = configuration.config
         step_mother.log = configuration.log
 
         step_mother.load_code_files(configuration.support_to_load)
-        new_options = step_mother.update_options(configuration.options)
-        configuration.options = step_mother.options = new_options
-
         step_mother.after_configuration(configuration)
 
         features = step_mother.load_plain_text_features(configuration.feature_files)
@@ -61,7 +58,7 @@ module Cucumber
         step_mother.load_code_files(configuration.step_defs_to_load)
 
         tag_excess = tag_excess(features)
-        configuration.options[:tag_excess] = tag_excess # Hack to make it available in console.rb - later: stick on Run instance.
+        configuration.config[:tag_excess] = tag_excess # Hack to make it available in console.rb - later: stick on Run instance.
 
         runner = configuration.build_runner(step_mother, @out_stream)
         step_mother.visitor = runner # Needed to support World#announce
@@ -82,7 +79,7 @@ module Cucumber
       end
 
       def tag_excess(features)
-        configuration.options[:tag_expression].limits.map do |tag_name, tag_limit|
+        configuration.config[:tag_expression].limits.map do |tag_name, tag_limit|
           tag_locations = features.tag_locations(tag_name)
           if tag_limit && (tag_locations.length > tag_limit)
             [tag_name, tag_limit, tag_locations]

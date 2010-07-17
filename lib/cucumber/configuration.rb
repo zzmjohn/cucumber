@@ -32,6 +32,8 @@ module Cucumber
     add_setting :require, :default => []    
     add_setting :verbose
     add_setting :drb
+    
+    add_setting :disable_profile_loading
 
     def settings
       @settings ||= default_options
@@ -64,12 +66,8 @@ module Cucumber
       reverse_merge(options)
     end
 
-    require 'rubygems'
-    require 'ruby-debug'
-    
     def reverse_merge(other_options)
-      debugger
-      other_settings = (other_options.send(:options)).settings
+      other_settings = other_options.settings
       
       @settings = other_settings.merge(@settings)
       @settings[:require] += other_settings[:require]
@@ -98,6 +96,12 @@ module Cucumber
 
       self
     end
+    
+    def filters
+      @settings.values_at(:name_regexps, :tag_expressions).select{|v| !v.empty?}.first || []
+    end
+    
+    
   end
   
   def self.configuration

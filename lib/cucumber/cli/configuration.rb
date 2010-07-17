@@ -13,53 +13,52 @@ module Cucumber
       include Constantize
 
       attr_reader :out_stream
-      attr_accessor :options
+      attr_accessor :config
 
       def initialize(out_stream = STDOUT, error_stream = STDERR)
         @out_stream   = out_stream
         @error_stream = error_stream
-        @options = Options.new(@out_stream, @error_stream, :default_profile => 'default')
+        @options_parser = Options.new(@out_stream, @error_stream, :default_profile => 'default')
       end
 
       def parse!(args)
         @args = args
-        @options.parse!(args)
+        @config = @options_parser.parse!(args)
         arrange_formats
-        raise("You can't use both --strict and --wip") if strict? && wip?
+        raise("You can't use both --strict and --wip") if @config.strict? && @config.wip?
 
-        @options[:tag_expression] = Gherkin::Parser::TagExpression.new(@options[:tag_expressions])
-        return @args.replace(@options.expanded_args_without_drb) if drb?
+        @config[:tag_expression] = Gherkin::Parser::TagExpression.new(@config[:tag_expressions])
+        return @args.replace(@config.expanded_args_without_drb) if @config.drb?
 
         set_environment_variables
       end
-      
 
-      # def verbose?
-      #   @options[:verbose]
-      # end
-      # 
-      # def strict?
-      #   @options[:strict]
-      # end
-      # 
-      # def wip?
-      #   @options[:wip]
-      # end
-      # 
-      # def guess?
-      #   @options[:guess]
-      # end
-      # 
-      # def drb?
-      #   @options[:drb]
-      # end
+      def verbose?
+        @config.verbose?
+      end
+          
+      def strict?
+        @config.strict?
+      end
+      
+      def wip?
+        @config.wip?
+      end
+      
+      def guess?
+        @config.guess?
+      end
+          
+      def drb?
+        @config.drb?
+      end
 
       def drb_port
-        @options[:drb_port].to_i if @options[:drb_port]
+        @config[:drb_port].to_i if @config[:drb_port]
       end
 
       def build_runner(step_mother, io)
-        Ast::TreeWalker.new(step_mother, formatters(step_mother), @options, io)
+        Ast::TreeWalker.new(step_mother, formatters(step_mother), @config, io)
       end
 
       def formatter_class(format)
@@ -71,7 +70,7 @@ module Cucumber
       end
 
       def all_files_to_load
-        requires = @options[:require].empty? ? require_dirs : @options[:require]
+        requires = @config[:require].empty? ? require_dirs : @config[:require]
         files = requires.map do |path|
           path = path.gsub(/\\/, '/') # In case we're on windows. Globs don't work with backslashes.
           path = path.gsub(/\/$/, '') # Strip trailing slash.
@@ -92,7 +91,7 @@ module Cucumber
         support_files = all_files_to_load.select {|f| f =~ %r{/support/} }
         env_files = support_files.select {|f| f =~ %r{/support/env\..*} }
         other_files = support_files - env_files
-        @options[:dry_run] ? other_files : env_files + other_files
+        @config[:dry_run] ? other_files : env_files + other_files
       end
 
       def feature_files
@@ -129,17 +128,17 @@ module Cucumber
       def formatters(step_mother)
         # TODO: We should remove the autoformat functionality. That
         # can be done with the gherkin CLI.
-        if @options[:autoformat]
+        if @config[:autoformat]
           require 'cucumber/formatter/pretty'
-          return [Formatter::Pretty.new(step_mother, nil, @options)]
+          return [Formatter::Pretty.new(step_mother, nil, @config)]
         end
 
-        @options[:formats].map do |format_and_out|
+        @config[:formats].map do |format_and_out|
           format = format_and_out[0]
           path_or_io = format_and_out[1]
           begin
             formatter_class = formatter_class(format)
-            formatter_class.new(step_mother, path_or_io, @options)
+            formatter_class.new(step_mother, path_or_io, @config)
           rescue Exception => e
             e.message << "\nError creating formatter: #{format}"
             raise e
@@ -154,26 +153,26 @@ module Cucumber
       end
 
       def paths
-        @options[:paths].empty? ? ['features'] : @options[:paths]
+        @config[:paths].empty? ? ['features'] : @config[:paths]
       end
 
       def set_environment_variables
-        @options[:env_vars].each do |var, value|
+        @config[:env_vars].each do |var, value|
           ENV[var] = value
         end
       end
 
       def arrange_formats
-        @options[:formats] << ['pretty', @out_stream] if @options[:formats].empty?
-        @options[:formats] = @options[:formats].sort_by{|f| f[1] == @out_stream ? -1 : 1}
-        streams = @options[:formats].map { |(_, stream)| stream }
+        @config[:formats] << ['pretty', @out_stream] if @config[:formats].empty?
+        @config[:formats] = @config[:formats].sort_by{|f| f[1] == @out_stream ? -1 : 1}
+        streams = @config[:formats].map { |(_, stream)| stream }
         if streams != streams.uniq
           raise "All but one formatter must use --out, only one can print to each stream (or STDOUT)"
         end
       end
 
       def remove_excluded_files_from(files)
-        files.reject! {|path| @options[:excludes].detect {|pattern| path =~ pattern } }
+        files.reject! {|path| @config[:excludes].detect {|pattern| path =~ pattern } }
       end
 
       def require_dirs

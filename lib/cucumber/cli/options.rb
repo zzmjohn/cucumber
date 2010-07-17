@@ -6,6 +6,8 @@ module Cucumber
   module Cli
 
     class Options
+      attr_reader :options
+      
       INDENT = ' ' * 53
       BUILTIN_FORMATS = {
         'html'        => ['Cucumber::Formatter::Html',        'Generates a nice looking HTML report.'],
@@ -276,23 +278,17 @@ module Cucumber
         merge_profiles
         print_profile_information
 
-        self
+        @options
       end
 
       def custom_profiles
         @profiles - [@default_profile]
       end
 
-      def filters
-        @options.values_at(:name_regexps, :tag_expressions).select{|v| !v.empty?}.first || []
-      end
-
-
-
     protected
 
-      attr_reader :options, :profiles, :expanded_args
-      protected :options, :profiles, :expanded_args
+      attr_reader :profiles, :expanded_args
+      protected :profiles, :expanded_args
 
     private
 

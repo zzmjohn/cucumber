@@ -373,15 +373,6 @@ module Cucumber
       end
     end
 
-    def update_options(options)
-      @programming_languages.each do |programming_language|
-        if programming_language.respond_to?(:update_options)
-          options = programming_language.update_options(options)
-        end
-      end
-      options
-    end
-
     private
 
     def programming_language_for(step_def_file) #:nodoc:
