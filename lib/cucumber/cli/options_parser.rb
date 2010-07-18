@@ -91,7 +91,7 @@ module Cucumber
 
       def parse!(args)
         @args = args
-        @expanded_args = @args.dup
+        @config[:expanded_args] = @args.dup
 
         @args.extend(::OptionParser::Arguable)
 
