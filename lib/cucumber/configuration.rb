@@ -26,6 +26,7 @@ module Cucumber
     add_setting :drb
     add_setting :profiles, :default => []
 
+
     def settings
       @settings ||= default_options
     end
@@ -68,7 +69,8 @@ module Cucumber
         :tag_expressions  => [],
         :name_regexps => [],
         :env_vars     => {},
-        :diff_enabled => true
+        :diff_enabled => true,
+        :profiles => []
       }
     end
 

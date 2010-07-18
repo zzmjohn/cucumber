@@ -262,7 +262,7 @@ module Cucumber
           @config[:snippets] = true if @config[:snippets].nil?
           @config[:source]   = true if @config[:source].nil?
         end
-
+        
         extract_environment_variables
         @config[:paths] = @args.dup #whatver is left over
 
@@ -298,9 +298,9 @@ module Cucumber
           return
         end
 
-        @profiles << @default_profile if default_profile_should_be_used?
+        @config[:profiles] << @default_profile if default_profile_should_be_used?
 
-        @profiles.each do |profile|
+        @config[:profiles].each do |profile|
           profile_args = profile_loader.args_from(profile)
           
           @config.reverse_merge(
@@ -310,7 +310,8 @@ module Cucumber
       end
 
       def default_profile_should_be_used?
-        @profiles.empty? &&
+        profiles = @config.profiles
+        profiles.empty? &&
           profile_loader.cucumber_yml_defined? &&
           profile_loader.has_profile?(@default_profile)
       end
@@ -332,12 +333,13 @@ module Cucumber
       end
 
       def print_profile_information
-        return if @skip_profile_information || @profiles.empty?
+        return if @skip_profile_information || @config[:profiles].empty?
+        profiles = @config.profiles
         profiles_sentence = ''
-        profiles_sentence = @profiles.size == 1 ? @profiles.first :
-          "#{@profiles[0...-1].join(', ')} and #{@profiles.last}"
+        profiles_sentence = profiles.size == 1 ? profiles.first :
+          "#{profiles[0...-1].join(', ')} and #{profiles.last}"
 
-        @out_stream.puts "Using the #{profiles_sentence} profile#{'s' if @profiles.size> 1}..."
+        @out_stream.puts "Using the #{profiles_sentence} profile#{'s' if profiles.size> 1}..."
       end
 
     end
