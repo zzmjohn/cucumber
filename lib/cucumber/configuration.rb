@@ -109,8 +109,6 @@ module Cucumber
         @settings[:formats] += other_settings[:formats]
         @settings[:formats] = stdout_formats[0..0] + non_stdout_formats
       end
-
-      self
     end
     
     def filters
