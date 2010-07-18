@@ -1,5 +1,10 @@
 module Cucumber
   class Configuration
+    
+    def initialize
+      @overridden_paths = []
+      @expanded_args = []
+    end
 
     def self.add_setting(name, opts={})
       if opts[:alias]
@@ -13,30 +18,13 @@ module Cucumber
       end
     end
 
-    add_setting :error_stream
-    add_setting :output_stream
-    add_setting :output, :alias => :output_stream
-
     add_setting :strict, :default => false
-    add_setting :dry_run, :default => false
-    add_setting :diff_enabled, :default => true 
     add_setting :tag_expressions
     add_setting :tags, :alias => :tag_expressions
-    
-    add_setting :multiline
-    add_setting :'no-source'
-    add_setting :quiet
     add_setting :wip
-    add_setting :guess
-    add_setting :snippets, :default => true
-    add_setting :colour, :default => true
-    add_setting :color,  :alias => :colour
-    add_setting :require, :default => []    
     add_setting :verbose
     add_setting :drb
     add_setting :profiles, :default => []
-    
-    add_setting :disable_profile_loading
 
     def settings
       @settings ||= default_options
@@ -66,6 +54,10 @@ module Cucumber
       @settings[:formats].select {|format, output| output == STDOUT }
     end
     
+    def expanded_args_without_drb
+      @expanded_args_without_drb
+    end
+
     def default_options
       {
         :strict       => false,
@@ -79,7 +71,7 @@ module Cucumber
         :diff_enabled => true
       }
     end
-    
+
     def merge_options!(options_args)
       options = OptionsParser.parse(options_args, @out_stream, @error_stream)
       reverse_merge(options)
@@ -99,14 +91,17 @@ module Cucumber
       if @settings[:paths].empty?
         @settings[:paths] = other_settings[:paths]
       else
-#        @overridden_paths += (other_settings[:paths] - @settings[:paths])
+
+      @overridden_paths += (other_settings[:paths] - @settings[:paths])
+
       end
       @settings[:source] &= other_settings[:source]
       @settings[:snippets] &= other_settings[:snippets]
       @settings[:strict] |= other_settings[:strict]
 
-#      @profiles += other_settings.profiles
-#      @expanded_args += other_settings.expanded_args
+      # @settings[:profiles] += other_settings[:profiles]
+
+      @expanded_args += other_settings[:expanded_args]
 
       if @settings[:formats].empty?
         @settings[:formats] = other_settings[:formats]
