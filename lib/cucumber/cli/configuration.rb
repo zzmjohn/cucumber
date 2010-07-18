@@ -24,6 +24,8 @@ module Cucumber
       def parse!(args)
         @args = args
         @config = @options_parser.parse!(args)
+        Cucumber.configuration.reverse_merge(@config)
+
         arrange_formats
         raise("You can't use both --strict and --wip") if @config.strict? && @config.wip?
 

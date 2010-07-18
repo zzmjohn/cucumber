@@ -299,11 +299,6 @@ module Cucumber
           return
         end
 
-        require 'rubygems'
-        require 'ruby-debug'
-        debugger
-
-
         @profiles << @default_profile if default_profile_should_be_used?
 
         @profiles.each do |profile|

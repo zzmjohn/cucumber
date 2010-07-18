@@ -86,6 +86,7 @@ module Cucumber
     end
 
     def reverse_merge(other_options)
+      @settings ||= default_options
       other_settings = other_options.settings
       
       @settings = other_settings.merge(@settings)
