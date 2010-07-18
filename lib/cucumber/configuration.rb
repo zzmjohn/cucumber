@@ -59,11 +59,11 @@ module Cucumber
     end
     
     def non_stdout_formats
-      Cucumber.configuration[:formats].select {|format, output| output != STDOUT }
+      @settings[:formats].select {|format, output| output != STDOUT }
     end
 
     def stdout_formats
-      Cucumber.configuration[:formats].select {|format, output| output == STDOUT }
+      @settings[:formats].select {|format, output| output == STDOUT }
     end
     
     def default_options
@@ -94,6 +94,7 @@ module Cucumber
       @settings[:name_regexps] += other_settings[:name_regexps]
       @settings[:tag_expressions] += other_settings[:tag_expressions]
       @settings[:env_vars] = other_settings[:env_vars].merge(@settings[:env_vars])
+      
       if @settings[:paths].empty?
         @settings[:paths] = other_settings[:paths]
       else

@@ -43,7 +43,7 @@ module Cucumber
   class StepMother
     include Constantize
     include Formatter::Duration
-    attr_writer :visitor, :log
+    attr_writer :options, :visitor, :log
 
     def initialize
       @unsupported_programming_languages = []
