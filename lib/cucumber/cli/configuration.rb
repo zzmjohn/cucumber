@@ -1,5 +1,5 @@
 require 'logger'
-require 'cucumber/cli/options'
+require 'cucumber/cli/options_parser'
 require 'cucumber/constantize'
 require 'gherkin/parser/tag_expression'
 
