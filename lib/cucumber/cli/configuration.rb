@@ -18,12 +18,13 @@ module Cucumber
       def initialize(out_stream = STDOUT, error_stream = STDERR)
         @out_stream   = out_stream
         @error_stream = error_stream
-        @options_parser = Options.new(@out_stream, @error_stream, :default_profile => 'default')
+        @options_parser = OptionsParser.new(@out_stream, @error_stream, :default_profile => 'default')
       end
 
       def parse!(args)
         @args = args
         @config = @options_parser.parse!(args)
+
         Cucumber.configuration.reverse_merge(@config)
 
         arrange_formats
@@ -63,7 +64,7 @@ module Cucumber
       end
 
       def formatter_class(format)
-        if(builtin = Options::BUILTIN_FORMATS[format])
+        if(builtin = OptionsParser::BUILTIN_FORMATS[format])
           constantize(builtin[0])
         else
           constantize(format)

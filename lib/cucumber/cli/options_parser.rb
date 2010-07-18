@@ -5,7 +5,7 @@ require 'gherkin/parser/tag_expression'
 module Cucumber
   module Cli
 
-    class Options      
+    class OptionsParser      
       INDENT = ' ' * 53
       BUILTIN_FORMATS = {
         'html'        => ['Cucumber::Formatter::Html',        'Generates a nice looking HTML report.'],
@@ -64,7 +64,6 @@ module Cucumber
         @overridden_paths = []
         
         @quiet = @disable_profile_loading = nil
-        
         
         @config = Cucumber::Configuration.new
       end
@@ -305,7 +304,7 @@ module Cucumber
           profile_args = profile_loader.args_from(profile)
           
           @config.reverse_merge(
-            Options.parse(profile_args, @out_stream, @error_stream, :skip_profile_information  => true)
+            OptionsParser.parse(profile_args, @out_stream, @error_stream, :skip_profile_information  => true)
           )
         end
       end

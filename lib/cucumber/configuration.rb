@@ -81,14 +81,14 @@ module Cucumber
     end
     
     def merge_options!(options_args)
-      options = Options.parse(options_args, @out_stream, @error_stream)
+      options = OptionsParser.parse(options_args, @out_stream, @error_stream)
       reverse_merge(options)
     end
 
     def reverse_merge(other_options)
       @settings ||= default_options
-      other_settings = other_options.settings
       
+      other_settings = other_options.settings
       @settings = other_settings.merge(@settings)
       @settings[:require] += other_settings[:require]
       @settings[:excludes] += other_settings[:excludes]

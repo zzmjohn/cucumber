@@ -3,7 +3,6 @@ require 'cucumber/rb_support/rb_world'
 require 'cucumber/rb_support/rb_step_definition'
 require 'cucumber/rb_support/rb_hook'
 require 'cucumber/rb_support/rb_transform'
-require 'cucumber/rb_support/rb_options'
 
 module Cucumber
   module RbSupport
