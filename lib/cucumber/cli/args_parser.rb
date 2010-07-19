@@ -68,27 +68,6 @@ module Cucumber
         @config = Cucumber::Configuration.new(out_stream, error_stream)
       end
 
-      def expanded_args_without_drb
-        return @expanded_args_without_drb  if @expanded_args_without_drb
-        @expanded_args_without_drb = (
-          previous_flag_was_profile = false
-          @expanded_args.reject do |arg|
-            if previous_flag_was_profile
-              previous_flag_was_profile = false
-              next true
-            end
-            if [PROFILE_SHORT_FLAG, PROFILE_LONG_FLAG].include?(arg)
-              previous_flag_was_profile = true
-              next true
-            end
-            arg == DRB_FLAG || @overridden_paths.include?(arg)
-          end
-        )
-
-        @expanded_args_without_drb.push("--no-profile") unless @expanded_args_without_drb.include?(NO_PROFILE_LONG_FLAG) || @expanded_args_without_drb.include?(NO_PROFILE_SHORT_FLAG)
-        @expanded_args_without_drb
-      end
-
       def parse!(args)
         @args = args
         @config[:expanded_args] = @args.dup

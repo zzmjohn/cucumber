@@ -23,7 +23,7 @@ module Cucumber
         arrange_formats
         raise("You can't use both --strict and --wip") if @config.strict? && @config.wip?
 
-        return @args.replace(@config.expanded_args_without_drb) if @config.drb?
+        @args.replace(@config.expanded_args_without_drb) if @config.drb?
 
         set_environment_variables
         

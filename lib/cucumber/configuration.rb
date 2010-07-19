@@ -3,8 +3,6 @@ require 'logger'
 module Cucumber
   class Configuration
     include Constantize
-
-    attr_reader :out_stream
     
     def initialize(out_stream = STDOUT, error_stream = STDERR)
       @out_stream   = out_stream
@@ -25,15 +23,15 @@ module Cucumber
       end
     end
 
-    add_setting :strict, :default => false
+    add_setting :out_stream
+    add_setting :strict
     add_setting :tag_expressions
     add_setting :tags, :alias => :tag_expressions
     add_setting :wip
     add_setting :verbose
     add_setting :drb
-    add_setting :profiles, :default => []
-    add_setting :formats, :default => []
-
+    add_setting :profiles
+    add_setting :formats
 
     def settings
       @settings ||= default_options
@@ -62,10 +60,28 @@ module Cucumber
     def stdout_formats
       @settings[:formats].select {|format, output| output == STDOUT }
     end
-    
+        
     def expanded_args_without_drb
+      return @expanded_args_without_drb  if @expanded_args_without_drb
+      @expanded_args_without_drb = (
+        previous_flag_was_profile = false
+        @expanded_args.reject do |arg|
+          if previous_flag_was_profile
+            previous_flag_was_profile = false
+            next true
+          end
+          if [Cli::ArgsParser::PROFILE_SHORT_FLAG, Cli::ArgsParser::PROFILE_LONG_FLAG].include?(arg)
+            previous_flag_was_profile = true
+            next true
+          end
+          arg == DRB_FLAG || @overridden_paths.include?(arg)
+        end
+      )
+
+      @expanded_args_without_drb.push("--no-profile") unless @expanded_args_without_drb.include?(Cli::ArgsParser::NO_PROFILE_LONG_FLAG) || @expanded_args_without_drb.include?(Cli::ArgsParser::NO_PROFILE_SHORT_FLAG)
       @expanded_args_without_drb
     end
+    
 
     def reverse_merge(other_options)
       @settings ||= default_options
