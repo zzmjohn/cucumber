@@ -60,8 +60,6 @@ module Cucumber
 
         @default_profile = options[:default_profile]
         @skip_profile_information = options[:skip_profile_information]
-
-        @overridden_paths = []
         
         @quiet = @disable_profile_loading = nil
         

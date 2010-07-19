@@ -48,10 +48,10 @@ module Cucumber
           end
         end
 
-        step_mother.options = Cucumber.configuration
+        step_mother.options = configuration
         step_mother.log = configuration.log
         step_mother.load_code_files(configuration.support_to_load)
-        step_mother.options = Cucumber.configuration
+        step_mother.options = configuration
 
         #Depreciate
         step_mother.after_configuration(configuration)

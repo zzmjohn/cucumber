@@ -50,7 +50,7 @@ module Cucumber
     end
     
     def custom_profiles
-      profiles - ['default']
+      @settings[:profiles] - ['default']
     end
     
     def non_stdout_formats
@@ -74,14 +74,13 @@ module Cucumber
             previous_flag_was_profile = true
             next true
           end
-          arg == DRB_FLAG || @overridden_paths.include?(arg)
+          arg == Cli::ArgsParser::DRB_FLAG || @overridden_paths.include?(arg)
         end
       )
 
       @expanded_args_without_drb.push("--no-profile") unless @expanded_args_without_drb.include?(Cli::ArgsParser::NO_PROFILE_LONG_FLAG) || @expanded_args_without_drb.include?(Cli::ArgsParser::NO_PROFILE_SHORT_FLAG)
       @expanded_args_without_drb
     end
-    
 
     def reverse_merge(other_options)
       @settings ||= default_options
