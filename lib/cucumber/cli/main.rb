@@ -93,12 +93,13 @@ module Cucumber
       end
 
       def configuration
-        return @configuration if @configuration
+        return Cucumber.configuration if @configuration_loaded
 
         configuration_loader = ConfigurationLoader.new(@out_stream, @error_stream)
-        @configuration = configuration_loader.load_from_args(@args)
-        Cucumber.configuration.reverse_merge(@configuration)
-        @configuration
+        configuration = configuration_loader.load_from_args(@args)
+        Cucumber.configuration.reverse_merge(configuration)
+        @configuration_loaded = true
+        Cucumber.configuration
       end
 
       private
