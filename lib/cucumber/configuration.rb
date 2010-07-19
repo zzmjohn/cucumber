@@ -1,7 +1,14 @@
+require 'logger'
+
 module Cucumber
   class Configuration
+    include Constantize
+
+    attr_reader :out_stream
     
-    def initialize
+    def initialize(out_stream = STDOUT, error_stream = STDERR)
+      @out_stream   = out_stream
+      @error_stream = error_stream
       @overridden_paths = []
       @expanded_args = []
     end
@@ -59,21 +66,6 @@ module Cucumber
       @expanded_args_without_drb
     end
 
-    def default_options
-      {
-        :strict       => false,
-        :require      => [],
-        :dry_run      => false,
-        :formats      => [],
-        :excludes     => [],
-        :tag_expressions  => [],
-        :name_regexps => [],
-        :env_vars     => {},
-        :diff_enabled => true,
-        :profiles => []
-      }
-    end
-
     def merge_options!(options_args)
       options = OptionsParser.parse(options_args, @out_stream, @error_stream)
       reverse_merge(options)
@@ -116,11 +108,132 @@ module Cucumber
     def filters
       @settings.values_at(:name_regexps, :tag_expressions).select{|v| !v.empty?}.first || []
     end
+
+    def drb_port
+      @settings[:drb_port].to_i if @settings[:drb_port]
+    end
+
+    def formatter_class(format)
+      if(builtin = Cli::ArgsParser::BUILTIN_FORMATS[format])
+        constantize(builtin[0])
+      else
+        constantize(format)
+      end
+    end
+
+    def all_files_to_load
+      requires = @settings[:require].empty? ? require_dirs : @settings[:require]
+      files = requires.map do |path|
+        path = path.gsub(/\\/, '/') # In case we're on windows. Globs don't work with backslashes.
+        path = path.gsub(/\/$/, '') # Strip trailing slash.
+        File.directory?(path) ? Dir["#{path}/**/*"] : path
+      end.flatten.uniq
+      remove_excluded_files_from(files)
+      files.reject! {|f| !File.file?(f)}
+      files.reject! {|f| File.extname(f) == '.feature' }
+      files.reject! {|f| f =~ /^http/}
+      files.sort
+    end
+
+    def step_defs_to_load
+      all_files_to_load.reject {|f| f =~ %r{/support/} }
+    end
+
+    def support_to_load
+      support_files = all_files_to_load.select {|f| f =~ %r{/support/} }
+      env_files = support_files.select {|f| f =~ %r{/support/env\..*} }
+      other_files = support_files - env_files
+      @settings[:dry_run] ? other_files : env_files + other_files
+    end
+
+    def feature_files
+      potential_feature_files = paths.map do |path|
+        path = path.gsub(/\\/, '/') # In case we're on windows. Globs don't work with backslashes.
+        path = path.chomp('/')
+        if File.directory?(path)
+          Dir["#{path}/**/*.feature"]
+        elsif path[0..0] == '@' and # @listfile.txt
+            File.file?(path[1..-1]) # listfile.txt is a file
+          IO.read(path[1..-1]).split
+        else
+          path
+        end
+      end.flatten.uniq
+      remove_excluded_files_from(potential_feature_files)
+      potential_feature_files
+    end
+
+    def feature_dirs
+      paths.map { |f| File.directory?(f) ? f : File.dirname(f) }.uniq
+    end
     
+    def log
+      logger = Logger.new(@out_stream)
+      logger.formatter = LogFormatter.new
+      logger.level = Logger::INFO
+      logger.level = Logger::DEBUG if self.verbose?
+      logger
+    end
+    
+    class LogFormatter < ::Logger::Formatter
+      def call(severity, time, progname, msg)
+        msg
+      end
+    end
+    
+    def formatters(step_mother)
+      # TODO: We should remove the autoformat functionality. That
+      # can be done with the gherkin CLI.
+      if @settings[:autoformat]
+        require 'cucumber/formatter/pretty'
+        return [Formatter::Pretty.new(step_mother, nil, self)]
+      end
+
+      @settings[:formats].map do |format_and_out|
+        format = format_and_out[0]
+        path_or_io = format_and_out[1]
+        begin
+          formatter_class = formatter_class(format)
+          formatter_class.new(step_mother, path_or_io, self)
+        rescue Exception => e
+          e.message << "\nError creating formatter: #{format}"
+          raise e
+        end
+      end
+    end
+    
+    private
+
+    def default_options
+      {
+        :strict       => false,
+        :require      => [],
+        :dry_run      => false,
+        :formats      => [],
+        :excludes     => [],
+        :tag_expressions  => [],
+        :name_regexps => [],
+        :env_vars     => {},
+        :diff_enabled => true,
+        :profiles => []
+      }
+    end
+
+    def paths
+      @settings[:paths].empty? ? ['features'] : @settings[:paths]
+    end
+
+    def remove_excluded_files_from(files)
+      files.reject! {|path| @settings[:excludes].detect {|pattern| path =~ pattern } }
+    end
+
+    def require_dirs
+      feature_dirs + Dir['vendor/{gems,plugins}/*/cucumber']
+    end
   end
   
   def self.configuration
-    @configuration ||= Cucumber::Configuration.new
+    @settingsuration ||= Cucumber::Configuration.new
   end
 
   def self.configure

@@ -10,7 +10,7 @@ require 'logger'
 require 'cucumber/parser'
 require 'cucumber/feature_file'
 require 'cucumber/formatter/color_io'
-require 'cucumber/cli/configuration'
+require 'cucumber/cli/configuration_loader'
 require 'cucumber/cli/drb_client'
 
 module Cucumber
@@ -60,9 +60,9 @@ module Cucumber
         step_mother.load_code_files(configuration.step_defs_to_load)
 
         tag_excess = tag_excess(features)
-        configuration.config[:tag_excess] = tag_excess # Hack to make it available in console.rb - later: stick on Run instance.
+        configuration[:tag_excess] = tag_excess # Hack to make it available in console.rb - later: stick on Run instance.
 
-        runner = configuration.build_runner(step_mother, @out_stream)
+        runner = build_runner(step_mother, @out_stream)
         step_mother.visitor = runner # Needed to support World#announce
         
         runner.visit_features(features)
@@ -81,7 +81,7 @@ module Cucumber
       end
 
       def tag_excess(features)
-        configuration.config.tag_expression.limits.map do |tag_name, tag_limit|
+        configuration.tag_expression.limits.map do |tag_name, tag_limit|
           tag_locations = features.tag_locations(tag_name)
           if tag_limit && (tag_locations.length > tag_limit)
             [tag_name, tag_limit, tag_locations]
@@ -94,12 +94,17 @@ module Cucumber
       def configuration
         return @configuration if @configuration
 
-        @configuration = Configuration.new(@out_stream, @error_stream)
-        @configuration.parse!(@args)
+        configuration_loader = ConfigurationLoader.new(@out_stream, @error_stream)
+        @configuration = configuration_loader.load_from_args(@args)
+        Cucumber.configuration.reverse_merge(@configuration)
         @configuration
       end
 
       private
+
+      def build_runner(step_mother, io)
+        Ast::TreeWalker.new(step_mother, configuration.formatters(step_mother), configuration, io)
+      end
 
       def trap_interrupt
         trap('INT') do
