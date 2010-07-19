@@ -65,7 +65,7 @@ module Cucumber
         
         @quiet = @disable_profile_loading = nil
         
-        @config = Cucumber::Configuration.new
+        @config = Cucumber::Configuration.new(out_stream, error_stream)
       end
 
       def expanded_args_without_drb
@@ -271,11 +271,6 @@ module Cucumber
 
         @config
       end
-
-    protected
-
-      attr_reader :profiles, :expanded_args
-      protected :profiles, :expanded_args
 
     private
 

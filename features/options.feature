@@ -6,7 +6,7 @@ Feature: Options
   Background:
     Given a standard Cucumber project directory structure
 
-  Scenario: Valid options
+  Scenario: Tags
     Given a file named "features/philosophers.feature" with:
     """
     Feature: Drunken Philosophers
@@ -41,3 +41,35 @@ Feature: Options
     1 step (1 passed)
 
     """
+    
+  Scenario: HTML formatter
+
+    Given a standard Cucumber project directory structure
+    And a file named "features/support/env.rb" with:
+      """
+      Cucumber.configure do |config|
+        config.formats << ['html', config.out_stream]
+      end
+      """
+    When I run cucumber features
+    Then STDERR should be empty
+    And the output should contain
+      """
+      html
+      """
+
+    Scenario: feature directories read from configuration
+
+      Given a standard Cucumber project directory structure
+      And a file named "features/support/env.rb" with:
+        """
+        Cucumber.configure do |config|
+          config.out_stream << "AfterConfiguration hook read feature directories: #{config.feature_dirs.join(', ')}" 
+        end
+        """
+      When I run cucumber features
+      Then STDERR should be empty
+      And the output should contain
+        """
+        AfterConfiguration hook read feature directories: features
+        """

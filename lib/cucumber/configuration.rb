@@ -32,6 +32,7 @@ module Cucumber
     add_setting :verbose
     add_setting :drb
     add_setting :profiles, :default => []
+    add_setting :formats, :default => []
 
 
     def settings
@@ -64,11 +65,6 @@ module Cucumber
     
     def expanded_args_without_drb
       @expanded_args_without_drb
-    end
-
-    def merge_options!(options_args)
-      options = OptionsParser.parse(options_args, @out_stream, @error_stream)
-      reverse_merge(options)
     end
 
     def reverse_merge(other_options)
@@ -233,7 +229,7 @@ module Cucumber
   end
   
   def self.configuration
-    @settingsuration ||= Cucumber::Configuration.new
+    @configuration ||= Cucumber::Configuration.new
   end
 
   def self.configure
