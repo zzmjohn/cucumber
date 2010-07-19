@@ -4,11 +4,14 @@ module Cucumber
   class Configuration
     include Constantize
     
+    attr_reader :settings
+    
     def initialize(out_stream = STDOUT, error_stream = STDERR)
-      @out_stream   = out_stream
       @error_stream = error_stream
       @overridden_paths = []
       @expanded_args = []
+      @settings ||= default_options
+      @settings[:out_stream] = out_stream
     end
 
     def self.add_setting(name, opts={})
@@ -17,8 +20,8 @@ module Cucumber
         alias_method "#{name}=", "#{opts[:alias]}="
         alias_method "#{name}?", "#{opts[:alias]}?"
       else
-        define_method("#{name}=") {|val| settings[name] = val}
-        define_method(name)       { settings.has_key?(name) ? settings[name] : opts[:default] }
+        define_method("#{name}=") {|val| @settings[name] = val}
+        define_method(name)       { @settings[name] }
         define_method("#{name}?") { !!(send name) }
       end
     end
@@ -33,16 +36,12 @@ module Cucumber
     add_setting :profiles
     add_setting :formats
 
-    def settings
-      @settings ||= default_options
-    end
-    
     def [](key)
-      settings[key]
+      @settings[key]
     end
 
     def []=(key, value)
-      settings[key] = value
+      @settings[key] = value
     end
     
     def tag_expression
