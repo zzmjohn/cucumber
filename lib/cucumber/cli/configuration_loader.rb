@@ -1,7 +1,5 @@
-
 require 'cucumber/cli/args_parser'
 require 'cucumber/constantize'
-require 'gherkin/parser/tag_expression'
 
 module Cucumber
   module Cli

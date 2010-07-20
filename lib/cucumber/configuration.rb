@@ -1,4 +1,5 @@
 require 'logger'
+require 'gherkin/tag_expression'
 
 module Cucumber
   class Configuration
@@ -46,7 +47,7 @@ module Cucumber
     end
     
     def tag_expression
-      Gherkin::Parser::TagExpression.new(@settings[:tag_expressions])
+      Gherkin::TagExpression.new(@settings[:tag_expressions])
     end
     
     def custom_profiles
