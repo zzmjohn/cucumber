@@ -97,7 +97,7 @@ module Cucumber
 
         configuration_loader = ConfigurationLoader.new(@out_stream, @error_stream)
         configuration = configuration_loader.load_from_args(@args)
-        Cucumber.configuration.reverse_merge(configuration)
+        Cucumber.configuration=configuration
         @configuration_loaded = true
         Cucumber.configuration
       end

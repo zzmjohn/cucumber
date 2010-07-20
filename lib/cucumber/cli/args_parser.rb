@@ -58,10 +58,7 @@ module Cucumber
         @out_stream   = out_stream
         @error_stream = error_stream
 
-        @default_profile = options[:default_profile]
-        @skip_profile_information = options[:skip_profile_information]
-        
-        @quiet = @disable_profile_loading = nil
+        @quiet = false
         
         @config = Cucumber::Configuration.new(out_stream, error_stream)
       end
@@ -162,7 +159,7 @@ module Cucumber
           end
           opts.on(NO_PROFILE_SHORT_FLAG, NO_PROFILE_LONG_FLAG,
             "Disables all profile loading to avoid using the 'default' profile.") do |v|
-            @disable_profile_loading = true
+            @config[:disable_profile_loading] = true
           end
           opts.on("-c", "--[no-]color",
             "Whether or not to use ANSI color in the output. Cucumber decides",
@@ -243,9 +240,6 @@ module Cucumber
         extract_environment_variables
         @config[:paths] = @args.dup #whatver is left over
 
-        merge_profiles
-        print_profile_information
-
         @config
       end
 
@@ -260,38 +254,6 @@ module Cucumber
         end
       end
 
-      def disable_profile_loading?
-        @disable_profile_loading
-      end
-
-      def merge_profiles
-        if @disable_profile_loading
-          @out_stream.puts "Disabling profiles..."
-          return
-        end
-
-        @config[:profiles] << @default_profile if default_profile_should_be_used?
-
-        @config[:profiles].each do |profile|
-          profile_args = profile_loader.args_from(profile)
-          
-          @config.reverse_merge(
-            ArgsParser.parse(profile_args, @out_stream, @error_stream, :skip_profile_information  => true)
-          )
-        end
-      end
-
-      def default_profile_should_be_used?
-        profiles = @config.profiles
-        profiles.empty? &&
-          profile_loader.cucumber_yml_defined? &&
-          profile_loader.has_profile?(@default_profile)
-      end
-
-      def profile_loader
-        @profile_loader ||= ProfileLoader.new
-      end
-
       def list_keywords_and_exit(lang)
         require 'gherkin/i18n'
         @out_stream.write(Gherkin::I18n.get(lang).keyword_table)
@@ -304,17 +266,6 @@ module Cucumber
         Kernel.exit(0)
       end
 
-      def print_profile_information
-        return if @skip_profile_information || @config[:profiles].empty?
-        profiles = @config.profiles
-        profiles_sentence = ''
-        profiles_sentence = profiles.size == 1 ? profiles.first :
-          "#{profiles[0...-1].join(', ')} and #{profiles.last}"
-
-        @out_stream.puts "Using the #{profiles_sentence} profile#{'s' if profiles.size> 1}..."
-      end
-
     end
-
   end
 end

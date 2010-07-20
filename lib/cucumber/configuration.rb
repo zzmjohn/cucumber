@@ -35,6 +35,7 @@ module Cucumber
     add_setting :drb
     add_setting :profiles
     add_setting :formats
+    add_setting :disable_profile_loading
 
     def [](key)
       @settings[key]
@@ -103,7 +104,7 @@ module Cucumber
       @settings[:snippets] &= other_settings[:snippets]
       @settings[:strict] |= other_settings[:strict]
 
-      # @settings[:profiles] += other_settings[:profiles]
+      @settings[:profiles] += other_settings[:profiles]
 
       @expanded_args += other_settings[:expanded_args]
 
@@ -225,7 +226,8 @@ module Cucumber
         :name_regexps => [],
         :env_vars     => {},
         :diff_enabled => true,
-        :profiles => []
+        :profiles => [],
+        :disable_profile_loading => false
       }
     end
 
@@ -240,6 +242,10 @@ module Cucumber
     def require_dirs
       feature_dirs + Dir['vendor/{gems,plugins}/*/cucumber']
     end
+  end
+  
+  def self.configuration=(configuration)
+    @configuration = configuration
   end
   
   def self.configuration
