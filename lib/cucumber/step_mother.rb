@@ -39,6 +39,12 @@ module Cucumber
     end
   end
 
+  class TagExcess < StandardError
+    def initialize(messages)
+      super(messages.join("\n"))
+    end
+  end
+
   # This is the meaty part of Cucumber that ties everything together.
   class StepMother
     include Constantize
@@ -55,11 +61,12 @@ module Cucumber
     def load_plain_text_features(feature_files)
       features = Ast::Features.new
 
+      tag_counts = {}
       start = Time.new
       log.debug("Features:\n")
       feature_files.each do |f|
         feature_file = FeatureFile.new(f)
-        feature = feature_file.parse(self, options)
+        feature = feature_file.parse(options, tag_counts)
         if feature
           features.add_feature(feature)
           log.debug("  * #{f}\n")
@@ -67,7 +74,24 @@ module Cucumber
       end
       duration = Time.now - start
       log.debug("Parsing feature files took #{format_duration(duration)}\n\n")
+      
+      check_tag_limits(tag_counts)
+      
       features
+    end
+
+    def check_tag_limits(tag_counts)
+      error_messages = []
+      options[:tag_expression].limits.each do |tag_name, tag_limit|
+        tag_locations = (tag_counts[tag_name] || [])
+        tag_count = tag_locations.length
+        if tag_count > tag_limit
+          error = "#{tag_name} occurred #{tag_count} times, but the limit was set to #{tag_limit}\n  " +
+            tag_locations.join("\n  ")
+          error_messages << error
+        end
+      end
+      raise TagExcess.new(error_messages) if error_messages.any?
     end
 
     def load_code_files(step_def_files)
@@ -191,8 +215,8 @@ module Cucumber
     #   })
     def invoke_steps(steps_text, i18n, file_colon_line)
       file, line = file_colon_line.split(':')
-      lexer = i18n.lexer(Gherkin::Parser::Parser.new(StepInvoker.new(self), true, 'steps'))
-      lexer.scan(steps_text, file, line.to_i)
+      parser = Gherkin::Parser::Parser.new(StepInvoker.new(self), true, 'steps')
+      parser.parse(steps_text, file, line.to_i)
     end
 
     class StepInvoker
@@ -200,37 +224,19 @@ module Cucumber
         @step_mother = step_mother
       end
 
-      def location(uri, offset)
-      end
-
-      def step(keyword, name, line)
-        invoke
-        @name = name
-      end
-
-      def py_string(string, line)
-        @multiline = Ast::PyString.new(string)
-      end
-
-      def row(row, line)
-        @rows ||= []
-        @rows << row
+      def step(statement, multiline_arg, result)
+        cucumber_multiline_arg = case(multiline_arg)
+        when Gherkin::Formatter::Model::PyString
+          multiline_arg.value
+        when Array
+          Ast::Table.new(multiline_arg.map{|row| row.cells})
+        else
+          nil
+        end
+        @step_mother.invoke(*[statement.name, cucumber_multiline_arg].compact) 
       end
 
       def eof
-        invoke
-      end
-
-      private
-      
-      def invoke
-        if @name
-          @multiline = Ast::Table.new(@rows) if @multiline.nil? && @rows
-          @step_mother.invoke(*[@name, @multiline].compact) 
-          @name = nil
-          @multiline = nil
-          @rows = nil
-        end
       end
     end
 

@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{cucumber}
-  s.version = "0.8.3"
+  s.version = "0.8.5"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Aslak Helles\303\270y"]
-  s.date = %q{2010-07-02}
+  s.date = %q{2010-07-14}
   s.default_executable = %q{cucumber}
   s.description = %q{Behaviour Driven Development with elegance and joy}
   s.email = %q{cukes@googlegroups.com}
@@ -237,8 +237,9 @@ Gem::Specification.new do |s|
      "examples/ramaze/features/support/env.rb",
      "examples/ramaze/layout/default.html.erb",
      "examples/ramaze/view/index.html.erb",
+     "examples/rspec_doubles/Rakefile",
+     "examples/rspec_doubles/features/mocking.feature",
      "examples/rspec_doubles/features/step_definitions/calvin_steps.rb",
-     "examples/rspec_doubles/features/stubbing.feature",
      "examples/rspec_doubles/features/support/env.rb",
      "examples/ruby2python/README.textile",
      "examples/ruby2python/Rakefile",
@@ -277,10 +278,6 @@ Gem::Specification.new do |s|
      "examples/watir/features/step_definitions/search_steps.rb",
      "examples/watir/features/support/env.rb",
      "examples/watir/features/support/screenshots.rb",
-     "examples/webrat/Rakefile",
-     "examples/webrat/features/search.feature",
-     "examples/webrat/features/step_definitions/kvasir_steps.rb",
-     "examples/webrat/features/support/env.rb",
      "features/announce.feature",
      "features/around_hooks.feature",
      "features/background.feature",
@@ -396,6 +393,8 @@ Gem::Specification.new do |s|
      "fixtures/tickets/features/301/filter_background_tagged_hooks_steps.rb",
      "fixtures/tickets/features/306/only_background.feature",
      "fixtures/tickets/features/around_timeout.feature",
+     "fixtures/tickets/features/gherkin_67.feature",
+     "fixtures/tickets/features/gherkin_68.feature",
      "fixtures/tickets/features/half_manual.feature",
      "fixtures/tickets/features/lib/eatting_machine.rb",
      "fixtures/tickets/features/lib/pantry.rb",
@@ -559,7 +558,7 @@ Gem::Specification.new do |s|
 
                      (::)   U P G R A D I N G    (::)
 
-Thank you for installing cucumber-0.8.3.
+Thank you for installing cucumber-0.8.5.
 Please be sure to read http://wiki.github.com/aslakhellesoy/cucumber/upgrading
 for important information about this release. Happy cuking!
 
@@ -707,9 +706,7 @@ for important information about this release. Happy cuking!
      "examples/test_unit/features/step_definitions/test_unit_steps.rb",
      "examples/watir/features/step_definitions/search_steps.rb",
      "examples/watir/features/support/env.rb",
-     "examples/watir/features/support/screenshots.rb",
-     "examples/webrat/features/step_definitions/kvasir_steps.rb",
-     "examples/webrat/features/support/env.rb"
+     "examples/watir/features/support/screenshots.rb"
   ]
 
   if s.respond_to? :specification_version then
@@ -717,7 +714,7 @@ for important information about this release. Happy cuking!
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<gherkin>, ["~> 2.0.2"])
+      s.add_runtime_dependency(%q<gherkin>, ["~> 2.1.4"])
       s.add_runtime_dependency(%q<term-ansicolor>, ["~> 1.0.4"])
       s.add_runtime_dependency(%q<builder>, ["~> 2.1.2"])
       s.add_runtime_dependency(%q<diff-lcs>, ["~> 1.1.2"])
@@ -727,9 +724,9 @@ for important information about this release. Happy cuking!
       s.add_development_dependency(%q<prawn-layout>, ["= 0.8.4"])
       s.add_development_dependency(%q<rspec>, ["~> 2.0.0.beta.15"])
       s.add_development_dependency(%q<syntax>, ["~> 1.0.0"])
-      s.add_development_dependency(%q<spork>, ["~> 0.8.3"])
+      s.add_development_dependency(%q<spork>, ["~> 0.8.4"])
     else
-      s.add_dependency(%q<gherkin>, ["~> 2.0.2"])
+      s.add_dependency(%q<gherkin>, ["~> 2.1.4"])
       s.add_dependency(%q<term-ansicolor>, ["~> 1.0.4"])
       s.add_dependency(%q<builder>, ["~> 2.1.2"])
       s.add_dependency(%q<diff-lcs>, ["~> 1.1.2"])
@@ -739,10 +736,10 @@ for important information about this release. Happy cuking!
       s.add_dependency(%q<prawn-layout>, ["= 0.8.4"])
       s.add_dependency(%q<rspec>, ["~> 2.0.0.beta.15"])
       s.add_dependency(%q<syntax>, ["~> 1.0.0"])
-      s.add_dependency(%q<spork>, ["~> 0.8.3"])
+      s.add_dependency(%q<spork>, ["~> 0.8.4"])
     end
   else
-    s.add_dependency(%q<gherkin>, ["~> 2.0.2"])
+    s.add_dependency(%q<gherkin>, ["~> 2.1.4"])
     s.add_dependency(%q<term-ansicolor>, ["~> 1.0.4"])
     s.add_dependency(%q<builder>, ["~> 2.1.2"])
     s.add_dependency(%q<diff-lcs>, ["~> 1.1.2"])
@@ -752,7 +749,7 @@ for important information about this release. Happy cuking!
     s.add_dependency(%q<prawn-layout>, ["= 0.8.4"])
     s.add_dependency(%q<rspec>, ["~> 2.0.0.beta.15"])
     s.add_dependency(%q<syntax>, ["~> 1.0.0"])
-    s.add_dependency(%q<spork>, ["~> 0.8.3"])
+    s.add_dependency(%q<spork>, ["~> 0.8.4"])
   end
 end
 

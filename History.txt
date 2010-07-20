@@ -1,6 +1,16 @@
-== In Git
+== 0.8.5 (2010-07-14)
+
+=== Bugfixes
+* Location of stepdefs outside the project (in gems) are reported incorrectly. (#583 Aslak Hellesøy)
+* Cucumber::Rake::Task uses 'bundle exec' when using bundler (#626 John Firebaugh)
+
+== 0.8.4 (2010-07-12)
+
+=== Bugfixes
+* Fix "Errno::EADDRNOTAVAIL" errors that may be received with spork on Snow Leopard. (Lucas Mundim)
 
 === New features
+* Detect limit for negative tags (#636 Aslak Hellesøy)
 * Support for RSpec 2 doubles (mocks and stubs) (Aslak Hellesøy)
 * Support a Options hook in the Ruby adapter which can be called in your env.rb to configure Cucumber. The options supported are the same as those on the command line. This will be particular useful for plugin writers. (#640 Joseph Wilk)
 

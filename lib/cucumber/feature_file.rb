@@ -1,6 +1,6 @@
 require 'cucumber/parser/gherkin_builder'
-require 'gherkin/parser/filter_listener'
-require 'gherkin/parser/formatter_listener'
+require 'gherkin/formatter/filter_formatter'
+require 'gherkin/formatter/tag_count_formatter'
 require 'gherkin/parser/parser'
 require 'gherkin/i18n_lexer'
 
@@ -24,21 +24,19 @@ module Cucumber
     # Parses a file and returns a Cucumber::Ast
     # If +options+ contains tags, the result will
     # be filtered.
-    def parse(step_mother, options)
+    def parse(options, tag_counts)
       filters = @lines || options.filters
 
-      builder            = Cucumber::Parser::GherkinBuilder.new
-      formatter_listener = Gherkin::Parser::FormatterListener.new(builder)
-      filter_listener    = Gherkin::Parser::FilterListener.new(formatter_listener, filters)
-      parser             = Gherkin::Parser::Parser.new(filter_listener, true, "root")
-      lexer              = Gherkin::I18nLexer.new(parser, false)
+      builder             = Cucumber::Parser::GherkinBuilder.new
+      filter_formatter    = filters.empty? ? builder : Gherkin::Formatter::FilterFormatter.new(builder, filters)
+      tag_count_formatter = Gherkin::Formatter::TagCountFormatter.new(filter_formatter, tag_counts)
+      parser              = Gherkin::Parser::Parser.new(tag_count_formatter, true, "root", false)
 
       begin
-        s = ENV['FILTER_PML_CALLOUT'] ? source.gsub(C_CALLOUT, '') : source
-        lexer.scan(s, @path, 0)
+        parser.parse(source, @path, 0)
         ast = builder.ast
         return nil if ast.nil? # Filter caused nothing to match
-        ast.language = lexer.i18n_language
+        ast.language = parser.i18n_language
         ast.file = @path
         ast
       rescue Gherkin::LexingError, Gherkin::Parser::ParseError => e
