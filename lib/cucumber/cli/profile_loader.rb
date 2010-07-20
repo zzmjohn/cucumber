@@ -1,5 +1,8 @@
 module Cucumber
   module Cli
+    class YmlLoadError < StandardError; end
+    class ProfilesNotDefinedError < YmlLoadError; end
+    class ProfileNotFound < StandardError; end
 
     class ProfileLoader
 
