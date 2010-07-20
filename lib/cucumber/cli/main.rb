@@ -60,7 +60,7 @@ module Cucumber
 
         step_mother.load_code_files(configuration.step_defs_to_load)
 
-        runner = configuration.build_runner(step_mother, @out_stream)
+        runner = build_runner(step_mother, @out_stream)
 
         step_mother.visitor = runner # Needed to support World#announce
         
