@@ -105,7 +105,7 @@ module Cucumber
       @settings[:snippets] &= other_settings[:snippets]
       @settings[:strict] |= other_settings[:strict]
 
-      @settings[:profiles] += other_settings[:profiles]
+      #@settings[:profiles] += other_settings[:profiles]
 
       @expanded_args += other_settings[:expanded_args]
 
@@ -180,10 +180,10 @@ module Cucumber
     end
     
     def log
-      logger = Logger.new(@out_stream)
+      logger = Logger.new(@settings[:out_stream])
       logger.formatter = LogFormatter.new
       logger.level = Logger::INFO
-      logger.level = Logger::DEBUG if self.verbose?
+      logger.level = Logger::DEBUG if @settings[:verbose]
       logger
     end
     
