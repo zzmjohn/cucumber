@@ -49,7 +49,7 @@ module Cucumber
       def merge_profiles(config)
         if config.disable_profile_loading?
           @out_stream.puts "Disabling profiles..."
-          return
+          return config
         end
 
         config[:profiles] << DEFAULT_PROFILE if default_profile_should_be_used?(config)
