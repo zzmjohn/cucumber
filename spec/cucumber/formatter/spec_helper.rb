@@ -46,7 +46,7 @@ module Cucumber
       end 
 
       def options
-        @options ||= mock(Cucumber::Cli::Options, :filters => [], :[] => nil)
+        @options ||= mock(Cucumber::Configuration, :filters => [], :[] => nil)
       end
     end
   end

@@ -1,8 +1,7 @@
-require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
+require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 require 'yaml'
 
 module Cucumber
-module Cli
   describe Configuration do
 
     def given_cucumber_yml_defined_as(hash_or_string)
@@ -22,8 +21,8 @@ module Cli
       Kernel.stub!(:exit).and_return(nil)
     end
 
-    def config
-      @config ||= Configuration.new(@out = StringIO.new, @error = StringIO.new)
+    def config_loader
+      @config_loader ||= Cli::ConfigurationLoader.new(@out = StringIO.new, @error = StringIO.new)
     end
 
     def reset_config
@@ -35,7 +34,7 @@ module Cli
     it "should require env.rb files first" do
       given_the_following_files("/features/support/a_file.rb","/features/support/env.rb")
 
-      config.parse!(%w{--require /features})
+      config = config_loader.load_from_args(%w{--require /features})
 
       config.support_to_load.should == [
         "/features/support/env.rb",
@@ -46,7 +45,7 @@ module Cli
     it "should not require env.rb files when --dry-run" do
       given_the_following_files("/features/support/a_file.rb","/features/support/env.rb")
 
-      config.parse!(%w{--require /features --dry-run})
+      config = config_loader.load_from_args(%w{--require /features --dry-run})
 
       config.support_to_load.should == [
         "/features/support/a_file.rb"
@@ -57,7 +56,7 @@ module Cli
       given_the_following_files("/vendor/gems/gem_a/cucumber/bar.rb",
                                 "/vendor/plugins/plugin_a/cucumber/foo.rb")
 
-      config.parse!(%w{--require /features})
+      config = config_loader.load_from_args(%w{--require /features})
 
       config.step_defs_to_load.should == [
         "/vendor/gems/gem_a/cucumber/bar.rb",
@@ -70,7 +69,7 @@ module Cli
       it "excludes a ruby file from requiring when the name matches exactly" do
         given_the_following_files("/features/support/a_file.rb","/features/support/env.rb")
 
-        config.parse!(%w{--require /features --exclude a_file.rb})
+        config = config_loader.load_from_args(%w{--require /features --exclude a_file.rb})
 
         config.all_files_to_load.should == [
           "/features/support/env.rb"
@@ -82,7 +81,7 @@ module Cli
                                   "/features/support/food.rb","/features/blah.rb",
                                   "/features/support/fooz.rb")
 
-        config.parse!(%w{--require /features --exclude foo[df] --exclude blah})
+        config = config_loader.load_from_args(%w{--require /features --exclude foo[df] --exclude blah})
 
         config.all_files_to_load.should == [
           "/features/support/bar.rb",
@@ -93,23 +92,23 @@ module Cli
 
     describe '#drb?' do
       it "indicates whether the --drb flag was passed in or not" do
-        config.parse!(%w{features})
+        config = config_loader.load_from_args(%w{features})
         config.should_not be_drb
 
 
-        config.parse!(%w{features --drb})
+        config = config_loader.load_from_args(%w{features --drb})
         config.should be_drb
       end
     end
 
     describe "#drb_port" do
       it "is nil when not configured" do
-        config.parse!([])
+        config = config_loader.load_from_args([])
         config.drb_port.should be_nil
       end
 
       it "is numeric when configured" do
-        config.parse!(%w{features --port 1000})
+        config = config_loader.load_from_args(%w{features --port 1000})
         config.drb_port.should == 1000
       end
 
@@ -119,8 +118,8 @@ module Cli
     it "uses the default profile when no profile is defined" do
       given_cucumber_yml_defined_as({'default' => '--require some_file'})
 
-      config.parse!(%w{--format progress})
-      config.options[:require].should include('some_file')
+      config = config_loader.load_from_args(%w{--format progress})
+      config[:require].should include('some_file')
     end
 
     context '--profile' do
@@ -128,30 +127,30 @@ module Cli
       it "expands args from profiles in the cucumber.yml file" do
         given_cucumber_yml_defined_as({'bongo' => '--require from/yml'})
 
-        config.parse!(%w{--format progress --profile bongo})
-        config.options[:formats].should == [['progress', out]]
-        config.options[:require].should == ['from/yml']
+        config = config_loader.load_from_args(%w{--format progress --profile bongo})
+        config[:formats].should == [['progress', out]]
+        config[:require].should == ['from/yml']
       end
 
       it "expands args from the default profile when no flags are provided" do
         given_cucumber_yml_defined_as({'default' => '--require from/yml'})
 
-        config.parse!([])
-        config.options[:require].should == ['from/yml']
+        config = config_loader.load_from_args([])
+        config[:require].should == ['from/yml']
       end
 
       it "allows --strict to be set by a profile" do
         given_cucumber_yml_defined_as({'bongo' => '--strict'})
 
-        config.parse!(%w{--profile bongo})
-        config.options[:strict].should be_true
+        config = config_loader.load_from_args(%w{--profile bongo})
+        config[:strict].should be_true
       end
 
       it "parses ERB syntax in the cucumber.yml file" do
         given_cucumber_yml_defined_as({'default' => '<%="--require some_file"%>'})
 
-        config.parse!([])
-        config.options[:require].should include('some_file')
+        config = config_loader.load_from_args([])
+        config[:require].should include('some_file')
       end
 
       it "parses ERB in cucumber.yml that makes uses nested ERB sessions" do
@@ -160,8 +159,8 @@ module Cli
 <%= ERB.new({'enhanced' => '--require other_file'}.to_yaml).result %>
 ERB_YML
 
-        config.parse!(%w(-p standard))
-        config.options[:require].should include('some_file')
+        config = config_loader.load_from_args(%w(-p standard))
+        config[:require].should include('some_file')
       end
 
       it "provides a helpful error message when a specified profile does not exists in cucumber.yml" do
@@ -175,20 +174,20 @@ Defined profiles in cucumber.yml:
   * html_report
 END_OF_MESSAGE
 
-        lambda{config.parse!(%w{--profile i_do_not_exist})}.should raise_error(ProfileNotFound, expected_message)
+        lambda{config = config_loader.load_from_args(%w{--profile i_do_not_exist})}.should raise_error(Cli::ProfileNotFound, expected_message)
       end
 
       it "allows profiles to be defined in arrays" do
         given_cucumber_yml_defined_as({'foo' => ['-f','progress']})
 
-        config.parse!(%w{--profile foo})
-        config.options[:formats].should == [['progress', out]]
+        config = config_loader.load_from_args(%w{--profile foo})
+        config[:formats].should == [['progress', out]]
       end
 
       it "disregards default STDOUT formatter defined in profile when another is passed in (via cmd line)" do
         given_cucumber_yml_defined_as({'foo' => %w[--format pretty]})
-        config.parse!(%w{--format progress --profile foo})
-        config.options[:formats].should == [['progress', out]]#, ['pretty', 'pretty.txt']]
+        config = config_loader.load_from_args(%w{--format progress --profile foo})
+        config[:formats].should == [['progress', out]]#, ['pretty', 'pretty.txt']]
       end
 
 
@@ -198,14 +197,14 @@ END_OF_MESSAGE
           it "disables profiles" do
             given_cucumber_yml_defined_as({'default' => '-v --require file_specified_in_default_profile.rb'})
 
-            config.parse!("#{flag} --require some_file.rb".split(" "))
-            config.options[:require].should == ['some_file.rb']
+            config = config_loader.load_from_args("#{flag} --require some_file.rb".split(" "))
+            config[:require].should == ['some_file.rb']
           end
 
           it "notifies the user that the profiles are being disabled" do
             given_cucumber_yml_defined_as({'default' => '-v'})
 
-            config.parse!("#{flag} --require some_file.rb".split(" "))
+            config_loader.load_from_args("#{flag} --require some_file.rb".split(" "))
             out.string.should =~ /Disabling profiles.../
           end
         end
@@ -216,7 +215,7 @@ END_OF_MESSAGE
           given_cucumber_yml_defined_as({'foo' => bad_input})
 
           expected_error = /The 'foo' profile in cucumber.yml was blank.  Please define the command line arguments for the 'foo' profile in cucumber.yml./
-          lambda{config.parse!(%w{--profile foo})}.should raise_error(expected_error)
+          lambda{config = config_loader.load_from_args(%w{--profile foo})}.should raise_error(expected_error)
         end
       end
 
@@ -224,7 +223,7 @@ END_OF_MESSAGE
         File.should_receive(:exist?).with('cucumber.yml').and_return(false)
 
         expected_error = /cucumber\.yml was not found/
-        lambda{config.parse!(%w{--profile i_do_not_exist})}.should raise_error(expected_error)
+        lambda{config = config_loader.load_from_args(%w{--profile i_do_not_exist})}.should raise_error(expected_error)
       end
 
       it "issues a helpful error message when cucumber.yml is blank or malformed" do
@@ -232,7 +231,7 @@ END_OF_MESSAGE
 
         ['', 'sfsadfs', "--- \n- an\n- array\n", "---dddfd"].each do |bad_input|
           given_cucumber_yml_defined_as(bad_input)
-          lambda{config.parse!([])}.should raise_error(expected_error_message)
+          lambda{config_loader.load_from_args([])}.should raise_error(expected_error_message)
           reset_config
         end
       end
@@ -243,89 +242,88 @@ END_OF_MESSAGE
         given_cucumber_yml_defined_as("input that causes an exception in YAML loading")
         YAML.should_receive(:load).and_raise ArgumentError
 
-        lambda{config.parse!([])}.should raise_error(expected_error_message)
+        lambda{config_loader.load_from_args([])}.should raise_error(expected_error_message)
       end
 
       it "issues a helpful error message when cucumber.yml can not be parsed by ERB" do
         expected_error_message = /cucumber.yml was found, but could not be parsed with ERB.  Please refer to cucumber's documentation on correct profile usage./
         given_cucumber_yml_defined_as("<% this_fails %>")
 
-        lambda{config.parse!([])}.should raise_error(expected_error_message)
+        lambda{config = config_loader.load_from_args([])}.should raise_error(expected_error_message)
       end
     end
 
-
     it "should accept --dry-run option" do
-      config.parse!(%w{--dry-run})
-      config.options[:dry_run].should be_true
+      config = config_loader.load_from_args(%w{--dry-run})
+      config[:dry_run].should be_true
     end
 
     it "should accept --no-source option" do
-      config.parse!(%w{--no-source})
+      config = config_loader.load_from_args(%w{--no-source})
 
-      config.options[:source].should be_false
+      config[:source].should be_false
     end
 
     it "should accept --no-snippets option" do
-      config.parse!(%w{--no-snippets})
+      config = config_loader.load_from_args(%w{--no-snippets})
 
-      config.options[:snippets].should be_false
+      config[:snippets].should be_false
     end
 
     it "should set snippets and source to false with --quiet option" do
-      config.parse!(%w{--quiet})
+      config = config_loader.load_from_args(%w{--quiet})
 
-      config.options[:snippets].should be_false
-      config.options[:source].should be_false
+      config[:snippets].should be_false
+      config[:source].should be_false
     end
 
     it "should accept --verbose option" do
-      config.parse!(%w{--verbose})
+      config = config_loader.load_from_args(%w{--verbose})
 
-      config.options[:verbose].should be_true
+      config[:verbose].should be_true
     end
 
     it "should accept --out option" do
-      config.parse!(%w{--out jalla.txt})
-      config.options[:formats].should == [['pretty', 'jalla.txt']]
+      config = config_loader.load_from_args(%w{--out jalla.txt})
+      config[:formats].should == [['pretty', 'jalla.txt']]
     end
 
     it "should accept multiple --out options" do
-      config.parse!(%w{--format progress --out file1 --out file2})
-      config.options[:formats].should == [['progress', 'file2']]
+      config = config_loader.load_from_args(%w{--format progress --out file1 --out file2})
+      config[:formats].should == [['progress', 'file2']]
     end
 
     it "should accept multiple --format options and put the STDOUT one first so progress is seen" do
-      config.parse!(%w{--format pretty --out pretty.txt --format progress})
-      config.options[:formats].should == [['progress', out], ['pretty', 'pretty.txt']]
+      config = config_loader.load_from_args(%w{--format pretty --out pretty.txt --format progress})
+      config[:formats].should == [['progress', out], ['pretty', 'pretty.txt']]
     end
 
     it "should not accept multiple --format options when both use implicit STDOUT" do
       lambda do
-        config.parse!(%w{--format pretty --format progress})
+        config_loader.load_from_args(%w{--format pretty --format progress})
       end.should raise_error("All but one formatter must use --out, only one can print to each stream (or STDOUT)")
     end
 
     it "should not accept multiple --out streams pointing to the same place" do
       lambda do
-        config.parse!(%w{--format pretty --out file1 --format progress --out file1})
+        config_loader.load_from_args(%w{--format pretty --out file1 --format progress --out file1})
       end.should raise_error("All but one formatter must use --out, only one can print to each stream (or STDOUT)")
     end
 
     it "should associate --out to previous --format" do
-      config.parse!(%w{--format progress --out file1 --format profile --out file2})
-      config.options[:formats].should == [["progress", "file1"], ["profile" ,"file2"]]
+      config = config_loader.load_from_args(%w{--format progress --out file1 --format profile --out file2})
+      config[:formats].should == [["progress", "file1"], ["profile" ,"file2"]]
     end
 
     it "should accept --color option" do
       Term::ANSIColor.should_receive(:coloring=).with(true)
-      config.parse!(['--color'])
+      config_loader.load_from_args(['--color'])
     end
 
     it "should accept --no-color option" do
       Term::ANSIColor.should_receive(:coloring=).with(false)
-      config = Configuration.new(StringIO.new)
-      config.parse!(['--no-color'])
+      config_loader = Cli::ConfigurationLoader.new(StringIO.new, StringIO.new)
+      config_loader.load_from_args(['--no-color'])
     end
 
     describe "--backtrace" do
@@ -348,21 +346,21 @@ END_OF_MESSAGE
     end
 
     it "should accept multiple --name options" do
-      config.parse!(['--name', "User logs in", '--name', "User signs up"])
+      config = config_loader.load_from_args(['--name', "User logs in", '--name', "User signs up"])
 
-      config.options[:name_regexps].should include(/User logs in/)
-      config.options[:name_regexps].should include(/User signs up/)
+      config[:name_regexps].should include(/User logs in/)
+      config[:name_regexps].should include(/User signs up/)
     end
 
     it "should accept multiple -n options" do
-      config.parse!(['-n', "User logs in", '-n', "User signs up"])
+      config = config_loader.load_from_args(['-n', "User logs in", '-n', "User signs up"])
 
-      config.options[:name_regexps].should include(/User logs in/)
-      config.options[:name_regexps].should include(/User signs up/)
+      config[:name_regexps].should include(/User logs in/)
+      config[:name_regexps].should include(/User signs up/)
     end
 
     it "should preserve the order of the feature files" do
-      config.parse!(%w{b.feature c.feature a.feature})
+      config = config_loader.load_from_args(%w{b.feature c.feature a.feature})
 
       config.feature_files.should == ["b.feature", "c.feature", "a.feature"]
     end
@@ -372,7 +370,7 @@ END_OF_MESSAGE
       Dir.should_receive(:[]).with("feature_directory/**/*.feature").
         any_number_of_times.and_return(["cucumber.feature"])
 
-      config.parse!(%w{feature_directory/})
+      config = config_loader.load_from_args(%w{feature_directory/})
 
       config.feature_files.should == ["cucumber.feature"]
     end
@@ -382,24 +380,23 @@ END_OF_MESSAGE
       Dir.should_receive(:[]).with("features/**/*.feature").
         any_number_of_times.and_return(["cucumber.feature"])
 
-      config.parse!(%w{})
+      config = config_loader.load_from_args(%w{})
 
       config.feature_files.should == ["cucumber.feature"]
     end
 
     it "should allow specifying environment variables on the command line" do
-      config.parse!(["foo=bar"])
+      config = config_loader.load_from_args(["foo=bar"])
       ENV["foo"].should == "bar"
       config.feature_files.should_not include('foo=bar')
     end
 
     it "should allow specifying environment variables in profiles" do
       given_cucumber_yml_defined_as({'selenium' => 'RAILS_ENV=selenium'})
-      config.parse!(["--profile", "selenium"])
+      config = config_loader.load_from_args(["--profile", "selenium"])
       ENV["RAILS_ENV"].should == "selenium"
       config.feature_files.should_not include('RAILS_ENV=selenium')
     end
 
   end
-end
 end
