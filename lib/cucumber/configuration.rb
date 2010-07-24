@@ -63,26 +63,13 @@ module Cucumber
     end
         
     def expanded_args_without_drb
-      return @expanded_args_without_drb  if @expanded_args_without_drb
-      @expanded_args_without_drb = (
-        previous_flag_was_profile = false
-        @expanded_args.reject do |arg|
-          if previous_flag_was_profile
-            previous_flag_was_profile = false
-            next true
-          end
-          if [Cli::ArgsParser::PROFILE_SHORT_FLAG, Cli::ArgsParser::PROFILE_LONG_FLAG].include?(arg)
-            previous_flag_was_profile = true
-            next true
-          end
-          arg == Cli::ArgsParser::DRB_FLAG || @overridden_paths.include?(arg)
-        end
-      )
+      return @expanded_args_without_drb if @expanded_args_without_drb
 
-      @expanded_args_without_drb.push("--no-profile") unless @expanded_args_without_drb.include?(Cli::ArgsParser::NO_PROFILE_LONG_FLAG) || @expanded_args_without_drb.include?(Cli::ArgsParser::NO_PROFILE_SHORT_FLAG)
+      @expanded_args_without_drb = args_without_incompatible_drb_options
+      @expanded_args_without_drb.push("--no-profile") unless includes_no_profile?(@expanded_args_without_drb)
       @expanded_args_without_drb
     end
-
+    
     def reverse_merge(other_options)
       @settings ||= default_options
       
@@ -105,7 +92,7 @@ module Cucumber
       @settings[:snippets] &= other_settings[:snippets]
       @settings[:strict] |= other_settings[:strict]
 
-      #@settings[:profiles] += other_settings[:profiles]
+      @settings[:profiles] += other_settings[:profiles]
 
       @expanded_args += other_settings[:expanded_args]
 
@@ -243,6 +230,26 @@ module Cucumber
     def require_dirs
       feature_dirs + Dir['vendor/{gems,plugins}/*/cucumber']
     end
+    
+    def includes_no_profile?(expanded_args_without_drb)
+      expanded_args_without_drb.include?(Cli::ArgsParser::NO_PROFILE_LONG_FLAG) ||    expanded_args_without_drb.include?(Cli::ArgsParser::NO_PROFILE_SHORT_FLAG)
+    end
+
+    def args_without_incompatible_drb_options
+      previous_flag_was_profile = false
+      @expanded_args.reject do |arg|
+        if previous_flag_was_profile
+          previous_flag_was_profile = false
+          next true
+        end
+        if [Cli::ArgsParser::PROFILE_SHORT_FLAG, Cli::ArgsParser::PROFILE_LONG_FLAG].include?(arg)
+          previous_flag_was_profile = true
+          next true
+        end
+        arg == Cli::ArgsParser::DRB_FLAG || @overridden_paths.include?(arg)
+      end
+    end
+  
   end
   
   def self.configuration=(configuration)

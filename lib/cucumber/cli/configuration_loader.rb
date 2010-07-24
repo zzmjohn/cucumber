@@ -14,7 +14,12 @@ module Cucumber
       
       def load_from_args(args)
         config = @args_parser.parse!(args)
-        config = merge_profiles(config)
+
+        if config.disable_profile_loading?
+          @out_stream.puts "Disabling profiles..."
+        else
+          config = merge_profiles(config)
+        end
 
         print_profile_information(config)
         
@@ -47,11 +52,6 @@ module Cucumber
       end
       
       def merge_profiles(config)
-        if config.disable_profile_loading?
-          @out_stream.puts "Disabling profiles..."
-          return config
-        end
-
         config[:profiles] << DEFAULT_PROFILE if default_profile_should_be_used?(config)
 
         config[:profiles].each do |profile|
