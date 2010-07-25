@@ -332,7 +332,7 @@ END_OF_MESSAGE
       end
 
       it "should show full backtrace when --backtrace is present" do
-        config = Main.new(['--backtrace'])
+        config = Cli::Main.new(['--backtrace'])
         begin
           "x".should == "y"
         rescue => e
