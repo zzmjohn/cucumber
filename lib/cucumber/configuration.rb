@@ -54,11 +54,11 @@ module Cucumber
     end
     
     def non_stdout_formats
-      @settings[:formats].select {|format, output| output != STDOUT }
+      @settings[:formats].select {|format, output| output != @settings[:out_stream] }
     end
 
     def stdout_formats
-      @settings[:formats].select {|format, output| output == STDOUT }
+      @settings[:formats].select {|format, output| output == @settings[:out_stream] }
     end
         
     def expanded_args_without_drb
