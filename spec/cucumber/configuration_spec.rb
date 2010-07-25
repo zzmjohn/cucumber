@@ -26,7 +26,7 @@ module Cucumber
     end
 
     def reset_config
-      @config = nil
+      @config_loader = nil
     end
 
     attr_reader :out, :error
