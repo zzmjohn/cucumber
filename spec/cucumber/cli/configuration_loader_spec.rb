@@ -132,10 +132,9 @@ module Cli
           end
         end
 
-        it "uses the default profile passed in during initialization if none are specified by the user" do
+        it "uses the default profile if none are specified by the user" do
           given_cucumber_yml_defined_as({'default' => '--require some_file'})
 
-          options = config_loader.new(output_stream, error_stream, :default_profile => 'default')
           config = config_loader.load_from_args(%w{--format progress})
           config[:require].should include('some_file')
         end
