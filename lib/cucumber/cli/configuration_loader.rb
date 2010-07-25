@@ -11,7 +11,7 @@ module Cucumber
         @error_stream = error_stream
         @args_parser = ArgsParser.new(@out_stream, @error_stream)
       end
-      
+
       def load_from_args(args)
         config = @args_parser.parse!(args)
 
@@ -22,8 +22,9 @@ module Cucumber
         end
 
         print_profile_information(config)
-        
+
         config = arrange_formats(config)
+
         raise("You can't use both --strict and --wip") if config.strict? && config.wip?
 
         #TODO: Why?

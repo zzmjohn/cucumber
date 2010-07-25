@@ -53,9 +53,11 @@ module Cucumber
       end
 
       describe "setup step sequence" do
-        
+
         it "should load files and execute hooks in order" do
-          Configuration.stub!(:new).and_return(configuration = mock('configuration').as_null_object)
+          ConfigurationLoader.stub!(:new).and_return(configuration_loader = mock('configuration loader').as_null_object)
+          configuration_loader.stub!(:load_from_args).and_return(configuration = mock('configuration').as_null_object)
+
           step_mother = mock('step mother').as_null_object
           configuration.stub!(:drb?).and_return false
           cli = Main.new(%w{--verbose example.feature}, @out)
@@ -85,10 +87,11 @@ module Cucumber
       [ProfilesNotDefinedError, YmlLoadError, ProfileNotFound].each do |exception_klass|
 
         it "rescues #{exception_klass}, prints the message to the error stream and returns true" do
-          Configuration.stub!(:new).and_return(configuration = mock('configuration'))
-          configuration.stub!(:parse!).and_raise(exception_klass.new("error message"))
+          Cucumber::Cli::ArgsParser.stub!(:new).and_return(args_parser = mock('args parser'))
+          args_parser.stub!(:parse!).and_raise(exception_klass.new("error message"))
 
           main = Main.new('', out = StringIO.new, error = StringIO.new)
+
           main.execute!(Cucumber::StepMother.new).should be_true
           error.string.should == "error message\n"
         end
@@ -97,12 +100,17 @@ module Cucumber
       context "--drb" do
         before(:each) do
           @configuration = mock('Configuration', :drb? => true).as_null_object
-          Configuration.stub!(:new).and_return(@configuration)
+
+          ConfigurationLoader.stub!(:new).and_return(mock(:load_from_args => @configuration))
 
           @args = ['features']
 
           @cli = Main.new(@args, @out, @err)
           @step_mother = mock('StepMother').as_null_object
+        end
+
+        after(:each) do
+          Cucumber.configuration = nil
         end
 
         it "delegates the execution to the DRB client passing the args and streams" do
