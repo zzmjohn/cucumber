@@ -83,9 +83,7 @@ module Cucumber
       if @settings[:paths].empty?
         @settings[:paths] = other_settings[:paths]
       else
-
-      @overridden_paths += (other_settings[:paths] - @settings[:paths])
-
+        @overridden_paths += (other_settings[:paths] - @settings[:paths])
       end
       @settings[:source] &= other_settings[:source]
       @settings[:snippets] &= other_settings[:snippets]

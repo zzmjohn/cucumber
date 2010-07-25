@@ -55,10 +55,17 @@ module Cucumber
       def merge_profiles(config)
         config[:profiles] << DEFAULT_PROFILE if default_profile_should_be_used?(config)
 
-        config[:profiles].each do |profile|
-          profile_args = profile_loader.args_from(profile)
-          profile_config = ArgsParser.parse(profile_args, @out_stream, @error_stream)
-          config.reverse_merge(profile_config)
+        config[:profiles].each do |profile_name|
+          config.reverse_merge(profile_config(profile_name))
+        end
+        config
+      end
+
+      def profile_config(profile_name)
+        profile_args = profile_loader.args_from(profile_name)
+        config = ArgsParser.parse(profile_args, @out_stream, @error_stream)
+        unless config.profiles.empty?
+          config.profiles.each {|profile_name| config.reverse_merge(profile_config(profile_name))}
         end
         config
       end
