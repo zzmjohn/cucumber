@@ -10,7 +10,6 @@ module Cucumber
     def initialize(out_stream = STDOUT, error_stream = STDERR)
       @error_stream = error_stream
       @overridden_paths = []
-      @expanded_args = []
       @settings ||= default_options
       @settings[:out_stream] = out_stream
     end
@@ -94,7 +93,7 @@ module Cucumber
 
       @settings[:profiles] += other_settings[:profiles]
 
-      @expanded_args += other_settings[:expanded_args]
+      @settings[:expanded_args] += other_settings[:expanded_args]
 
       if @settings[:formats].empty?
         @settings[:formats] = other_settings[:formats]
@@ -215,7 +214,8 @@ module Cucumber
         :env_vars     => {},
         :diff_enabled => true,
         :profiles => [],
-        :disable_profile_loading => false
+        :disable_profile_loading => false,
+        :expanded_args => []
       }
     end
 
@@ -237,7 +237,7 @@ module Cucumber
 
     def args_without_incompatible_drb_options
       previous_flag_was_profile = false
-      @expanded_args.reject do |arg|
+      @settings[:expanded_args].reject do |arg|
         if previous_flag_was_profile
           previous_flag_was_profile = false
           next true
