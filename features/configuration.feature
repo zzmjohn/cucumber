@@ -41,9 +41,8 @@ Feature: Options
     1 step (1 passed)
 
     """
-    
-  Scenario: HTML formatter
 
+  Scenario: HTML formatter
     Given a standard Cucumber project directory structure
     And a file named "features/support/env.rb" with:
       """
@@ -58,18 +57,17 @@ Feature: Options
       html
       """
 
-    Scenario: feature directories read from configuration
-
-      Given a standard Cucumber project directory structure
-      And a file named "features/support/env.rb" with:
-        """
-        Cucumber.configure do |config|
-          config.out_stream << "AfterConfiguration hook read feature directories: #{config.feature_dirs.join(', ')}" 
-        end
-        """
-      When I run cucumber features
-      Then STDERR should be empty
-      And the output should contain
-        """
-        AfterConfiguration hook read feature directories: features
-        """
+  Scenario: feature directories read from configuration
+    Given a standard Cucumber project directory structure
+    And a file named "features/support/env.rb" with:
+      """
+      Cucumber.configure do |config|
+        config.out_stream << "Read feature directories: #{config.feature_dirs.join(', ')}"
+      end
+      """
+    When I run cucumber features
+    Then STDERR should be empty
+    And the output should contain
+      """
+      Read feature directories: features
+      """
