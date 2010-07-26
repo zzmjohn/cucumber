@@ -1,3 +1,11 @@
+== (In Git)
+
+=== New features
+* Support a Options hook in the Ruby adapter which can be called in your env.rb to configure Cucumber. The options supported are the same as those on the command line. This will be particular useful for plugin writers. (#640 Joseph Wilk)
+
+=== Removed features
+AfterConfiguration hook is no longer required. Use the Configuration.configure instead.
+
 == 0.8.5 (2010-07-14)
 
 === Bugfixes
@@ -12,7 +20,6 @@
 === New features
 * Detect limit for negative tags (#636 Aslak Hellesøy)
 * Support for RSpec 2 doubles (mocks and stubs) (Aslak Hellesøy)
-* Support a Options hook in the Ruby adapter which can be called in your env.rb to configure Cucumber. The options supported are the same as those on the command line. This will be particular useful for plugin writers. (#640 Joseph Wilk)
 
 == 0.8.3 (2010-06-16)
 
