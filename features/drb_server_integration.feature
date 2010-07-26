@@ -134,9 +134,9 @@ Feature: DRb Server Integration
 
   Scenario: Feature Run with --drb specifying a non-standard port
 
-    Given I am running spork in the background on port 9000
+    Given I am running spork in the background on port 9001
 
-    When I run cucumber features --drb --port 9000
+    When I run cucumber features --drb --port 9001
     Then it should pass
     And STDERR should be empty
     And the output should contain
@@ -154,8 +154,8 @@ Feature: DRb Server Integration
 
   Scenario: Feature Run with $CUCUMBER_DRB environment variable
 
-    Given I have environment variable CUCUMBER_DRB set to "9000"
-    And I am running spork in the background on port 9000
+    Given I have environment variable CUCUMBER_DRB set to "9001"
+    And I am running spork in the background on port 9001
 
     When I run cucumber features/ --drb
     Then it should pass
