@@ -5,8 +5,6 @@ module Cucumber
   class Configuration
     include Constantize
     
-    attr_reader :settings
-    
     def initialize(out_stream = STDOUT, error_stream = STDERR)
       @error_stream = error_stream
       @overridden_paths = []
@@ -72,35 +70,38 @@ module Cucumber
     def reverse_merge(other_options)
       @settings ||= default_options
       
-      other_settings = other_options.settings
-      @settings = other_settings.merge(@settings)
-      @settings[:require] += other_settings[:require]
-      @settings[:excludes] += other_settings[:excludes]
-      @settings[:name_regexps] += other_settings[:name_regexps]
-      @settings[:tag_expressions] += other_settings[:tag_expressions]
-      @settings[:env_vars] = other_settings[:env_vars].merge(@settings[:env_vars])
+      @settings = other_options.merge_settings(@settings)
+      @settings[:require] += other_options[:require]
+      @settings[:excludes] += other_options[:excludes]
+      @settings[:name_regexps] += other_options[:name_regexps]
+      @settings[:tag_expressions] += other_options[:tag_expressions]
+      @settings[:env_vars] = other_options[:env_vars].merge(@settings[:env_vars])
       
       if @settings[:paths].empty?
-        @settings[:paths] = other_settings[:paths]
+        @settings[:paths] = other_options[:paths]
       else
-        @overridden_paths += (other_settings[:paths] - @settings[:paths])
+        @overridden_paths += (other_options[:paths] - @settings[:paths])
       end
-      @settings[:source] &= other_settings[:source]
-      @settings[:snippets] &= other_settings[:snippets]
-      @settings[:strict] |= other_settings[:strict]
+      @settings[:source] &= other_options[:source]
+      @settings[:snippets] &= other_options[:snippets]
+      @settings[:strict] |= other_options[:strict]
 
-      @settings[:profiles] += other_settings[:profiles]
+      @settings[:profiles] += other_options[:profiles]
 
-      @settings[:expanded_args] += other_settings[:expanded_args]
+      @settings[:expanded_args] += other_options[:expanded_args]
 
       if @settings[:formats].empty?
-        @settings[:formats] = other_settings[:formats]
+        @settings[:formats] = other_options[:formats]
       else
-        @settings[:formats] += other_settings[:formats]
+        @settings[:formats] += other_options[:formats]
         @settings[:formats] = stdout_formats[0..0] + non_stdout_formats
       end
     end
     
+    def merge_settings(settings)
+      @settings.merge(settings)
+    end
+
     def filters
       @settings.values_at(:name_regexps, :tag_expressions).select{|v| !v.empty?}.first || []
     end
