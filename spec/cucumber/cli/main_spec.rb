@@ -55,6 +55,7 @@ module Cucumber
       describe "setup step sequence" do
 
         it "should load files and execute hooks in order" do
+          Ast::TreeWalker.stub!(:new).and_return(mock("treewalker").as_null_object)
           ConfigurationLoader.stub!(:new).and_return(configuration_loader = mock('configuration loader').as_null_object)
           configuration_loader.stub!(:load_from_args).and_return(configuration = mock('configuration').as_null_object)
 
