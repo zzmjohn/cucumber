@@ -53,7 +53,7 @@ module Cucumber
         step_mother.load_code_files(configuration.support_to_load)
         step_mother.options = configuration
 
-        configuration.freeze
+        configuration.lock
 
         features = step_mother.load_plain_text_features(configuration.feature_files)
 

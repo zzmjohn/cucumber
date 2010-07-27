@@ -21,7 +21,7 @@ module Cucumber
         alias_method "#{name}?", "#{opts[:alias]}?"
       else
         define_method("#{name}=") {|val| self[name] = val}
-        define_method(name)       { @settings[name] }
+        define_method(name)       { self[name] }
         define_method("#{name}?") { !!(send name) }
       end
     end
@@ -37,7 +37,7 @@ module Cucumber
     add_setting :formats
     add_setting :disable_profile_loading
 
-    def freeze
+    def lock
       @settings.freeze
     end
 
