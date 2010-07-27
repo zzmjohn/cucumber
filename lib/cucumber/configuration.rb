@@ -10,8 +10,8 @@ module Cucumber
     def initialize(out_stream = STDOUT, error_stream = STDERR)
       @error_stream = error_stream
       @overridden_paths = []
-      @settings ||= default_options
-      @settings[:out_stream] = out_stream
+      @options ||= default_options
+      @options[:out_stream] = out_stream
     end
 
     def self.add_setting(name, opts={})
@@ -38,38 +38,38 @@ module Cucumber
     add_setting :disable_profile_loading
 
     def lock
-      @settings.freeze
+      @options.freeze
     end
 
     def [](key)
-      @settings[key]
+      @options[key]
     end
 
     def []=(key, value)
-      if @settings.frozen?
+      if @options.frozen?
         raise ConfigurationFrozenError.new(<<-END_OF_ERROR)
 You cannot modify configuration once Cucumber has started executing features.
 Ensure all configuration occurs within your support/ folder
 END_OF_ERROR
       else
-        @settings[key] = value
+        @options[key] = value
       end
     end
     
     def tag_expression
-      Gherkin::TagExpression.new(@settings[:tag_expressions])
+      Gherkin::TagExpression.new(@options[:tag_expressions])
     end
     
     def custom_profiles
-      @settings[:profiles] - ['default']
+      @options[:profiles] - ['default']
     end
     
     def non_stdout_formats
-      @settings[:formats].select {|format, output| output != @settings[:out_stream] }
+      @options[:formats].select {|format, output| output != @options[:out_stream] }
     end
 
     def stdout_formats
-      @settings[:formats].select {|format, output| output == @settings[:out_stream] }
+      @options[:formats].select {|format, output| output == @options[:out_stream] }
     end
         
     def expanded_args_without_drb
@@ -81,46 +81,46 @@ END_OF_ERROR
     end
     
     def reverse_merge(other_options)
-      @settings ||= default_options
+      @options ||= default_options
       
-      @settings = other_options.merge_settings(@settings)
-      @settings[:requires] += other_options[:requires]
-      @settings[:excludes] += other_options[:excludes]
-      @settings[:name_regexps] += other_options[:name_regexps]
-      @settings[:tag_expressions] += other_options[:tag_expressions]
-      @settings[:env_vars] = other_options[:env_vars].merge(@settings[:env_vars])
+      @options = other_options.merge_settings(@options)
+      @options[:requires] += other_options[:requires]
+      @options[:excludes] += other_options[:excludes]
+      @options[:name_regexps] += other_options[:name_regexps]
+      @options[:tag_expressions] += other_options[:tag_expressions]
+      @options[:env_vars] = other_options[:env_vars].merge(@options[:env_vars])
       
-      if @settings[:paths].empty?
-        @settings[:paths] = other_options[:paths]
+      if @options[:paths].empty?
+        @options[:paths] = other_options[:paths]
       else
-        @overridden_paths += (other_options[:paths] - @settings[:paths])
+        @overridden_paths += (other_options[:paths] - @options[:paths])
       end
-      @settings[:source] &= other_options[:source]
-      @settings[:snippets] &= other_options[:snippets]
-      @settings[:strict] |= other_options[:strict]
+      @options[:source] &= other_options[:source]
+      @options[:snippets] &= other_options[:snippets]
+      @options[:strict] |= other_options[:strict]
 
-      @settings[:profiles] += other_options[:profiles]
+      @options[:profiles] += other_options[:profiles]
 
-      @settings[:expanded_args] += other_options[:expanded_args]
+      @options[:expanded_args] += other_options[:expanded_args]
 
-      if @settings[:formats].empty?
-        @settings[:formats] = other_options[:formats]
+      if @options[:formats].empty?
+        @options[:formats] = other_options[:formats]
       else
-        @settings[:formats] += other_options[:formats]
-        @settings[:formats] = stdout_formats[0..0] + non_stdout_formats
+        @options[:formats] += other_options[:formats]
+        @options[:formats] = stdout_formats[0..0] + non_stdout_formats
       end
     end
     
     def merge_settings(settings)
-      @settings.merge(settings)
+      @options.merge(settings)
     end
 
     def filters
-      @settings.values_at(:name_regexps, :tag_expressions).select{|v| !v.empty?}.first || []
+      @options.values_at(:name_regexps, :tag_expressions).select{|v| !v.empty?}.first || []
     end
 
     def drb_port
-      @settings[:drb_port].to_i if @settings[:drb_port]
+      @options[:drb_port].to_i if @options[:drb_port]
     end
 
     def formatter_class(format)
@@ -132,7 +132,7 @@ END_OF_ERROR
     end
 
     def all_files_to_load
-      requires = @settings[:requires].empty? ? require_dirs : @settings[:requires]
+      requires = @options[:requires].empty? ? require_dirs : @options[:requires]
       files = requires.map do |path|
         path = path.gsub(/\\/, '/') # In case we're on windows. Globs don't work with backslashes.
         path = path.gsub(/\/$/, '') # Strip trailing slash.
@@ -153,7 +153,7 @@ END_OF_ERROR
       support_files = all_files_to_load.select {|f| f =~ %r{/support/} }
       env_files = support_files.select {|f| f =~ %r{/support/env\..*} }
       other_files = support_files - env_files
-      @settings[:dry_run] ? other_files : env_files + other_files
+      @options[:dry_run] ? other_files : env_files + other_files
     end
 
     def feature_files
@@ -178,10 +178,10 @@ END_OF_ERROR
     end
     
     def log
-      logger = Logger.new(@settings[:out_stream])
+      logger = Logger.new(@options[:out_stream])
       logger.formatter = LogFormatter.new
       logger.level = Logger::INFO
-      logger.level = Logger::DEBUG if @settings[:verbose]
+      logger.level = Logger::DEBUG if @options[:verbose]
       logger
     end
     
@@ -194,12 +194,12 @@ END_OF_ERROR
     def formatters(step_mother)
       # TODO: We should remove the autoformat functionality. That
       # can be done with the gherkin CLI.
-      if @settings[:autoformat]
+      if @options[:autoformat]
         require 'cucumber/formatter/pretty'
         return [Formatter::Pretty.new(step_mother, nil, self)]
       end
 
-      @settings[:formats].map do |format_and_out|
+      @options[:formats].map do |format_and_out|
         format = format_and_out[0]
         path_or_io = format_and_out[1]
         begin
@@ -232,11 +232,11 @@ END_OF_ERROR
     end
 
     def paths
-      @settings[:paths].empty? ? ['features'] : @settings[:paths]
+      @options[:paths].empty? ? ['features'] : @options[:paths]
     end
 
     def remove_excluded_files_from(files)
-      files.reject! {|path| @settings[:excludes].detect {|pattern| path =~ pattern } }
+      files.reject! {|path| @options[:excludes].detect {|pattern| path =~ pattern } }
     end
 
     def require_dirs
@@ -249,7 +249,7 @@ END_OF_ERROR
 
     def args_without_incompatible_drb_options
       previous_flag_was_profile = false
-      @settings[:expanded_args].reject do |arg|
+      @options[:expanded_args].reject do |arg|
         if previous_flag_was_profile
           previous_flag_was_profile = false
           next true
