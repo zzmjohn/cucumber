@@ -72,17 +72,38 @@ Feature: Options
       Read feature directories: features
       """
 
-  Scenario: configuring after features have been loaded
+  Scenario: configuring outside of support
     Given a standard Cucumber project directory structure
     And a file named "features/step_definitions/cheat_steps.rb" with:
       """
       Cucumber.configure do |config|
-        config.tags = ['@wip']
+        config.formats << ['html', config.out_stream]
       end
       """
     When I run cucumber features
-    Then STDERR should match
+    Then it should pass with
+    """
+    html
+    """
+
+  Scenario: configuring during Cucumber execution
+    Given a standard Cucumber project directory structure
+    And a file named "features/philosophers.feature" with:
+    """
+    Feature: Drunken Philosophers
+      Scenario: I drink therefore I am
+        Given Immanuel Kant was a real pissant
+    """
+    And a file named "features/step_definitions/steps.rb" with:
+    """
+      Given /^Immanuel Kant was a real pissant$/ do
+        Cucumber.configure do |config|
+           config.tags = ['@wip']
+         end
+      end
+    """
+    When I run cucumber features
+    Then it should fail with
     """
     You cannot modify configuration once Cucumber has started executing features.
-    Ensure all configuration occurs within your support/ folder
     """

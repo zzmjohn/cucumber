@@ -6,7 +6,6 @@ module Cucumber
     def message
       <<-END_OF_ERROR
 You cannot modify configuration once Cucumber has started executing features.
-Ensure all configuration occurs within your support/ folder
 END_OF_ERROR
     end
   end
