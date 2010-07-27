@@ -71,3 +71,18 @@ Feature: Options
       """
       Read feature directories: features
       """
+
+  Scenario: configuring after features have been loaded
+    Given a standard Cucumber project directory structure
+    And a file named "features/step_definitions/cheat_steps.rb" with:
+      """
+      Cucumber.configure do |config|
+        config.tags = ['@wip']
+      end
+      """
+    When I run cucumber features
+    Then STDERR should match
+    """
+    You cannot modify configuration once Cucumber has started executing features.
+    Ensure all configuration occurs within your support/ folder
+    """

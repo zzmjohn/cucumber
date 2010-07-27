@@ -2,6 +2,8 @@ require 'logger'
 require 'gherkin/tag_expression'
 
 module Cucumber
+  class ConfigurationFrozenError < StandardError; end
+
   class Configuration
     include Constantize
     
@@ -18,7 +20,7 @@ module Cucumber
         alias_method "#{name}=", "#{opts[:alias]}="
         alias_method "#{name}?", "#{opts[:alias]}?"
       else
-        define_method("#{name}=") {|val| @settings[name] = val}
+        define_method("#{name}=") {|val| self[name] = val}
         define_method(name)       { @settings[name] }
         define_method("#{name}?") { !!(send name) }
       end
@@ -35,12 +37,23 @@ module Cucumber
     add_setting :formats
     add_setting :disable_profile_loading
 
+    def freeze
+      @settings.freeze
+    end
+
     def [](key)
       @settings[key]
     end
 
     def []=(key, value)
-      @settings[key] = value
+      if @settings.frozen?
+        raise ConfigurationFrozenError.new(<<-END_OF_ERROR)
+You cannot modify configuration once Cucumber has started executing features.
+Ensure all configuration occurs within your support/ folder
+END_OF_ERROR
+      else
+        @settings[key] = value
+      end
     end
     
     def tag_expression
