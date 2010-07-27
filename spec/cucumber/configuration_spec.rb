@@ -397,6 +397,15 @@ END_OF_MESSAGE
       ENV["RAILS_ENV"].should == "selenium"
       config.feature_files.should_not include('RAILS_ENV=selenium')
     end
+    
+    it "should not allow merging of configurations if the config is locked" do
+      config = config_loader.load_from_args([])
+      new_config = config_loader.load_from_args([])
+      
+      config.lock
+      
+      lambda { config.reverse_merge(new_config) }.should raise_error(ConfigurationFrozenError)      
+    end
 
   end
 end

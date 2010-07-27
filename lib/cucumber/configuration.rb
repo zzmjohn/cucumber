@@ -2,7 +2,14 @@ require 'logger'
 require 'gherkin/tag_expression'
 
 module Cucumber
-  class ConfigurationFrozenError < StandardError; end
+  class ConfigurationFrozenError < StandardError
+    def message
+      <<-END_OF_ERROR
+You cannot modify configuration once Cucumber has started executing features.
+Ensure all configuration occurs within your support/ folder
+END_OF_ERROR
+    end
+  end
 
   class Configuration
     include Constantize
@@ -10,7 +17,7 @@ module Cucumber
     def initialize(out_stream = STDOUT, error_stream = STDERR)
       @error_stream = error_stream
       @overridden_paths = []
-      @options ||= default_options
+      @options = default_options
       @options[:out_stream] = out_stream
     end
 
@@ -44,13 +51,10 @@ module Cucumber
     def [](key)
       @options[key]
     end
-
+    
     def []=(key, value)
       if @options.frozen?
-        raise ConfigurationFrozenError.new(<<-END_OF_ERROR)
-You cannot modify configuration once Cucumber has started executing features.
-Ensure all configuration occurs within your support/ folder
-END_OF_ERROR
+        raise ConfigurationFrozenError.new
       else
         @options[key] = value
       end
@@ -81,6 +85,7 @@ END_OF_ERROR
     end
     
     def reverse_merge(other_options)
+      raise ConfigurationFrozenError if @options.frozen?
       @options ||= default_options
       
       @options = other_options.merge_settings(@options)
