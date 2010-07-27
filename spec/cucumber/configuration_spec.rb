@@ -119,7 +119,7 @@ module Cucumber
       given_cucumber_yml_defined_as({'default' => '--require some_file'})
 
       config = config_loader.load_from_args(%w{--format progress})
-      config[:require].should include('some_file')
+      config[:requires].should include('some_file')
     end
 
     context '--profile' do
@@ -129,14 +129,14 @@ module Cucumber
 
         config = config_loader.load_from_args(%w{--format progress --profile bongo})
         config[:formats].should == [['progress', out]]
-        config[:require].should == ['from/yml']
+        config[:requires].should == ['from/yml']
       end
 
       it "expands args from the default profile when no flags are provided" do
         given_cucumber_yml_defined_as({'default' => '--require from/yml'})
 
         config = config_loader.load_from_args([])
-        config[:require].should == ['from/yml']
+        config[:requires].should == ['from/yml']
       end
 
       it "allows --strict to be set by a profile" do
@@ -150,7 +150,7 @@ module Cucumber
         given_cucumber_yml_defined_as({'default' => '<%="--require some_file"%>'})
 
         config = config_loader.load_from_args([])
-        config[:require].should include('some_file')
+        config[:requires].should include('some_file')
       end
 
       it "parses ERB in cucumber.yml that makes uses nested ERB sessions" do
@@ -160,7 +160,7 @@ module Cucumber
 ERB_YML
 
         config = config_loader.load_from_args(%w(-p standard))
-        config[:require].should include('some_file')
+        config[:requires].should include('some_file')
       end
 
       it "provides a helpful error message when a specified profile does not exists in cucumber.yml" do
@@ -198,7 +198,7 @@ END_OF_MESSAGE
             given_cucumber_yml_defined_as({'default' => '-v --require file_specified_in_default_profile.rb'})
 
             config = config_loader.load_from_args("#{flag} --require some_file.rb".split(" "))
-            config[:require].should == ['some_file.rb']
+            config[:requires].should == ['some_file.rb']
           end
 
           it "notifies the user that the profiles are being disabled" do

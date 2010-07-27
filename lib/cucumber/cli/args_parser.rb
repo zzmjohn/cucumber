@@ -85,7 +85,7 @@ module Cucumber
             "Files under directories named \"support\" are always",
             "loaded first.",
             "This option can be specified multiple times.") do |v|
-            @config[:require] << v
+            @config[:requires] << v
             if(Cucumber::JRUBY && File.directory?(v))
               require 'java'
               $CLASSPATH << v

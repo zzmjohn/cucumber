@@ -84,7 +84,7 @@ END_OF_ERROR
       @settings ||= default_options
       
       @settings = other_options.merge_settings(@settings)
-      @settings[:require] += other_options[:require]
+      @settings[:requires] += other_options[:requires]
       @settings[:excludes] += other_options[:excludes]
       @settings[:name_regexps] += other_options[:name_regexps]
       @settings[:tag_expressions] += other_options[:tag_expressions]
@@ -132,7 +132,7 @@ END_OF_ERROR
     end
 
     def all_files_to_load
-      requires = @settings[:require].empty? ? require_dirs : @settings[:require]
+      requires = @settings[:requires].empty? ? require_dirs : @settings[:requires]
       files = requires.map do |path|
         path = path.gsub(/\\/, '/') # In case we're on windows. Globs don't work with backslashes.
         path = path.gsub(/\/$/, '') # Strip trailing slash.
@@ -217,7 +217,7 @@ END_OF_ERROR
     def default_options
       {
         :strict       => false,
-        :require      => [],
+        :requires      => [],
         :dry_run      => false,
         :formats      => [],
         :excludes     => [],

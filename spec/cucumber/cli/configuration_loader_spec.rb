@@ -47,7 +47,7 @@ module Cli
       context '-r or --require' do
         it "collects all specified files into an array" do
           after_parsing('--require some_file.rb -r another_file.rb') do |config|
-            config[:require].should == ['some_file.rb', 'another_file.rb']
+            config[:requires].should == ['some_file.rb', 'another_file.rb']
           end
         end
       end
@@ -136,7 +136,7 @@ module Cli
           given_cucumber_yml_defined_as({'default' => '--require some_file'})
 
           config = config_loader.load_from_args(%w{--format progress})
-          config[:require].should include('some_file')
+          config[:requires].should include('some_file')
         end
 
         it "merges all uniq values from both cmd line and the profile" do
@@ -155,7 +155,7 @@ module Cli
         it "combines the require files of both" do
           given_cucumber_yml_defined_as('bar' => %w[--require features -r dog.rb])
           config = config_loader.load_from_args(%w[--require foo.rb -p bar])
-          config[:require].should == %w[foo.rb features dog.rb]
+          config[:requires].should == %w[foo.rb features dog.rb]
         end
 
         it "combines the tag names of both" do
@@ -227,7 +227,7 @@ module Cli
           given_cucumber_yml_defined_as({'default' => '-v --require file_specified_in_default_profile.rb'})
 
           after_parsing("-P --require some_file.rb") do |config|
-            config[:require].should == ['some_file.rb']
+            config[:requires].should == ['some_file.rb']
           end
         end
 
