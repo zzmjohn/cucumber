@@ -70,13 +70,8 @@ module Cucumber
           # Support must be loaded first to ensure post configuration hook can
           # run before anything else.
           step_mother.should_receive(:load_code_files).with(['support']).ordered
-
-          # Feature files must be loaded before step definitions are required.
-          # This is because i18n step methods are only aliased when
-          # features are loaded. If we swap the order, the requires
-          # will fail.
-          step_mother.should_receive(:load_plain_text_features).ordered
           step_mother.should_receive(:load_code_files).with(['step defs']).ordered
+          step_mother.should_receive(:load_plain_text_features).ordered
 
           cli.execute!(step_mother)
         end
