@@ -4,7 +4,10 @@
 * Support a Options hook in the Ruby adapter which can be called in your env.rb to configure Cucumber. The options supported are the same as those on the command line. This will be particular useful for plugin writers. (#640 Joseph Wilk)
 
 === Removed features
-AfterConfiguration hook is no longer required. Use the Configuration.configure instead.
+* AfterConfiguration hook is no longer required. Use the Configuration.configure instead.
+
+=== Bugfixes
+* JUnit formatter now puts output in CDATA sections. (Dmitry Amelchenko)
 
 == 0.8.5 (2010-07-14)
 
