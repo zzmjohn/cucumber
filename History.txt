@@ -1,10 +1,10 @@
 == (In Git)
 
 === New features
-* Support a Options hook in the Ruby adapter which can be called in your env.rb to configure Cucumber. The options supported are the same as those on the command line. This will be particular useful for plugin writers. (#640 Joseph Wilk)
+* Support a Cucumber.configure method which allows you to configure Cucumber through Ruby and within the same process as Cucumber. The possible configuration options follow those of the command line options. This will be particularly useful for plugin writers and for replacing cucumber.yml (#640 Joseph Wilk)
 
 === Removed features
-AfterConfiguration hook is no longer required. Use the Configuration.configure instead.
+AfterConfiguration hook is no longer required. Use the Cucumber.configure instead.
 
 == 0.8.5 (2010-07-14)
 
