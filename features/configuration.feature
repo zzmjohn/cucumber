@@ -107,3 +107,23 @@ Feature: Options
     """
     You cannot modify configuration once Cucumber has started executing features.
     """
+  
+  @wip
+  Scenario: Profiles
+    Given a standard Cucumber project directory structure
+    And a file named "features/support/env.rb" with:
+      """
+      Cucumber.configure('html_it') do |config|
+        config.formats << ['html', config.out_stream]
+      end
+      
+      Cucumber.configure('progress') do |config|
+        config.formats << ['pretty', config.out_stream]
+      end
+      
+      """
+    When I run cucumber features --profile html_it
+    Then it should pass with
+    """
+    html
+    """
