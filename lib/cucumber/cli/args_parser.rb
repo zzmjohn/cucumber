@@ -1,3 +1,4 @@
+require 'optparse'
 require 'cucumber/cli/profile_loader'
 require 'cucumber/formatter/ansicolor'
 

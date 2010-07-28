@@ -4,7 +4,6 @@ rescue LoadError
   require 'rubygems'
   require 'gherkin'
 end
-require 'optparse'
 require 'cucumber'
 require 'logger'
 require 'cucumber/parser'
