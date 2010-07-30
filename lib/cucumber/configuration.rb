@@ -87,7 +87,7 @@ END_OF_ERROR
       raise ConfigurationFrozenError if @options.frozen?
       @options ||= default_options
       
-      @options = other_options.merge_settings(@options)
+      @options = other_options.merge_options(@options)
       @options[:requires] += other_options[:requires]
       @options[:excludes] += other_options[:excludes]
       @options[:name_regexps] += other_options[:name_regexps]
@@ -115,8 +115,8 @@ END_OF_ERROR
       end
     end
     
-    def merge_settings(settings)
-      @options.merge(settings)
+    def merge_options(options)
+      @options.merge(options)
     end
 
     def filters
