@@ -43,7 +43,8 @@ END_OF_ERROR
     add_setting :formats
     add_setting :disable_profile_loading
 
-    def lock
+    def validate_and_lock!
+      raise("You can't use both --strict and --wip") if strict? && wip?
       @options.freeze
     end
 
@@ -83,40 +84,40 @@ END_OF_ERROR
       @expanded_args_without_drb
     end
     
-    def reverse_merge(other_options)
+    def reverse_merge(other_config)
       raise ConfigurationFrozenError if @options.frozen?
       @options ||= default_options
       
-      @options = other_options.merge_settings(@options)
-      @options[:requires] += other_options[:requires]
-      @options[:excludes] += other_options[:excludes]
-      @options[:name_regexps] += other_options[:name_regexps]
-      @options[:tag_expressions] += other_options[:tag_expressions]
-      @options[:env_vars] = other_options[:env_vars].merge(@options[:env_vars])
+      @options = other_config.merge_options(@options)
+      @options[:requires] += other_config[:requires]
+      @options[:excludes] += other_config[:excludes]
+      @options[:name_regexps] += other_config[:name_regexps]
+      @options[:tag_expressions] += other_config[:tag_expressions]
+      @options[:env_vars] = other_config[:env_vars].merge(@options[:env_vars])
       
       if @options[:paths].empty?
-        @options[:paths] = other_options[:paths]
+        @options[:paths] = other_config[:paths]
       else
-        @overridden_paths += (other_options[:paths] - @options[:paths])
+        @overridden_paths += (other_config[:paths] - @options[:paths])
       end
-      @options[:source] &= other_options[:source]
-      @options[:snippets] &= other_options[:snippets]
-      @options[:strict] |= other_options[:strict]
+      @options[:source] &= other_config[:source]
+      @options[:snippets] &= other_config[:snippets]
+      @options[:strict] |= other_config[:strict]
 
-      @options[:profiles] += other_options[:profiles]
+      @options[:profiles] += other_config[:profiles]
 
-      @options[:expanded_args] += other_options[:expanded_args]
+      @options[:expanded_args] += other_config[:expanded_args]
 
       if @options[:formats].empty?
-        @options[:formats] = other_options[:formats]
+        @options[:formats] = other_config[:formats]
       else
-        @options[:formats] += other_options[:formats]
+        @options[:formats] += other_config[:formats]
         @options[:formats] = stdout_formats[0..0] + non_stdout_formats
       end
     end
     
-    def merge_settings(settings)
-      @options.merge(settings)
+    def merge_options(options)
+      @options.merge(options)
     end
 
     def filters

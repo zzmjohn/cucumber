@@ -52,15 +52,15 @@ module Cucumber
         step_mother.load_code_files(configuration.support_to_load)
         step_mother.options = configuration
 
-        features = step_mother.load_plain_text_features(configuration.feature_files)
-
         step_mother.load_code_files(configuration.step_defs_to_load)
+
+        features = step_mother.load_plain_text_features(configuration.feature_files)
 
         runner = build_runner(step_mother, @out_stream)
 
         step_mother.visitor = runner # Needed to support World#announce
 
-        configuration.lock
+        configuration.validate_and_lock!
 
         runner.visit_features(features)
 
