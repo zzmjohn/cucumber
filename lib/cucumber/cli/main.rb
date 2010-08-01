@@ -60,7 +60,7 @@ module Cucumber
 
         step_mother.visitor = runner # Needed to support World#announce
 
-        configuration.lock
+        configuration.validate_and_lock!
 
         runner.visit_features(features)
 

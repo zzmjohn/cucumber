@@ -43,7 +43,8 @@ END_OF_ERROR
     add_setting :formats
     add_setting :disable_profile_loading
 
-    def lock
+    def validate_and_lock!
+      raise("You can't use both --strict and --wip") if strict? && wip?
       @options.freeze
     end
 

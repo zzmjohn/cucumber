@@ -25,8 +25,6 @@ module Cucumber
 
         config = arrange_formats(config)
 
-        raise("You can't use both --strict and --wip") if config.strict? && config.wip?
-
         args.replace(config.expanded_args_without_drb) if config.drb?
 
         set_environment_variables(config)
