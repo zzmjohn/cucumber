@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Aslak Helles\303\270y"]
-  s.date = %q{2010-07-26}
+  s.date = %q{2010-08-01}
   s.default_executable = %q{cucumber}
   s.description = %q{Behaviour Driven Development with elegance and joy}
   s.email = %q{cukes@googlegroups.com}
@@ -287,6 +287,7 @@ Gem::Specification.new do |s|
      "features/bug_585_tab_indentation.feature",
      "features/bug_600.feature",
      "features/call_steps_from_stepdefs.feature",
+     "features/configuration.feature",
      "features/cucumber_cli.feature",
      "features/cucumber_cli_outlines.feature",
      "features/custom_formatter.feature",
@@ -307,7 +308,6 @@ Gem::Specification.new do |s|
      "features/listener_debugger_formatter.feature",
      "features/multiline_names.feature",
      "features/negative_tagged_hooks.feature",
-     "features/post_configuration_hook.feature",
      "features/profiles.feature",
      "features/rake_task.feature",
      "features/report_called_undefined_steps.feature",
@@ -445,11 +445,12 @@ Gem::Specification.new do |s|
      "lib/cucumber/ast/tree_walker.rb",
      "lib/cucumber/ast/visitor.rb",
      "lib/cucumber/broadcaster.rb",
-     "lib/cucumber/cli/configuration.rb",
+     "lib/cucumber/cli/args_parser.rb",
+     "lib/cucumber/cli/configuration_loader.rb",
      "lib/cucumber/cli/drb_client.rb",
      "lib/cucumber/cli/main.rb",
-     "lib/cucumber/cli/options.rb",
      "lib/cucumber/cli/profile_loader.rb",
+     "lib/cucumber/configuration.rb",
      "lib/cucumber/constantize.rb",
      "lib/cucumber/core_ext/instance_exec.rb",
      "lib/cucumber/core_ext/proc.rb",
@@ -524,11 +525,11 @@ Gem::Specification.new do |s|
      "spec/cucumber/ast/table_spec.rb",
      "spec/cucumber/ast/tree_walker_spec.rb",
      "spec/cucumber/broadcaster_spec.rb",
-     "spec/cucumber/cli/configuration_spec.rb",
+     "spec/cucumber/cli/configuration_loader_spec.rb",
      "spec/cucumber/cli/drb_client_spec.rb",
      "spec/cucumber/cli/main_spec.rb",
-     "spec/cucumber/cli/options_spec.rb",
      "spec/cucumber/cli/profile_loader_spec.rb",
+     "spec/cucumber/configuration_spec.rb",
      "spec/cucumber/core_ext/proc_spec.rb",
      "spec/cucumber/formatter/ansicolor_spec.rb",
      "spec/cucumber/formatter/color_io_spec.rb",
@@ -581,11 +582,11 @@ for important information about this release. Happy cuking!
      "spec/cucumber/ast/table_spec.rb",
      "spec/cucumber/ast/tree_walker_spec.rb",
      "spec/cucumber/broadcaster_spec.rb",
-     "spec/cucumber/cli/configuration_spec.rb",
+     "spec/cucumber/cli/configuration_loader_spec.rb",
      "spec/cucumber/cli/drb_client_spec.rb",
      "spec/cucumber/cli/main_spec.rb",
-     "spec/cucumber/cli/options_spec.rb",
      "spec/cucumber/cli/profile_loader_spec.rb",
+     "spec/cucumber/configuration_spec.rb",
      "spec/cucumber/core_ext/proc_spec.rb",
      "spec/cucumber/formatter/ansicolor_spec.rb",
      "spec/cucumber/formatter/color_io_spec.rb",
