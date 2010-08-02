@@ -402,7 +402,7 @@ END_OF_MESSAGE
       config = config_loader.load_from_args([])
       new_config = config_loader.load_from_args([])
       
-      config.lock
+      config.validate_and_lock!
       
       lambda { config.reverse_merge(new_config) }.should raise_error(ConfigurationFrozenError)      
     end
