@@ -43,7 +43,14 @@ END_OF_ERROR
     add_setting :formats
     add_setting :disable_profile_loading
 
-    def validate_and_lock!
+    def require_files_under(dir, priority_regexp=nil)
+      files = Dir["#{dir}/**/*.rb"].sort
+      priority = priority_regexp ? files.select{|file| file =~ priority_regexp} : []
+      files_with_lower_priority = files - priority
+      (priority + files_with_lower_priority).each{|file| require file}
+    end
+
+    def validate_and_lock! #:nodoc:
       raise("You can't use both --strict and --wip") if strict? && wip?
       @options.freeze
     end

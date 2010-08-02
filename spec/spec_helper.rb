@@ -1,3 +1,4 @@
+ENV['CUCUMBER_SELF_TEST']='true'
 ENV['CUCUMBER_COLORS']=nil
 $:.unshift(File.dirname(__FILE__) + '/../lib')
 $:.unshift(File.dirname(__FILE__))

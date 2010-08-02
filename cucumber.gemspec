@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Aslak Helles\303\270y"]
-  s.date = %q{2010-08-01}
+  s.date = %q{2010-08-03}
   s.default_executable = %q{cucumber}
   s.description = %q{Behaviour Driven Development with elegance and joy}
   s.email = %q{cukes@googlegroups.com}
@@ -19,7 +19,8 @@ Gem::Specification.new do |s|
      "README.rdoc"
   ]
   s.files = [
-    ".gitattributes",
+    ".cucumber.rb",
+     ".gitattributes",
      ".gitignore",
      ".rspec",
      "Caliper.yml",
@@ -447,6 +448,7 @@ Gem::Specification.new do |s|
      "lib/cucumber/broadcaster.rb",
      "lib/cucumber/cli/args_parser.rb",
      "lib/cucumber/cli/configuration_loader.rb",
+     "lib/cucumber/cli/default_dot_cucumber.rb",
      "lib/cucumber/cli/drb_client.rb",
      "lib/cucumber/cli/main.rb",
      "lib/cucumber/cli/profile_loader.rb",

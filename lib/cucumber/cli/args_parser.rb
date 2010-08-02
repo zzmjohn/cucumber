@@ -147,7 +147,7 @@ module Cucumber
             @config[:name_regexps] << /#{v}/
           end
           opts.on("-e", "--exclude PATTERN", "Don't run feature files or require ruby files matching PATTERN") do |v|
-            warn("The --exclude option is deprecated and will be removed after 0.9. Please exclude features with --tags ~@sometag.")
+            warn("The --exclude option is deprecated and will be removed after 0.9.x. Please exclude features with --tags ~@sometag.") unless ENV['CUCUMBER_SELF_TEST']
             @config[:excludes] << Regexp.new(v)
           end
           opts.on(PROFILE_SHORT_FLAG, "#{PROFILE_LONG_FLAG} PROFILE",

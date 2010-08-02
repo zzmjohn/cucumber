@@ -69,6 +69,7 @@ module Cucumber
           
           # Support must be loaded first to ensure post configuration hook can
           # run before anything else.
+          step_mother.should_receive(:dot_configure_present?).ordered
           step_mother.should_receive(:load_code_files).with(['support']).ordered
           step_mother.should_receive(:load_code_files).with(['step defs']).ordered
           step_mother.should_receive(:load_plain_text_features).ordered

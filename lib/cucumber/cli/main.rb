@@ -49,15 +49,34 @@ module Cucumber
 
         step_mother.options = configuration
         step_mother.log = configuration.log
-        step_mother.load_code_files(configuration.support_to_load)
         step_mother.options = configuration
 
-        step_mother.load_code_files(configuration.step_defs_to_load)
+        if step_mother.dot_configure_present?
+          step_mother.load_dot_configure_files
+        else
+          unless(ENV['CUCUMBER_SELF_TEST'])
+            @error_stream.puts <<-EOM
+(::) (::) (::) (::) (::) (::) (::) (::) (::) (::) (::) (::) (::) (::) (::)
+
+                       (::)   W A R N I N G   (::)
+
+You don't have a .cucumber.rb file. This file is used to configure
+Cucumber and will be mandatory after release 0.9.x. To make this
+warning go away, just create a .cucumber.rb file in the root of your
+project with the following contents: 
+
+#{IO.read(File.dirname(__FILE__) + '/default_dot_cucumber.rb')}
+
+(::) (::) (::) (::) (::) (::) (::) (::) (::) (::) (::) (::) (::) (::) (::)
+EOM
+          end
+          step_mother.load_code_files(configuration.support_to_load)
+          step_mother.load_code_files(configuration.step_defs_to_load)
+        end
 
         features = step_mother.load_plain_text_features(configuration.feature_files)
 
         runner = build_runner(step_mother, @out_stream)
-
         step_mother.visitor = runner # Needed to support World#announce
 
         configuration.validate_and_lock!

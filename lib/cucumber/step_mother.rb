@@ -94,20 +94,30 @@ module Cucumber
       raise TagExcess.new(error_messages) if error_messages.any?
     end
 
-    def load_code_files(step_def_files)
+    def dot_configure_present?
+      dot_configure_files.any?
+    end
+
+    def load_dot_configure_files
+      load_code_files(dot_configure_files)
+    end
+
+    def dot_configure_files
+      Dir['.cucumber.*']
+    end
+
+    def load_code_files(code_files)
       log.debug("Code:\n")
-      step_def_files.each do |step_def_file|
-        load_code_file(step_def_file)
+      code_files.each do |code_file|
+        load_code_file(code_file)
       end
       log.debug("\n")
     end
 
-    def load_code_file(step_def_file)
-      if programming_language = programming_language_for(step_def_file)
-        log.debug("  * #{step_def_file}\n")
-        programming_language.load_code_file(step_def_file)
-      else
-        log.debug("  * #{step_def_file} [NOT SUPPORTED]\n")
+    def load_code_file(code_file)
+      if programming_language = programming_language_for(code_file)
+        log.debug("  * #{code_file}\n")
+        programming_language.load_code_file(code_file)
       end
     end
 

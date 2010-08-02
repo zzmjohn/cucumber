@@ -43,8 +43,7 @@ Feature: Options
       """
 
   Scenario: HTML formatter
-    Given a standard Cucumber project directory structure
-    And a file named "features/support/env.rb" with:
+    Given a file named "features/support/env.rb" with:
       """
       Cucumber.configure do |config|
         config.formats << ['html', config.out_stream]
@@ -58,8 +57,7 @@ Feature: Options
       """
 
   Scenario: feature directories read from configuration
-    Given a standard Cucumber project directory structure
-    And a file named "features/support/env.rb" with:
+    Given a file named "features/support/env.rb" with:
       """
       Cucumber.configure do |config|
         config.out_stream << "Read feature directories: #{config.feature_dirs.join(', ')}"
@@ -72,9 +70,27 @@ Feature: Options
       Read feature directories: features
       """
 
+  Scenario: Pick up .cucumber, but not anything under features
+    And a file named ".cucumber.rb" with:
+      """
+      Cucumber.configure do |config|
+        config.out_stream << "IM IN URZ CONFIGZ"
+      end
+      """
+    And a file named "features/support/env.rb" with:
+      """
+      This isn't even ruby, but that's
+      ok since it is never loaded
+      """
+    When I run cucumber features
+    Then STDERR should be empty
+    And the output should contain
+      """
+      IM IN URZ CONFIGZ
+      """
+
   Scenario: configuring outside of support
-    Given a standard Cucumber project directory structure
-    And a file named "features/step_definitions/cheat_steps.rb" with:
+    Given a file named "features/step_definitions/cheat_steps.rb" with:
       """
       Cucumber.configure do |config|
         config.formats << ['html', config.out_stream]
@@ -87,8 +103,7 @@ Feature: Options
       """
 
   Scenario: configuring during Cucumber execution
-    Given a standard Cucumber project directory structure
-    And a file named "features/philosophers.feature" with:
+    Given a file named "features/philosophers.feature" with:
       """
       Feature: Drunken Philosophers
         Scenario: I drink therefore I am
@@ -109,8 +124,7 @@ Feature: Options
       """
 
   Scenario: strict and wip
-    Given a standard Cucumber project directory structure
-    And a file named "features/support/env.rb" with:
+    Given a file named "features/support/env.rb" with:
       """
       Cucumber.configure do |config|
         config.wip = true
@@ -126,8 +140,7 @@ Feature: Options
 
   @wip
   Scenario: Profiles
-    Given a standard Cucumber project directory structure
-    And a file named "features/support/env.rb" with:
+    Given a file named "features/support/env.rb" with:
       """
       Cucumber.configure('html_it') do |config|
         config.formats << ['html', config.out_stream]

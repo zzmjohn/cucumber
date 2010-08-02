@@ -1,7 +1,12 @@
 == (In Git)
 
 === New features
-* Support a Cucumber.configure method which allows you to configure Cucumber through Ruby and within the same process as Cucumber. The possible configuration options follow those of the command line options. This will be particularly useful for plugin writers and for replacing cucumber.yml (#640 Joseph Wilk)
+* Support a Cucumber.configure method which allows you to configure Cucumber through Ruby and within the same process as Cucumber. 
+  The possible configuration options follow those of the command line options. This will be particularly useful for plugin writers 
+  and for replacing cucumber.yml (#640 Joseph Wilk)
+* Automatically load .cucumber.* files. This is the preferred place to use Cucumber.configure. If found, the automatic loading
+  of ruby files under features is disabled. You will ger a warning if you don't have a .cucumber.rb file (or some other language
+  extension). (Aslak Hellesøy)
 
 == Deprecated features
 * --exclude. Use --tags ~@sometag instead. (Aslak Hellesøy)
