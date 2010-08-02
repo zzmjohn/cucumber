@@ -3,6 +3,9 @@
 === New features
 * Support a Cucumber.configure method which allows you to configure Cucumber through Ruby and within the same process as Cucumber. The possible configuration options follow those of the command line options. This will be particularly useful for plugin writers and for replacing cucumber.yml (#640 Joseph Wilk)
 
+== Deprecated features
+* --exclude. Use --tags ~@sometag instead. (Aslak Hellesøy)
+
 === Removed features
 * AfterConfiguration hook is no longer required. Use the Cucumber.configure instead.
 
