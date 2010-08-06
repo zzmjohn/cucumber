@@ -51,8 +51,8 @@ module Cucumber
         step_mother.log = configuration.log
         step_mother.options = configuration
 
-        if step_mother.dot_configure_present?
-          step_mother.load_dot_configure_files
+        if step_mother.dot_cucumber_present?
+          step_mother.load_dot_cucumber_files
         else
           unless(ENV['CUCUMBER_SELF_TEST'])
             @error_stream.puts <<-EOM

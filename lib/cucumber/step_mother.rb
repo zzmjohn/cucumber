@@ -94,15 +94,15 @@ module Cucumber
       raise TagExcess.new(error_messages) if error_messages.any?
     end
 
-    def dot_configure_present?
-      dot_configure_files.any?
+    def dot_cucumber_present?
+      dot_cucumber_files.any?
     end
 
-    def load_dot_configure_files
-      load_code_files(dot_configure_files)
+    def load_dot_cucumber_files
+      load_code_files(dot_cucumber_files)
     end
 
-    def dot_configure_files
+    def dot_cucumber_files
       Dir['.cucumber.*']
     end
 
