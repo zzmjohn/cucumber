@@ -93,7 +93,6 @@ END_OF_ERROR
     
     def reverse_merge(other_config)
       raise ConfigurationFrozenError if @options.frozen?
-      @options ||= default_options
       
       @options = other_config.merge_options(@options)
       @options[:requires] += other_config[:requires]
@@ -143,6 +142,7 @@ END_OF_ERROR
       end
     end
 
+    # DEPRECATED
     def all_files_to_load
       requires = @options[:requires].empty? ? require_dirs : @options[:requires]
       files = requires.map do |path|
@@ -157,10 +157,12 @@ END_OF_ERROR
       files.sort
     end
 
+    # DEPRECATED
     def step_defs_to_load
       all_files_to_load.reject {|f| f =~ %r{/support/} }
     end
 
+    # DEPRECATED
     def support_to_load
       support_files = all_files_to_load.select {|f| f =~ %r{/support/} }
       env_files = support_files.select {|f| f =~ %r{/support/env\..*} }
@@ -247,10 +249,12 @@ END_OF_ERROR
       @options[:paths].empty? ? ['features'] : @options[:paths]
     end
 
+    # DEPRECATED
     def remove_excluded_files_from(files)
       files.reject! {|path| @options[:excludes].detect {|pattern| path =~ pattern } }
     end
 
+    # DEPRECATED
     def require_dirs
       feature_dirs + Dir['vendor/{gems,plugins}/*/cucumber']
     end

@@ -74,12 +74,12 @@ EOM
 
         features = step_mother.load_plain_text_features(configuration.feature_files)
 
-        runner = build_runner(step_mother, @out_stream)
-        step_mother.visitor = runner # Needed to support World#announce
+        tree_walker = tree_walker(step_mother, @out_stream)
+        step_mother.visitor = tree_walker # Needed to support World#announce
 
         configuration.validate_and_lock!
 
-        runner.visit_features(features)
+        tree_walker.visit_features(features)
 
         failure = if configuration.wip?
           step_mother.scenarios(:passed).any?
@@ -104,7 +104,7 @@ EOM
 
       private
 
-      def build_runner(step_mother, io)
+      def tree_walker(step_mother, io)
         Ast::TreeWalker.new(step_mother, configuration.formatters(step_mother), configuration, io)
       end
 
