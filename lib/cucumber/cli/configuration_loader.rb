@@ -3,7 +3,9 @@ require 'cucumber/constantize'
 
 module Cucumber
   module Cli
-    class ConfigurationLoader
+    # DEPRECATED. This class has unclear responsibilities. Move
+    # useful methods into Configuration, ArgsParser and Main.
+    class ConfigurationLoader #:nodoc:
       DEFAULT_PROFILE = 'default'
       
       def initialize(out_stream, error_stream)
