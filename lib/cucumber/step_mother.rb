@@ -49,7 +49,7 @@ module Cucumber
   class StepMother
     include Constantize
     include Formatter::Duration
-    attr_writer :options, :visitor, :log
+    attr_writer :configuration, :visitor, :log
 
     def initialize
       @unsupported_programming_languages = []
@@ -66,7 +66,7 @@ module Cucumber
       log.debug("Features:\n")
       feature_files.each do |f|
         feature_file = FeatureFile.new(f)
-        feature = feature_file.parse(options, tag_counts)
+        feature = feature_file.parse(configuration, tag_counts)
         if feature
           features.add_feature(feature)
           log.debug("  * #{f}\n")
@@ -82,7 +82,7 @@ module Cucumber
 
     def check_tag_limits(tag_counts)
       error_messages = []
-      options.tag_expression.limits.each do |tag_name, tag_limit|
+      configuration.tag_expression.limits.each do |tag_name, tag_limit|
         tag_locations = (tag_counts[tag_name] || [])
         tag_count = tag_locations.length
         if tag_count > tag_limit
@@ -134,9 +134,8 @@ module Cucumber
       programming_language
     end
 
-    # Returns the options passed on the command line.
-    def options
-      @options ||= Cucumber.configuration
+    def configuration
+      @configuration ||= Cucumber.configuration
     end
 
     def step_visited(step) #:nodoc:
@@ -298,8 +297,8 @@ module Cucumber
         programming_language.step_matches(step_name, name_to_report).to_a
       end.flatten
       raise Undefined.new(step_name) if matches.empty?
-      matches = best_matches(step_name, matches) if matches.size > 1 && options[:guess]
-      raise Ambiguous.new(step_name, matches, options[:guess]) if matches.size > 1
+      matches = best_matches(step_name, matches) if matches.size > 1 && configuration[:guess]
+      raise Ambiguous.new(step_name, matches, configuration[:guess]) if matches.size > 1
       matches[0]
     end
 
@@ -366,7 +365,7 @@ module Cucumber
     end
 
     def before(scenario) #:nodoc:
-      return if options[:dry_run] || @current_scenario
+      return if configuration[:dry_run] || @current_scenario
       @current_scenario = scenario
       @programming_languages.each do |programming_language|
         programming_language.before(scenario)
@@ -375,14 +374,14 @@ module Cucumber
     
     def after(scenario) #:nodoc:
       @current_scenario = nil
-      return if options[:dry_run]
+      return if configuration[:dry_run]
       @programming_languages.each do |programming_language|
         programming_language.after(scenario)
       end
     end
     
     def after_step #:nodoc:
-      return if options[:dry_run]
+      return if configuration[:dry_run]
       @programming_languages.each do |programming_language|
         programming_language.execute_after_step(@current_scenario)
       end

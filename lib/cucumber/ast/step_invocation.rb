@@ -84,11 +84,11 @@ module Cucumber
         begin
           @step_match = step_mother.step_match(@name)
         rescue Undefined => e
-          failed(step_mother.options, e, true)
+          failed(step_mother.configuration, e, true)
           status!(:undefined)
           @step_match = NoStepMatch.new(@step, @name)
         rescue Ambiguous => e
-          failed(step_mother.options, e, false)
+          failed(step_mother.configuration, e, false)
           status!(:failed)
           @step_match = NoStepMatch.new(@step, @name)
         end

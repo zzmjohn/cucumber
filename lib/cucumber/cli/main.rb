@@ -47,9 +47,8 @@ module Cucumber
           end
         end
 
-        step_mother.options = configuration
+        step_mother.configuration = configuration
         step_mother.log = configuration.log
-        step_mother.options = configuration
 
         if step_mother.dot_cucumber_present?
           step_mother.load_dot_cucumber_files

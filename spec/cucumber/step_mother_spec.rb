@@ -42,7 +42,7 @@ You can run again with --guess to make Cucumber be more smart about it
     end
 
     it "should not show --guess hint when --guess is used" do
-      @step_mother.options = {:guess => true}
+      @step_mother.configuration = {:guess => true}
 
       @dsl.Given(/Three (.*) mice/) {|disability|}
       @dsl.Given(/Three cute (.*)/) {|animal|}
@@ -58,7 +58,7 @@ spec/cucumber/step_mother_spec.rb:48:in `/Three cute (.*)/'
     end
 
     it "should not raise Ambiguous error when multiple step definitions match, but --guess is enabled" do
-      @step_mother.options = {:guess => true}
+      @step_mother.configuration = {:guess => true}
       @dsl.Given(/Three (.*) mice/) {|disability|}
       @dsl.Given(/Three (.*)/) {|animal|}
       
@@ -68,7 +68,7 @@ spec/cucumber/step_mother_spec.rb:48:in `/Three cute (.*)/'
     end
     
     it "should not raise NoMethodError when guessing from multiple step definitions with nil fields" do
-      @step_mother.options = {:guess => true}
+      @step_mother.configuration = {:guess => true}
       @dsl.Given(/Three (.*) mice( cannot find food)?/) {|disability, is_disastrous|}
       @dsl.Given(/Three (.*)?/) {|animal|}
       
@@ -78,7 +78,7 @@ spec/cucumber/step_mother_spec.rb:48:in `/Three cute (.*)/'
     end
     
     it "should pick right step definition when --guess is enabled and equal number of capture groups" do
-      @step_mother.options = {:guess => true}
+      @step_mother.configuration = {:guess => true}
       right = @dsl.Given(/Three (.*) mice/) {|disability|}
       wrong = @dsl.Given(/Three (.*)/) {|animal|}
       
@@ -86,7 +86,7 @@ spec/cucumber/step_mother_spec.rb:48:in `/Three cute (.*)/'
     end
     
     it "should pick right step definition when --guess is enabled and unequal number of capture groups" do
-      @step_mother.options = {:guess => true}
+      @step_mother.configuration = {:guess => true}
       right = @dsl.Given(/Three (.*) mice ran (.*)/) {|disability|}
       wrong = @dsl.Given(/Three (.*)/) {|animal|}
       
@@ -94,7 +94,7 @@ spec/cucumber/step_mother_spec.rb:48:in `/Three cute (.*)/'
     end
 
     it "should pick most specific step definition when --guess is enabled and unequal number of capture groups" do
-      @step_mother.options = {:guess => true}
+      @step_mother.configuration = {:guess => true}
       general       = @dsl.Given(/Three (.*) mice ran (.*)/) {|disability|}
       specific      = @dsl.Given(/Three blind mice ran far/) do; end
       more_specific = @dsl.Given(/^Three blind mice ran far$/) do; end
