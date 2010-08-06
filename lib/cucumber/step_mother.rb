@@ -49,7 +49,7 @@ module Cucumber
   class StepMother
     include Constantize
     include Formatter::Duration
-    attr_writer :configuration, :visitor, :log
+    attr_writer :configuration, :visitor
 
     def initialize
       @unsupported_programming_languages = []
@@ -63,17 +63,17 @@ module Cucumber
 
       tag_counts = {}
       start = Time.new
-      log.debug("Features:\n")
+      configuration.log.debug("Features:\n")
       feature_files.each do |f|
         feature_file = FeatureFile.new(f)
         feature = feature_file.parse(configuration, tag_counts)
         if feature
           features.add_feature(feature)
-          log.debug("  * #{f}\n")
+          configuration.log.debug("  * #{f}\n")
         end
       end
       duration = Time.now - start
-      log.debug("Parsing feature files took #{format_duration(duration)}\n\n")
+      configuration.log.debug("Parsing feature files took #{format_duration(duration)}\n\n")
       
       check_tag_limits(tag_counts)
       
@@ -107,16 +107,16 @@ module Cucumber
     end
 
     def load_code_files(code_files)
-      log.debug("Code:\n")
+      configuration.log.debug("Code:\n")
       code_files.each do |code_file|
         load_code_file(code_file)
       end
-      log.debug("\n")
+      configuration.log.debug("\n")
     end
 
     def load_code_file(code_file)
       if programming_language = programming_language_for(code_file)
-        log.debug("  * #{code_file}\n")
+        configuration.log.debug("  * #{code_file}\n")
         programming_language.load_code_file(code_file)
       end
     end
@@ -395,7 +395,7 @@ module Cucumber
         begin
           load_programming_language(ext)
         rescue LoadError => e
-          log.debug("Failed to load '#{ext}' programming language for file #{step_def_file}: #{e.message}\n")
+          configuration.log.debug("Failed to load '#{ext}' programming language for file #{step_def_file}: #{e.message}\n")
           @unsupported_programming_languages << ext
           nil
         end
@@ -410,10 +410,6 @@ module Cucumber
 
     def scenario_visited(scenario) #:nodoc:
       scenarios << scenario unless scenarios.index(scenario)
-    end
-
-    def log
-      @log ||= Logger.new(STDOUT)
     end
 
     def mri_gets(timeout_seconds)

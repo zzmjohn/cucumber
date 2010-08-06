@@ -48,7 +48,6 @@ module Cucumber
         end
 
         step_mother.configuration = configuration
-        step_mother.log = configuration.log
 
         if step_mother.dot_cucumber_present?
           step_mother.load_dot_cucumber_files
