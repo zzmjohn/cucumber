@@ -24,9 +24,17 @@ Feature: Run features from code
       require 'cucumber'
       
       runtime = Cucumber.configure do |config|
-        config.formatters << Cucumber::Formatter.new do
-          after_scenario do |scenario|
-            puts scenario.name
+        config.listeners << Cucumber::Listener.new do
+          before_all do |runtime|
+            puts "Just about to run the lot"
+          end
+
+          after_each do |scenario_result|
+            puts "Just ran #{scenario_result.name}"
+          end
+
+          before_each do |scenario|
+            puts "About to run #{scenario.name}"
           end
         end
       end
@@ -38,4 +46,8 @@ Feature: Run features from code
     And the output should contain:
       """
       Foo
+      """
+    And the output should contain:
+      """
+      run the lot
       """

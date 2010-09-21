@@ -30,6 +30,7 @@ module Cucumber
       tree_walker = @configuration.build_tree_walker(self)
       self.visitor = tree_walker # Ugly circular dependency, but needed to support World#announce
       
+      fire_event(:before_all, self)
       tree_walker.visit_features(features)
     end
     
@@ -149,12 +150,14 @@ module Cucumber
       return if @configuration.dry_run? || @current_scenario
       @current_scenario = scenario
       @support_code.fire_hook(:before, scenario)
+      fire_event(:before_each, scenario)
     end
 
     def after(scenario) #:nodoc:
       @current_scenario = nil
       return if @configuration.dry_run?
       @support_code.fire_hook(:after, scenario)
+      fire_event(:after_each, scenario)
     end
 
     def after_step #:nodoc:
@@ -187,6 +190,12 @@ module Cucumber
 
     def log
       Cucumber.logger
+    end
+    
+    def fire_event(name, *args)
+      @configuration.listeners.each do |listener|
+        listener.call_hook(name, *args)
+      end
     end
   end
 

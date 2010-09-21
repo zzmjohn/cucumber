@@ -17,10 +17,21 @@ module Cucumber
     end
   end
   
-  class HookCollector
+  class Listener
+    def initialize(&block)
+      instance_exec(&block)
+    end
+    
     def method_missing(name, &block)
       hooks[name] = block
     end
+    
+    def call_hook(name, *args)
+      return unless hooks[name]
+      hooks[name].call(*args)
+    end
+
+    private
     
     def hooks
       @hooks ||= {}

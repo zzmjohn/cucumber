@@ -27,6 +27,10 @@ module Cucumber
     def formatters
       @formatters ||= []
     end
+
+    def listeners
+      @listeners ||= []
+    end
     
     def auto_load_paths
       @options[:auto_load_paths] || @default[:auto_load_paths]
