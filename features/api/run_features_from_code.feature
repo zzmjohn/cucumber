@@ -19,8 +19,6 @@ Feature: Run features from code
   Scenario: Run a single feature
     And a file named "test.rb" with:
       """
-      require 'rubygems'
-      require 'gherkin'
       require 'cucumber'
       
       runtime = Cucumber.configure do |config|
