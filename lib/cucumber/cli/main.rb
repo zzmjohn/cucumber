@@ -1,9 +1,3 @@
-begin
-  require 'gherkin'
-rescue LoadError
-  require 'rubygems'
-  require 'gherkin'
-end
 require 'optparse'
 require 'cucumber'
 require 'logger'
@@ -51,7 +45,7 @@ module Cucumber
         return @drb_output if run_drb_client
         
         runtime = Runtime.new(configuration)
-        runtime.run!
+        runtime.run
         runtime.results.failure?
       rescue ProfilesNotDefinedError, YmlLoadError, ProfileNotFound => e
         @error_stream.puts e.message

@@ -6,6 +6,7 @@ require 'cucumber/runtime/user_interface'
 require 'cucumber/runtime/features_loader'
 require 'cucumber/runtime/results'
 require 'cucumber/runtime/support_code'
+require 'cucumber/file_finder'
 
 module Cucumber
   # This is the meaty part of Cucumber that ties everything together.
@@ -22,7 +23,7 @@ module Cucumber
       @results = Results.new(@configuration)
     end
     
-    def run!
+    def run
       load_step_definitions
       fire_after_configuration_hook
 
@@ -180,7 +181,7 @@ module Cucumber
     end
 
     def load_step_definitions
-      files = @configuration.support_to_load + @configuration.step_defs_to_load
+      files = FileFinder.new(@configuration).step_definition_files
       @support_code.load_files!(files)
     end
 

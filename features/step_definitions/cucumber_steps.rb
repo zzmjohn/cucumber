@@ -61,6 +61,11 @@ When /^I run rake (.*)$/ do |rake_opts|
   run "rake #{rake_opts} --trace"
 end
 
+When /^I run ruby (.*)$/ do |ruby_opts|
+  cucumber_lib = File.expand_path(File.dirname(__FILE__) + '/../../lib')
+  run "ruby -I #{cucumber_lib} #{ruby_opts}"
+end
+
 Then /^it should (fail|pass)$/ do |success|
   if success == 'fail'
     last_exit_status.should_not == 0
@@ -76,7 +81,7 @@ Then /^it should (fail|pass) with$/ do |success, output|
   Then("it should #{success}")
 end
 
-Then /^the output should contain$/ do |text|
+Then /^the output should contain:?$/ do |text|
   last_stdout.should include(text)
 end
 
