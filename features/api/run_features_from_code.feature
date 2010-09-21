@@ -45,6 +45,10 @@ Feature: Run features from code
     Then it should pass
     And the output should contain:
       """
+      about to run
+      """
+    And the output should contain:
+      """
       Foo
       """
     And the output should contain:
