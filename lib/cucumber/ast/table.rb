@@ -449,13 +449,13 @@ module Cucumber
         options = {:color => true, :indent => 2, :prefixes => TO_S_PREFIXES}.merge(options)
         io = StringIO.new
 
-        c = Term::ANSIColor.coloring?
-        Term::ANSIColor.coloring = options[:color]
+        c = Cucumber::Formatter::ANSIColor.coloring?
+        Cucumber::Formatter::ANSIColor.coloring = options[:color]
         formatter = Formatter::Pretty.new(nil, io, options)
         formatter.instance_variable_set('@indent', options[:indent])
         TreeWalker.new(nil, [formatter]).visit_multiline_arg(self)
         
-        Term::ANSIColor.coloring = c
+        Cucumber::Formatter::ANSIColor.coloring = c
         io.rewind
         s = "\n" + io.read + (" " * (options[:indent] - 2))
         s
