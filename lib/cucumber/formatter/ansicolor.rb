@@ -1,8 +1,8 @@
 begin
-  require 'term/ansicolor'
+  #require 'term/ansicolor'
 rescue LoadError
-  require 'rubygems'
-  require 'term/ansicolor'
+  #require 'rubygems'
+  #require 'term/ansicolor'
 end
 require 'cucumber/platform'
 
@@ -17,11 +17,11 @@ end
 if Cucumber::WINDOWS_MRI
   unless ENV['ANSICON']
     STDERR.puts %{*** WARNING: You must use ANSICON 1.31 or higher (http://adoxa.110mb.com/ansicon) to get coloured output on Windows}
-    Term::ANSIColor.coloring = false
+    Cucumber::Formatter::ANSIColor.coloring = false
   end
 end
 
-Term::ANSIColor.coloring = false if !STDOUT.tty? && !ENV.has_key?("AUTOTEST")
+#Term::ANSIColor.coloring = false if !STDOUT.tty? && !ENV.has_key?("AUTOTEST")
 
 module Cucumber
   module Formatter
@@ -61,7 +61,16 @@ module Cucumber
     #
     # Although not listed, you can also use <tt>grey</tt>
     module ANSIColor
-      include Term::ANSIColor
+      def self.coloring=(c)
+        @coloring = c
+      end
+      
+      def self.coloring?
+        @coloring
+      end
+      
+      @coloring = true
+      @coloring = false if !STDOUT.tty? && !ENV.has_key?("AUTOTEST")
 
       ALIASES = Hash.new do |h,k|
         if k.to_s =~ /(.*)_param/
@@ -96,6 +105,7 @@ module Cucumber
             #{ALIASES[method+'_param'].split(",").join("(") + "(string, &proc" + ")" * ALIASES[method+'_param'].split(",").length} + #{ALIASES[method].split(",").join(' + ')}
           end
           EOF
+          #puts code
           eval(code)
         end
       end
@@ -108,7 +118,7 @@ module Cucumber
           when 0
             raise "Your terminal doesn't support colours"
           when 1
-            ::Term::ANSIColor.coloring = false
+            @coloring = false
             alias grey white
           when 2..8
             alias grey white
@@ -130,7 +140,7 @@ module Cucumber
       
       def self.define_real_grey #:nodoc:
         def grey(m) #:nodoc:
-          if ::Term::ANSIColor.coloring?
+          if ANSIColor.coloring?
             "\e[90m#{m}\e[0m"
           else
             m
@@ -143,17 +153,62 @@ module Cucumber
       def cukes(n)
         ("(::) " * n).strip
       end
-
+      
+      def green(n="")
+        return n unless ANSIColor.coloring?
+        if n.nil? or n == ""
+          "\e[32m"
+        else
+          "\e[32m#{n}\e[0m"
+        end
+      end
+      
       def green_cukes(n)
         blink(green(cukes(n)))
+      end
+      
+      def red(n="")
+        return n unless ANSIColor.coloring?
+        if n.nil? or n == ""
+          "\e[31m"
+        else
+          "\e[31m#{n}\e[0m"
+        end
       end
 
       def red_cukes(n)
         blink(red(cukes(n)))
       end
 
+      def yellow(n="")
+        return n unless ANSIColor.coloring?
+        if n.nil? or n == ""
+          "\e[33m"
+        else
+          "\e[33m#{n}\e[0m"
+        end
+      end
+      
       def yellow_cukes(n)
         blink(yellow(cukes(n)))
+      end
+      
+      def cyan(n="")
+        return n unless ANSIColor.coloring?
+        if n.nil? or n == ""
+          "\e[36m"
+        else
+          "\e[36m#{n}\e[0m"
+        end
+      end
+      
+      def bold(n="")
+        return n unless ANSIColor.coloring?
+        if n.nil? or n == ""
+          "\e[1m"
+        else
+          "\e[1m#{n}\e[0m"
+        end
       end
     end
   end
