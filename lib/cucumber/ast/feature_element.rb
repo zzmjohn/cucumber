@@ -67,7 +67,7 @@ module Cucumber
       end
 
       def source_tag_names
-        (@tags.tag_names.to_a + (@feature ? @feature.source_tag_names.to_a : [])).uniq
+        (@tags ? @tags.tag_names.to_a : [] + (@feature ? @feature.source_tag_names.to_a : [])).uniq
       end
 
       def language
