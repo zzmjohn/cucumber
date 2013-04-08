@@ -20,13 +20,17 @@ Feature: Before Hook
       names = []
       Before do |unit|
         names << unit.feature_name
-        unit.source_scenario do |scenario|
-          names << scenario.name
-        end
-        unit.source_examples_table_row |row|
-          names << row.scenario_outline_name
-          names << row.examples_table_name
-          names << row.number
+        # You could either pass in a visitor, or use this block
+        # to build one.
+        unit.visit_source do |visitor_builder|
+          visitor_builder.scenario do |scenario|
+            names << scenario.name
+          end
+          visitor_builder.examples_table_row do |row|
+            names << row.scenario_outline_name
+            names << row.examples_table_name
+            names << row.number
+          end
         end
       end
       at_exit { puts names.join("\n") }
