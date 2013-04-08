@@ -18,14 +18,15 @@ Feature: Before Hook
     And a file named "features/support/hook.rb" with:
       """
       names = []
-      Before do |scenario|
-        names << scenario.feature_name
-        if scenario.respond_to?(:scenario_name)
-          names << scenario.scenario_name
-        else
-          names << scenario.scenario_outline_name
-          names << scenario.examples_table_name
-          names << scenario.examples_table_row
+      Before do |unit|
+        names << unit.feature_name
+        unit.source_scenario do |scenario|
+          names << scenario.name
+        end
+        unit.source_examples_table_row |row|
+          names << row.scenario_outline_name
+          names << row.examples_table_name
+          names << row.number
         end
       end
       at_exit { puts names.join("\n") }
